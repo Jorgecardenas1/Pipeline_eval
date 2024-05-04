@@ -1,6 +1,6 @@
 import sys
 import os
-
+import time
 #from Utilities.SaveAnimation import Video
 
 from druida import Stack
@@ -37,6 +37,12 @@ import argparse
 import json
 from PIL import Image
 import cv2 
+
+# CAD
+
+from druida.tools.utils import CAD 
+
+
 # Arguments
 parser = argparse.ArgumentParser()
 # boxImagesPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Images Jorge Cardenas 512\\"
@@ -108,6 +114,103 @@ def join_simulationData():
     
     df.to_csv('out.csv',index=False)
     
+def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight):
+
+
+ 
+
+    ImageProcessor=CAD("./"+images_folder+"generated_image_512.png", "./"+images_folder+"processed/")
+    image_name="./"+images_folder+image_file_name
+
+    upperBound=[50,255,255]
+    #Feature extraction
+    lowerBound=[0,80,80]
+    epsilon_coeff=0.0500
+    threshold_Value=0
+    contour_name="RED"
+    red_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
+
+    upperBound=[90, 255,255]
+    lowerBound=[36, 100, 0]
+    epsilon_coeff=0.0500
+    threshold_Value=100
+    contour_name="GREEN"
+
+    green_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
+
+    upperBound=[255,255,255]
+    lowerBound=[20,0,0]
+    epsilon_coeff=0.0500
+    threshold_Value=0
+    contour_name="BLUE"
+
+    blue_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
+
+    """DXF generation"""
+    units="um"
+    GoalSize=500
+    currentSize=size[0] #assumming an squared image same witdth and height
+    multiplier=0
+    layerscale=0
+
+    if units=="mm":
+        multiplier=0.1
+        layerscale=1
+    elif units=="um":
+        multiplier=10
+        layerscale=1000
+    else:
+        pass
+
+
+    """Here the original layers were given in mm
+    as the target units are nm, layers must be rescaled
+    """
+
+    layers= {
+            "conductor":{
+                "thickness":str(0.035*layerscale),
+                "material":"pec",
+                "color": "red",
+                "zpos":str(sustratoHeight*layerscale)
+            },
+            "dielectric":{
+                "thickness":str(sustratoHeight*layerscale),
+                "material":"PTFE",
+                "color": "green",
+                "zpos":str(sustratoHeight*layerscale)
+
+            } ,
+            "substrate":{
+                "thickness":str(sustratoHeight*layerscale),
+                "material":"Rogers RT/duroid 5880 (tm)",
+                "color": "blue",
+                "zpos":0
+
+            }
+        }
+
+    """We can chose the layers to be included in DXF file to be exporte to HFSS"""
+   
+    selectedLayer = ["conductor","dielectric" ,"substrate"]
+    
+    ImageProcessor.DXF_build(multiplier, GoalSize,currentSize,red_cnts, blue_cnts,green_cnts, selectedLayer)
+
+    """This section allows to include information previously known from layers in HFSS model 
+    to recreate the model """
+
+    #This info is usuarlly included when generating data by using
+    # the data generation module
+
+    kwargs={
+            "reports":"",
+            "simulation_id":"simID",
+        "variable_name":"variables",
+            "value" : str([]),
+            "units" : units,
+        }
+    
+    ImageProcessor.elevation_file(layers,**kwargs)
 
 
 def prepare_data(names, device,df,classes,classes_types):
@@ -169,7 +272,7 @@ def prepare_data(names, device,df,classes,classes_types):
             top_frequencies = all_frequencies[indices]
 
             if parser.one_hot_encoding == 1:  
-                conditional_data = set_conditioning_one_hot(df,
+                conditional_data,sustratoHeight = set_conditioning_one_hot(df,
                                                     name,
                                                     classes[idx],
                                                     classes_types[idx],
@@ -182,7 +285,7 @@ def prepare_data(names, device,df,classes,classes_types):
                                                     bands_encoder)
 
             else:
-                conditional_data = set_conditioning(df,
+                conditional_data,sustratoHeight = set_conditioning(df,
                                                     name,
                                                     classes[idx],
                                                     classes_types[idx],
@@ -209,7 +312,7 @@ def prepare_data(names, device,df,classes,classes_types):
             array1.append(tensor1.to(device))
         
 
-    return array1, array2, noise,tensor1, values
+    return array1, array2, noise,tensor1, values,sustratoHeight
 
 def set_conditioning_one_hot(df,name,target,categories,band_name,top_freqs,substrate_encoder,materials_encoder,surfaceType_encoder,TargetGeometries_encoder,bands_encoder):
     series=name.split('_')[-2]
@@ -218,6 +321,7 @@ def set_conditioning_one_hot(df,name,target,categories,band_name,top_freqs,subst
     row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
         #print(batch)
         #print(iteration)
+
 
     target_val=target
     category=categories
@@ -257,7 +361,7 @@ def set_conditioning_one_hot(df,name,target,categories,band_name,top_freqs,subst
     values_array = torch.cat((surface,materialconductor,materialsustrato,torch.Tensor([sustratoHeight]),band,top_freqs),0) #concat side
     """ Values array solo pouede llenarse con n+umero y no con textos"""
     # values_array = torch.Tensor(values_array)
-    return values_array
+    return values_array, sustratoHeight
 
 
 def set_conditioning(df,name,target,categories,band_name,top_freqs):
@@ -305,7 +409,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
 
     """ Values array solo pouede llenarse con n+umero y no con textos"""
     # values_array = torch.Tensor(values_array)
-    return values_array
+    return values_array,sustratoHeight
 
 
 
@@ -327,7 +431,7 @@ def test(netG,device):
         #sending to CUDA
         inputs = inputs.to(device)
         classes = classes.to(device)
-        _, _, noise,tensor1,real_values = prepare_data(names, device,df,classes,classes_types)
+        _, _, noise,tensor1,real_values,sustratoHeight = prepare_data(names, device,df,classes,classes_types)
 
 
         testTensor = noise.type(torch.float).to(device)
@@ -361,6 +465,11 @@ def test(netG,device):
         resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
         cv2.imwrite("output/"+str(names)+"/generated_image_512.png", resized) 
 
+        imagesFolder = "output/"+str(names)+"/"
+        destinationFolder = "output/"+str(names)+"/"
+        image_name = "generated_image_512.png"
+        time.sleep(3)
+        cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight)
         #plot Data
 
         break
