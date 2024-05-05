@@ -82,7 +82,7 @@ def arguments():
     parser.add_argument("one_hot_encoding",type=int)
 
     parser.run_name = "GAN Training"
-    parser.epochs = 2
+    parser.epochs = 1
     parser.batch_size = 1
     parser.workers=1
     parser.gpu_number=1
@@ -90,12 +90,12 @@ def arguments():
     parser.dataset_path = os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/')
     parser.device = "cpu"
     parser.learning_rate =5e-5
-    parser.condition_len = 16 #Incliuding 3 top frequencies
+    parser.condition_len = 5 #Incliuding 3 top frequencies
     parser.metricType='AbsorbanceTM' #this is to be modified when training for different metrics.
-    parser.latent=200 #this is to be modified when training for different metrics.
+    parser.latent=105 #this is to be modified when training for different metrics.
     parser.spectra_length=100 #this is to be modified when training for different metrics.
-    parser.gen_model='models/NETGModelTM_abs__GAN_Bands_30Abr_50e-5_50epc_64_16conds_onehot_.pth'
-    parser.one_hot_encoding = 1 #Incliuding 3 top frequencies
+    parser.gen_model='models/NETGModelTM_abs__GAN_Bands_4May_100epc_64_5conds_zprod.pth'
+    parser.one_hot_encoding = 0 #if used OHE Incliuding 3 top frequencies
 
     categories=["box", "circle", "cross"]
 
@@ -297,10 +297,18 @@ def prepare_data(names, device,df,classes,classes_types):
 
             #loading data to tensors for discriminator
             tensorA = torch.from_numpy(values[1])
+            labels = torch.cat((conditional_data.to(device),tensorA.to(device))) #concat side
+
             array2.append(tensorA.to(device)) #concat por batches
 
             latent_tensor=torch.rand(parser.latent)
-            tensor1 = torch.cat((conditional_data.to(device),tensorA.to(device),latent_tensor.to(device),)) #concat side
+
+
+            """multiply noise and labels to get a single vector"""
+            tensor1=torch.mul(labels.to(device),latent_tensor.to(device) )
+    
+            """concat noise and labels adjacent"""
+            #tensor1 = torch.cat((conditional_data.to(device),tensorA.to(device),latent_tensor.to(device),)) #concat side
             #un vector que inclue
             #datos desde el dataset y otros datos aleatorios latentes.
 
@@ -403,12 +411,14 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         
 
 
-    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
+    values_array=torch.Tensor([surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
     
-    values_array = torch.cat((values_array,top_freqs),0) #concat side
+    """condition with top frequencies"""
+    #values_array = torch.cat((values_array,top_freqs),0) #concat side
 
-    """ Values array solo pouede llenarse con n+umero y no con textos"""
-    # values_array = torch.Tensor(values_array)
+    """ conditions no top frequencies"""
+    values_array = torch.Tensor(values_array)
+    
     return values_array,sustratoHeight
 
 
@@ -443,6 +453,26 @@ def test(netG,device):
 
         if not os.path.exists("output/"+str(names)):
             os.makedirs("output/"+str(names))
+
+        with open("output/"+str(names)+"/usedmodel.txt", "a") as f:
+            f.write("image_size:"+str(parser.image_size))
+            f.write("\n")
+            
+            f.write("condition_len:"+str(parser.condition_len))
+            f.write("\n")
+
+            f.write("latent:"+str(parser.latent))
+            f.write("\n")
+
+            f.write("spectra_length:"+str(parser.spectra_length))
+            f.write("\n")
+
+            f.write("gen_model:"+str(parser.gen_model))
+            f.write("\n")
+            
+            f.write("one_hot_encoding:"+str(parser.one_hot_encoding))
+            f.write("\n")
+
 
         t_np = torch.squeeze(noise,(2,3)).cpu().numpy() #convert to Numpy array
         df_ = pd.DataFrame(t_np) #convert to a dataframe
@@ -549,7 +579,13 @@ def main():
 
     trainer = Stack.Trainer(parser)
 
-    input_size=parser.spectra_length+parser.condition_len+parser.latent
+    # Sizes for discrimnator and generator
+    """Z product"""
+    input_size=parser.spectra_length+parser.condition_len
+    
+    """this for Z concat"""
+    #input_size=parser.spectra_length+parser.condition_len+parser.latent
+    
     generator_mapping_size=parser.image_size
     output_channels=3
 
