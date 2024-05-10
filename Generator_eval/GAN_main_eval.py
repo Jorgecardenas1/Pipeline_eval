@@ -90,11 +90,11 @@ def arguments():
     parser.dataset_path = os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/')
     parser.device = "cpu"
     parser.learning_rate =5e-5
-    parser.condition_len = 5 #Incliuding 3 top frequencies
+    parser.condition_len = 6 #Incliuding 3 top frequencies
     parser.metricType='AbsorbanceTM' #this is to be modified when training for different metrics.
-    parser.latent=105 #this is to be modified when training for different metrics.
+    parser.latent=106 #this is to be modified when training for different metrics.
     parser.spectra_length=100 #this is to be modified when training for different metrics.
-    parser.gen_model='models/NETGModelTM_abs__GAN_Bands_4May_100epc_64_5conds_zprod.pth'
+    parser.gen_model='models/NETGModelTM_abs__GAN_Bands_9May_100epc_64_6conds_zprod.pth'
     parser.one_hot_encoding = 0 #if used OHE Incliuding 3 top frequencies
 
     categories=["box", "circle", "cross"]
@@ -116,13 +116,11 @@ def join_simulationData():
     
 def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight):
 
-
- 
-
     ImageProcessor=CAD("./"+images_folder+"generated_image_512.png", "./"+images_folder+"processed/")
     image_name="./"+images_folder+image_file_name
 
     upperBound=[50,255,255]
+
     #Feature extraction
     lowerBound=[0,80,80]
     epsilon_coeff=0.0500
@@ -411,7 +409,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         
 
 
-    values_array=torch.Tensor([surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
+    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
     
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
@@ -564,8 +562,6 @@ def encoders(dictionary):
     enc.fit(index)
     return enc
 
-
-    
 
 
 def main():
