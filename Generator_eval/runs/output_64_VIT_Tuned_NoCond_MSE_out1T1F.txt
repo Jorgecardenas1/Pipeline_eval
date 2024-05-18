@@ -1,0 +1,2922 @@
+cuda:0
+Access main
+conditioned
+VisionTransformer(
+  (l1): Linear(in_features=6, out_features=12288, bias=False)
+  (input_layer): Linear(in_features=1536, out_features=1536, bias=True)
+  (transformer): Sequential(
+    (0): AttentionBlock(
+      (layer_norm_1): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+      (attn): MultiheadAttention(
+        (out_proj): NonDynamicallyQuantizableLinear(in_features=1536, out_features=1536, bias=True)
+      )
+      (layer_norm_2): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+      (linear): Sequential(
+        (0): Linear(in_features=1536, out_features=1536, bias=True)
+        (1): GELU(approximate='none')
+        (2): Dropout(p=0.2, inplace=False)
+        (3): Linear(in_features=1536, out_features=1536, bias=True)
+        (4): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (1): AttentionBlock(
+      (layer_norm_1): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+      (attn): MultiheadAttention(
+        (out_proj): NonDynamicallyQuantizableLinear(in_features=1536, out_features=1536, bias=True)
+      )
+      (layer_norm_2): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+      (linear): Sequential(
+        (0): Linear(in_features=1536, out_features=1536, bias=True)
+        (1): GELU(approximate='none')
+        (2): Dropout(p=0.2, inplace=False)
+        (3): Linear(in_features=1536, out_features=1536, bias=True)
+        (4): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (2): AttentionBlock(
+      (layer_norm_1): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+      (attn): MultiheadAttention(
+        (out_proj): NonDynamicallyQuantizableLinear(in_features=1536, out_features=1536, bias=True)
+      )
+      (layer_norm_2): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+      (linear): Sequential(
+        (0): Linear(in_features=1536, out_features=1536, bias=True)
+        (1): GELU(approximate='none')
+        (2): Dropout(p=0.2, inplace=False)
+        (3): Linear(in_features=1536, out_features=1536, bias=True)
+        (4): Dropout(p=0.2, inplace=False)
+      )
+    )
+    (3): AttentionBlock(
+      (layer_norm_1): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+      (attn): MultiheadAttention(
+        (out_proj): NonDynamicallyQuantizableLinear(in_features=1536, out_features=1536, bias=True)
+      )
+      (layer_norm_2): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+      (linear): Sequential(
+        (0): Linear(in_features=1536, out_features=1536, bias=True)
+        (1): GELU(approximate='none')
+        (2): Dropout(p=0.2, inplace=False)
+        (3): Linear(in_features=1536, out_features=1536, bias=True)
+        (4): Dropout(p=0.2, inplace=False)
+      )
+    )
+  )
+  (mlp_head): Sequential(
+    (0): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+    (1): Linear(in_features=1536, out_features=1536, bias=False)
+    (2): Dropout(p=0.2, inplace=False)
+    (3): Linear(in_features=1536, out_features=2, bias=False)
+  )
+  (dropout): Dropout(p=0.2, inplace=False)
+)
+Epoch 0/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[1,    99] loss: 3.584 running loss:  359.622
+accuracy: -4.389 
+Score: -6.689 
+[1,   199] loss: 3.581 running loss:  169.504
+accuracy: -4.273 
+Score: -4.116 
+[1,   299] loss: 4.232 running loss:  171.144
+accuracy: -4.278 
+Score: -4.119 
+[1,   399] loss: 0.381 running loss:  74.720
+accuracy: -4.059 
+Score: -2.225 
+[1,   499] loss: 0.276 running loss:  15.679
+accuracy: -3.842 
+Score: -5.444 
+[1,   599] loss: 0.209 running loss:  12.457
+accuracy: -3.684 
+Score: -3.289 
+[1,   699] loss: 0.232 running loss:  11.729
+accuracy: -3.534 
+Score: -3.380 
+[1,   799] loss: 0.202 running loss:  10.729
+accuracy: -3.398 
+Score: -1.008 
+[1,   899] loss: 0.206 running loss:  9.303
+accuracy: -3.253 
+Score: -1.529 
+[1,   999] loss: 0.222 running loss:  8.985
+accuracy: -3.151 
+Score: -4.783 
+[1,  1099] loss: 0.107 running loss:  10.797
+accuracy: -3.048 
+Score: -1.123 
+[1,  1199] loss: 0.179 running loss:  8.844
+accuracy: -2.945 
+Score: -0.906 
+[1,  1299] loss: 0.186 running loss:  8.315
+accuracy: -2.847 
+Score: -2.324 
+[1,  1399] loss: 0.153 running loss:  9.017
+accuracy: -2.757 
+Score: -2.569 
+[1,  1499] loss: 0.232 running loss:  8.519
+accuracy: -2.667 
+Score: -1.407 
+[1,  1599] loss: 0.144 running loss:  8.896
+accuracy: -2.589 
+Score: -0.132 
+[1,  1699] loss: 0.166 running loss:  8.312
+accuracy: -2.510 
+Score: -0.597 
+learning_rate:  [4.9e-05]
+learning_rate:  [4.9e-05]
+mean Acc per epoch -2.495757028070703
+Epoch 1/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[2,    99] loss: 0.129 running loss:  7.800
+accuracy: -1.135 
+Score: -0.300 
+[2,   199] loss: 0.153 running loss:  7.479
+accuracy: -1.060 
+Score: -0.513 
+[2,   299] loss: 0.127 running loss:  7.341
+accuracy: -1.003 
+Score: -0.318 
+[2,   399] loss: 0.133 running loss:  7.460
+accuracy: -0.982 
+Score: -1.246 
+[2,   499] loss: 0.131 running loss:  7.278
+accuracy: -0.942 
+Score: 0.058 
+[2,   599] loss: 0.118 running loss:  7.392
+accuracy: -0.899 
+Score: -0.309 
+[2,   699] loss: 0.122 running loss:  6.796
+accuracy: -0.866 
+Score: -0.485 
+[2,   799] loss: 0.106 running loss:  7.500
+accuracy: -0.828 
+Score: -0.976 
+[2,   899] loss: 0.154 running loss:  7.475
+accuracy: -0.791 
+Score: -1.335 
+[2,   999] loss: 0.171 running loss:  7.342
+accuracy: -0.767 
+Score: -0.735 
+[2,  1099] loss: 0.271 running loss:  6.936
+accuracy: -0.740 
+Score: 0.141 
+[2,  1199] loss: 0.117 running loss:  6.953
+accuracy: -0.711 
+Score: -0.121 
+[2,  1299] loss: 0.145 running loss:  7.159
+accuracy: -0.686 
+Score: -0.321 
+[2,  1399] loss: 0.134 running loss:  6.554
+accuracy: -0.653 
+Score: 0.000 
+[2,  1499] loss: 0.101 running loss:  6.168
+accuracy: -0.619 
+Score: 0.252 
+[2,  1599] loss: 0.097 running loss:  7.057
+accuracy: -0.590 
+Score: 0.032 
+[2,  1699] loss: 0.305 running loss:  6.201
+accuracy: -0.566 
+Score: -0.548 
+learning_rate:  [4.802e-05]
+learning_rate:  [4.802e-05]
+mean Acc per epoch -0.5624339276379828
+Epoch 2/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[3,    99] loss: 0.130 running loss:  6.188
+accuracy: -0.042 
+Score: 0.264 
+[3,   199] loss: 0.110 running loss:  7.600
+accuracy: -0.064 
+Score: 0.355 
+[3,   299] loss: 0.097 running loss:  6.153
+accuracy: -0.038 
+Score: 0.323 
+[3,   399] loss: 0.139 running loss:  6.279
+accuracy: -0.032 
+Score: 0.147 
+[3,   499] loss: 0.191 running loss:  6.032
+accuracy: -0.016 
+Score: 0.144 
+[3,   599] loss: 0.097 running loss:  6.673
+accuracy: 0.005 
+Score: 0.064 
+[3,   699] loss: 0.081 running loss:  6.550
+accuracy: 0.014 
+Score: 0.016 
+[3,   799] loss: 0.233 running loss:  5.880
+accuracy: 0.033 
+Score: 0.096 
+[3,   899] loss: 0.126 running loss:  6.064
+accuracy: 0.050 
+Score: 0.411 
+[3,   999] loss: 0.159 running loss:  6.271
+accuracy: 0.064 
+Score: 0.094 
+[3,  1099] loss: 0.144 running loss:  6.309
+accuracy: 0.082 
+Score: 0.254 
+[3,  1199] loss: 0.122 running loss:  6.841
+accuracy: 0.095 
+Score: 0.199 
+[3,  1299] loss: 0.136 running loss:  5.891
+accuracy: 0.110 
+Score: 0.154 
+[3,  1399] loss: 0.100 running loss:  5.655
+accuracy: 0.122 
+Score: 0.260 
+[3,  1499] loss: 0.133 running loss:  6.119
+accuracy: 0.134 
+Score: 0.121 
+[3,  1599] loss: 0.164 running loss:  6.062
+accuracy: 0.147 
+Score: 0.480 
+[3,  1699] loss: 0.105 running loss:  5.983
+accuracy: 0.158 
+Score: 0.211 
+learning_rate:  [4.70596e-05]
+learning_rate:  [4.70596e-05]
+mean Acc per epoch 0.15910363813264716
+Epoch 3/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[4,    99] loss: 0.093 running loss:  6.091
+accuracy: 0.364 
+Score: 0.188 
+[4,   199] loss: 0.100 running loss:  6.206
+accuracy: 0.368 
+Score: 0.374 
+[4,   299] loss: 0.123 running loss:  5.875
+accuracy: 0.372 
+Score: 0.353 
+[4,   399] loss: 0.127 running loss:  6.591
+accuracy: 0.384 
+Score: 0.504 
+[4,   499] loss: 0.101 running loss:  5.938
+accuracy: 0.391 
+Score: 0.521 
+[4,   599] loss: 0.092 running loss:  5.569
+accuracy: 0.400 
+Score: 0.554 
+[4,   699] loss: 0.116 running loss:  5.793
+accuracy: 0.407 
+Score: 0.583 
+[4,   799] loss: 0.100 running loss:  5.594
+accuracy: 0.416 
+Score: 0.544 
+[4,   899] loss: 0.351 running loss:  6.733
+accuracy: 0.420 
+Score: 0.552 
+[4,   999] loss: 0.142 running loss:  6.289
+accuracy: 0.424 
+Score: 0.292 
+[4,  1099] loss: 0.114 running loss:  5.479
+accuracy: 0.429 
+Score: 0.567 
+[4,  1199] loss: 0.124 running loss:  5.735
+accuracy: 0.435 
+Score: 0.626 
+[4,  1299] loss: 0.082 running loss:  6.497
+accuracy: 0.440 
+Score: 0.549 
+[4,  1399] loss: 0.095 running loss:  5.639
+accuracy: 0.444 
+Score: 0.552 
+[4,  1499] loss: 0.103 running loss:  5.521
+accuracy: 0.449 
+Score: 0.448 
+[4,  1599] loss: 0.117 running loss:  5.467
+accuracy: 0.453 
+Score: 0.644 
+[4,  1699] loss: 0.094 running loss:  5.987
+accuracy: 0.457 
+Score: 0.601 
+learning_rate:  [4.6118408e-05]
+learning_rate:  [4.6118408e-05]
+mean Acc per epoch 0.45794010487983156
+Epoch 4/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[5,    99] loss: 0.084 running loss:  5.437
+accuracy: 0.524 
+Score: 0.568 
+[5,   199] loss: 0.117 running loss:  5.667
+accuracy: 0.526 
+Score: 0.465 
+[5,   299] loss: 0.125 running loss:  5.968
+accuracy: 0.531 
+Score: 0.677 
+[5,   399] loss: 0.106 running loss:  5.237
+accuracy: 0.534 
+Score: 0.441 
+[5,   499] loss: 0.105 running loss:  6.106
+accuracy: 0.534 
+Score: 0.441 
+[5,   599] loss: 0.067 running loss:  5.872
+accuracy: 0.535 
+Score: 0.517 
+[5,   699] loss: 0.105 running loss:  6.050
+accuracy: 0.536 
+Score: 0.505 
+[5,   799] loss: 0.107 running loss:  5.848
+accuracy: 0.536 
+Score: 0.592 
+[5,   899] loss: 0.100 running loss:  5.301
+accuracy: 0.538 
+Score: 0.537 
+[5,   999] loss: 0.096 running loss:  5.536
+accuracy: 0.539 
+Score: 0.401 
+[5,  1099] loss: 0.093 running loss:  5.846
+accuracy: 0.542 
+Score: 0.620 
+[5,  1199] loss: 0.129 running loss:  5.146
+accuracy: 0.543 
+Score: 0.556 
+[5,  1299] loss: 0.114 running loss:  5.407
+accuracy: 0.545 
+Score: 0.426 
+[5,  1399] loss: 0.136 running loss:  5.406
+accuracy: 0.547 
+Score: 0.667 
+[5,  1499] loss: 0.097 running loss:  5.434
+accuracy: 0.547 
+Score: 0.554 
+[5,  1599] loss: 0.074 running loss:  5.346
+accuracy: 0.549 
+Score: 0.658 
+[5,  1699] loss: 0.147 running loss:  5.196
+accuracy: 0.551 
+Score: 0.583 
+learning_rate:  [4.519603984e-05]
+learning_rate:  [4.519603984e-05]
+mean Acc per epoch 0.5512443207225695
+Epoch 5/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[6,    99] loss: 0.105 running loss:  5.222
+accuracy: 0.586 
+Score: 0.513 
+[6,   199] loss: 0.116 running loss:  5.499
+accuracy: 0.584 
+Score: 0.592 
+[6,   299] loss: 0.139 running loss:  5.196
+accuracy: 0.582 
+Score: 0.535 
+[6,   399] loss: 0.125 running loss:  5.814
+accuracy: 0.580 
+Score: 0.602 
+[6,   499] loss: 0.079 running loss:  5.679
+accuracy: 0.580 
+Score: 0.525 
+[6,   599] loss: 0.123 running loss:  5.067
+accuracy: 0.582 
+Score: 0.523 
+[6,   699] loss: 0.105 running loss:  6.344
+accuracy: 0.580 
+Score: 0.572 
+[6,   799] loss: 0.088 running loss:  5.473
+accuracy: 0.581 
+Score: 0.542 
+[6,   899] loss: 0.093 running loss:  5.727
+accuracy: 0.577 
+Score: 0.604 
+[6,   999] loss: 0.105 running loss:  4.731
+accuracy: 0.579 
+Score: 0.649 
+[6,  1099] loss: 0.179 running loss:  5.867
+accuracy: 0.580 
+Score: 0.590 
+[6,  1199] loss: 0.143 running loss:  6.102
+accuracy: 0.578 
+Score: 0.561 
+[6,  1299] loss: 0.099 running loss:  5.094
+accuracy: 0.580 
+Score: 0.390 
+[6,  1399] loss: 0.088 running loss:  5.421
+accuracy: 0.579 
+Score: 0.613 
+[6,  1499] loss: 0.117 running loss:  5.069
+accuracy: 0.579 
+Score: 0.550 
+[6,  1599] loss: 0.130 running loss:  5.532
+accuracy: 0.580 
+Score: 0.568 
+[6,  1699] loss: 0.079 running loss:  5.715
+accuracy: 0.580 
+Score: 0.683 
+learning_rate:  [4.4292119043199996e-05]
+learning_rate:  [4.4292119043199996e-05]
+mean Acc per epoch 0.580658234824391
+Epoch 6/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[7,    99] loss: 0.129 running loss:  5.076
+accuracy: 0.593 
+Score: 0.636 
+[7,   199] loss: 0.081 running loss:  5.037
+accuracy: 0.590 
+Score: 0.583 
+[7,   299] loss: 0.077 running loss:  5.069
+accuracy: 0.596 
+Score: 0.673 
+[7,   399] loss: 0.085 running loss:  5.324
+accuracy: 0.596 
+Score: 0.665 
+[7,   499] loss: 0.124 running loss:  4.861
+accuracy: 0.597 
+Score: 0.537 
+[7,   599] loss: 0.102 running loss:  5.690
+accuracy: 0.593 
+Score: 0.544 
+[7,   699] loss: 0.101 running loss:  5.370
+accuracy: 0.592 
+Score: 0.656 
+[7,   799] loss: 0.093 running loss:  5.569
+accuracy: 0.592 
+Score: 0.613 
+[7,   899] loss: 0.088 running loss:  5.368
+accuracy: 0.593 
+Score: 0.244 
+[7,   999] loss: 0.147 running loss:  4.940
+accuracy: 0.593 
+Score: 0.604 
+[7,  1099] loss: 0.140 running loss:  5.268
+accuracy: 0.592 
+Score: 0.587 
+[7,  1199] loss: 0.099 running loss:  4.922
+accuracy: 0.593 
+Score: 0.679 
+[7,  1299] loss: 0.078 running loss:  5.293
+accuracy: 0.594 
+Score: 0.530 
+[7,  1399] loss: 0.075 running loss:  5.129
+accuracy: 0.592 
+Score: 0.680 
+[7,  1499] loss: 0.098 running loss:  5.630
+accuracy: 0.592 
+Score: 0.639 
+[7,  1599] loss: 0.073 running loss:  4.946
+accuracy: 0.593 
+Score: 0.586 
+[7,  1699] loss: 0.117 running loss:  5.206
+accuracy: 0.593 
+Score: 0.517 
+learning_rate:  [4.3406276662335996e-05]
+learning_rate:  [4.3406276662335996e-05]
+mean Acc per epoch 0.5926360831083622
+Epoch 7/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[8,    99] loss: 0.123 running loss:  5.633
+accuracy: 0.579 
+Score: 0.567 
+[8,   199] loss: 0.085 running loss:  5.060
+accuracy: 0.581 
+Score: 0.703 
+[8,   299] loss: 0.136 running loss:  5.110
+accuracy: 0.586 
+Score: 0.597 
+[8,   399] loss: 0.099 running loss:  5.461
+accuracy: 0.588 
+Score: 0.604 
+[8,   499] loss: 0.107 running loss:  5.197
+accuracy: 0.589 
+Score: 0.544 
+[8,   599] loss: 0.071 running loss:  4.885
+accuracy: 0.590 
+Score: 0.622 
+[8,   699] loss: 0.108 running loss:  5.200
+accuracy: 0.592 
+Score: 0.622 
+[8,   799] loss: 0.080 running loss:  4.990
+accuracy: 0.590 
+Score: 0.654 
+[8,   899] loss: 0.078 running loss:  5.547
+accuracy: 0.592 
+Score: 0.633 
+[8,   999] loss: 0.152 running loss:  4.754
+accuracy: 0.593 
+Score: 0.614 
+[8,  1099] loss: 0.082 running loss:  5.238
+accuracy: 0.594 
+Score: 0.579 
+[8,  1199] loss: 0.095 running loss:  5.038
+accuracy: 0.594 
+Score: 0.633 
+[8,  1299] loss: 0.131 running loss:  4.894
+accuracy: 0.595 
+Score: 0.669 
+[8,  1399] loss: 0.114 running loss:  5.435
+accuracy: 0.596 
+Score: 0.611 
+[8,  1499] loss: 0.086 running loss:  4.855
+accuracy: 0.595 
+Score: 0.664 
+[8,  1599] loss: 0.108 running loss:  5.168
+accuracy: 0.593 
+Score: 0.555 
+[8,  1699] loss: 0.117 running loss:  4.844
+accuracy: 0.594 
+Score: 0.549 
+learning_rate:  [4.2538151129089276e-05]
+learning_rate:  [4.2538151129089276e-05]
+mean Acc per epoch 0.5935508409300804
+Epoch 8/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[9,    99] loss: 0.104 running loss:  4.908
+accuracy: 0.603 
+Score: 0.625 
+[9,   199] loss: 0.108 running loss:  4.779
+accuracy: 0.593 
+Score: 0.674 
+[9,   299] loss: 0.111 running loss:  5.465
+accuracy: 0.595 
+Score: 0.601 
+[9,   399] loss: 0.107 running loss:  4.826
+accuracy: 0.597 
+Score: 0.646 
+[9,   499] loss: 0.118 running loss:  4.731
+accuracy: 0.600 
+Score: 0.721 
+[9,   599] loss: 0.068 running loss:  5.267
+accuracy: 0.599 
+Score: 0.560 
+[9,   699] loss: 0.090 running loss:  4.831
+accuracy: 0.599 
+Score: 0.620 
+[9,   799] loss: 0.094 running loss:  5.307
+accuracy: 0.601 
+Score: 0.549 
+[9,   899] loss: 0.090 running loss:  4.697
+accuracy: 0.602 
+Score: 0.716 
+[9,   999] loss: 0.062 running loss:  5.665
+accuracy: 0.604 
+Score: 0.615 
+[9,  1099] loss: 0.090 running loss:  4.782
+accuracy: 0.604 
+Score: 0.667 
+[9,  1199] loss: 0.082 running loss:  4.943
+accuracy: 0.605 
+Score: 0.579 
+[9,  1299] loss: 0.112 running loss:  4.959
+accuracy: 0.605 
+Score: 0.652 
+[9,  1399] loss: 0.095 running loss:  4.829
+accuracy: 0.605 
+Score: 0.568 
+[9,  1499] loss: 0.080 running loss:  5.087
+accuracy: 0.604 
+Score: 0.590 
+[9,  1599] loss: 0.109 running loss:  4.978
+accuracy: 0.604 
+Score: 0.487 
+[9,  1699] loss: 0.330 running loss:  4.933
+accuracy: 0.604 
+Score: 0.586 
+learning_rate:  [4.168738810650749e-05]
+learning_rate:  [4.168738810650749e-05]
+mean Acc per epoch 0.6039263252414662
+Epoch 9/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[10,    99] loss: 0.091 running loss:  4.590
+accuracy: 0.610 
+Score: 0.625 
+[10,   199] loss: 0.094 running loss:  4.869
+accuracy: 0.611 
+Score: 0.600 
+[10,   299] loss: 0.086 running loss:  4.743
+accuracy: 0.616 
+Score: 0.625 
+[10,   399] loss: 0.062 running loss:  4.867
+accuracy: 0.617 
+Score: 0.634 
+[10,   499] loss: 0.114 running loss:  5.535
+accuracy: 0.611 
+Score: 0.561 
+[10,   599] loss: 0.086 running loss:  4.548
+accuracy: 0.611 
+Score: 0.541 
+[10,   699] loss: 0.116 running loss:  4.820
+accuracy: 0.611 
+Score: 0.610 
+[10,   799] loss: 0.133 running loss:  5.111
+accuracy: 0.609 
+Score: 0.501 
+[10,   899] loss: 0.076 running loss:  4.733
+accuracy: 0.610 
+Score: 0.704 
+[10,   999] loss: 0.092 running loss:  4.752
+accuracy: 0.609 
+Score: 0.606 
+[10,  1099] loss: 0.103 running loss:  5.034
+accuracy: 0.608 
+Score: 0.521 
+[10,  1199] loss: 0.099 running loss:  4.577
+accuracy: 0.610 
+Score: 0.593 
+[10,  1299] loss: 0.074 running loss:  4.773
+accuracy: 0.611 
+Score: 0.666 
+[10,  1399] loss: 0.073 running loss:  4.817
+accuracy: 0.610 
+Score: 0.602 
+[10,  1499] loss: 0.057 running loss:  4.761
+accuracy: 0.611 
+Score: 0.688 
+[10,  1599] loss: 0.124 running loss:  4.704
+accuracy: 0.610 
+Score: 0.493 
+[10,  1699] loss: 0.097 running loss:  4.593
+accuracy: 0.610 
+Score: 0.610 
+learning_rate:  [4.085364034437734e-05]
+learning_rate:  [4.085364034437734e-05]
+mean Acc per epoch 0.6103257538869066
+Epoch 10/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[11,    99] loss: 0.083 running loss:  5.022
+accuracy: 0.610 
+Score: 0.728 
+[11,   199] loss: 0.095 running loss:  4.779
+accuracy: 0.616 
+Score: 0.699 
+[11,   299] loss: 0.062 running loss:  4.673
+accuracy: 0.617 
+Score: 0.673 
+[11,   399] loss: 0.093 running loss:  5.045
+accuracy: 0.615 
+Score: 0.694 
+[11,   499] loss: 0.098 running loss:  4.627
+accuracy: 0.617 
+Score: 0.652 
+[11,   599] loss: 0.090 running loss:  4.885
+accuracy: 0.620 
+Score: 0.652 
+[11,   699] loss: 0.091 running loss:  4.655
+accuracy: 0.621 
+Score: 0.654 
+[11,   799] loss: 0.109 running loss:  4.529
+accuracy: 0.622 
+Score: 0.615 
+[11,   899] loss: 0.103 running loss:  5.128
+accuracy: 0.622 
+Score: 0.571 
+[11,   999] loss: 0.098 running loss:  4.633
+accuracy: 0.621 
+Score: 0.523 
+[11,  1099] loss: 0.115 running loss:  5.511
+accuracy: 0.620 
+Score: 0.551 
+[11,  1199] loss: 0.061 running loss:  4.381
+accuracy: 0.620 
+Score: 0.655 
+[11,  1299] loss: 0.105 running loss:  4.826
+accuracy: 0.618 
+Score: 0.528 
+[11,  1399] loss: 0.101 running loss:  4.751
+accuracy: 0.618 
+Score: 0.608 
+[11,  1499] loss: 0.075 running loss:  4.745
+accuracy: 0.618 
+Score: 0.737 
+[11,  1599] loss: 0.103 running loss:  4.835
+accuracy: 0.619 
+Score: 0.766 
+[11,  1699] loss: 0.097 running loss:  4.600
+accuracy: 0.620 
+Score: 0.680 
+learning_rate:  [4.003656753748979e-05]
+learning_rate:  [4.003656753748979e-05]
+mean Acc per epoch 0.6198144337083912
+Epoch 11/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[12,    99] loss: 0.083 running loss:  4.593
+accuracy: 0.647 
+Score: 0.642 
+[12,   199] loss: 0.090 running loss:  4.550
+accuracy: 0.633 
+Score: 0.537 
+[12,   299] loss: 0.161 running loss:  4.906
+accuracy: 0.639 
+Score: 0.614 
+[12,   399] loss: 0.100 running loss:  4.591
+accuracy: 0.631 
+Score: 0.693 
+[12,   499] loss: 0.103 running loss:  4.634
+accuracy: 0.628 
+Score: 0.636 
+[12,   599] loss: 0.093 running loss:  4.910
+accuracy: 0.626 
+Score: 0.580 
+[12,   699] loss: 0.080 running loss:  4.612
+accuracy: 0.630 
+Score: 0.653 
+[12,   799] loss: 0.074 running loss:  4.842
+accuracy: 0.629 
+Score: 0.602 
+[12,   899] loss: 0.078 running loss:  4.635
+accuracy: 0.630 
+Score: 0.600 
+[12,   999] loss: 0.063 running loss:  4.445
+accuracy: 0.629 
+Score: 0.508 
+[12,  1099] loss: 0.077 running loss:  4.417
+accuracy: 0.630 
+Score: 0.593 
+[12,  1199] loss: 0.149 running loss:  4.649
+accuracy: 0.631 
+Score: 0.684 
+[12,  1299] loss: 0.101 running loss:  4.532
+accuracy: 0.631 
+Score: 0.643 
+[12,  1399] loss: 0.092 running loss:  4.429
+accuracy: 0.631 
+Score: 0.648 
+[12,  1499] loss: 0.105 running loss:  4.764
+accuracy: 0.631 
+Score: 0.554 
+[12,  1599] loss: 0.107 running loss:  4.504
+accuracy: 0.631 
+Score: 0.643 
+[12,  1699] loss: 0.111 running loss:  4.534
+accuracy: 0.631 
+Score: 0.614 
+learning_rate:  [3.9235836186739994e-05]
+learning_rate:  [3.9235836186739994e-05]
+mean Acc per epoch 0.6312843232457449
+Epoch 12/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[13,    99] loss: 0.099 running loss:  4.306
+accuracy: 0.641 
+Score: 0.624 
+[13,   199] loss: 0.102 running loss:  4.697
+accuracy: 0.632 
+Score: 0.629 
+[13,   299] loss: 0.090 running loss:  4.508
+accuracy: 0.633 
+Score: 0.719 
+[13,   399] loss: 0.109 running loss:  5.044
+accuracy: 0.632 
+Score: 0.605 
+[13,   499] loss: 0.112 running loss:  4.455
+accuracy: 0.631 
+Score: 0.638 
+[13,   599] loss: 0.133 running loss:  4.756
+accuracy: 0.633 
+Score: 0.708 
+[13,   699] loss: 0.102 running loss:  4.416
+accuracy: 0.632 
+Score: 0.635 
+[13,   799] loss: 0.062 running loss:  4.682
+accuracy: 0.631 
+Score: 0.713 
+[13,   899] loss: 0.080 running loss:  4.657
+accuracy: 0.630 
+Score: 0.685 
+[13,   999] loss: 0.115 running loss:  4.698
+accuracy: 0.631 
+Score: 0.618 
+[13,  1099] loss: 0.065 running loss:  4.571
+accuracy: 0.631 
+Score: 0.748 
+[13,  1199] loss: 0.106 running loss:  4.714
+accuracy: 0.631 
+Score: 0.620 
+[13,  1299] loss: 0.097 running loss:  4.447
+accuracy: 0.631 
+Score: 0.678 
+[13,  1399] loss: 0.101 running loss:  5.132
+accuracy: 0.630 
+Score: 0.510 
+[13,  1499] loss: 0.075 running loss:  4.218
+accuracy: 0.631 
+Score: 0.624 
+[13,  1599] loss: 0.087 running loss:  4.687
+accuracy: 0.632 
+Score: 0.624 
+[13,  1699] loss: 0.072 running loss:  4.343
+accuracy: 0.631 
+Score: 0.637 
+learning_rate:  [3.845111946300519e-05]
+learning_rate:  [3.845111946300519e-05]
+mean Acc per epoch 0.6309600476144944
+Epoch 13/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[14,    99] loss: 0.066 running loss:  4.378
+accuracy: 0.652 
+Score: 0.685 
+[14,   199] loss: 0.089 running loss:  4.659
+accuracy: 0.641 
+Score: 0.642 
+[14,   299] loss: 0.094 running loss:  4.424
+accuracy: 0.641 
+Score: 0.549 
+[14,   399] loss: 0.092 running loss:  4.558
+accuracy: 0.639 
+Score: 0.565 
+[14,   499] loss: 0.103 running loss:  4.759
+accuracy: 0.642 
+Score: 0.619 
+[14,   599] loss: 0.077 running loss:  4.292
+accuracy: 0.638 
+Score: 0.589 
+[14,   699] loss: 0.070 running loss:  4.473
+accuracy: 0.637 
+Score: 0.625 
+[14,   799] loss: 0.095 running loss:  4.801
+accuracy: 0.637 
+Score: 0.580 
+[14,   899] loss: 0.106 running loss:  4.491
+accuracy: 0.635 
+Score: 0.695 
+[14,   999] loss: 0.085 running loss:  4.492
+accuracy: 0.637 
+Score: 0.606 
+[14,  1099] loss: 0.088 running loss:  4.794
+accuracy: 0.638 
+Score: 0.642 
+[14,  1199] loss: 0.102 running loss:  4.465
+accuracy: 0.638 
+Score: 0.615 
+[14,  1299] loss: 0.310 running loss:  4.578
+accuracy: 0.635 
+Score: 0.586 
+[14,  1399] loss: 0.108 running loss:  4.501
+accuracy: 0.636 
+Score: 0.616 
+[14,  1499] loss: 0.071 running loss:  4.581
+accuracy: 0.635 
+Score: 0.736 
+[14,  1599] loss: 0.080 running loss:  4.261
+accuracy: 0.635 
+Score: 0.706 
+[14,  1699] loss: 0.090 running loss:  4.682
+accuracy: 0.635 
+Score: 0.537 
+learning_rate:  [3.768209707374509e-05]
+learning_rate:  [3.768209707374509e-05]
+mean Acc per epoch 0.6353153663931036
+Epoch 14/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[15,    99] loss: 0.113 running loss:  4.472
+accuracy: 0.634 
+Score: 0.650 
+[15,   199] loss: 0.075 running loss:  4.363
+accuracy: 0.644 
+Score: 0.479 
+[15,   299] loss: 0.066 running loss:  4.771
+accuracy: 0.634 
+Score: 0.679 
+[15,   399] loss: 0.090 running loss:  4.257
+accuracy: 0.635 
+Score: 0.688 
+[15,   499] loss: 0.117 running loss:  4.309
+accuracy: 0.632 
+Score: 0.610 
+[15,   599] loss: 0.102 running loss:  4.574
+accuracy: 0.629 
+Score: 0.593 
+[15,   699] loss: 0.094 running loss:  4.127
+accuracy: 0.631 
+Score: 0.501 
+[15,   799] loss: 0.102 running loss:  4.270
+accuracy: 0.632 
+Score: 0.666 
+[15,   899] loss: 0.195 running loss:  4.449
+accuracy: 0.633 
+Score: 0.552 
+[15,   999] loss: 0.087 running loss:  4.320
+accuracy: 0.635 
+Score: 0.676 
+[15,  1099] loss: 0.106 running loss:  4.356
+accuracy: 0.634 
+Score: 0.592 
+[15,  1199] loss: 0.097 running loss:  4.460
+accuracy: 0.634 
+Score: 0.576 
+[15,  1299] loss: 0.113 running loss:  4.518
+accuracy: 0.634 
+Score: 0.654 
+[15,  1399] loss: 0.087 running loss:  4.430
+accuracy: 0.634 
+Score: 0.718 
+[15,  1499] loss: 0.104 running loss:  4.471
+accuracy: 0.633 
+Score: 0.387 
+[15,  1599] loss: 0.064 running loss:  4.342
+accuracy: 0.634 
+Score: 0.690 
+[15,  1699] loss: 0.078 running loss:  4.230
+accuracy: 0.634 
+Score: 0.614 
+learning_rate:  [3.6928455132270186e-05]
+learning_rate:  [3.6928455132270186e-05]
+mean Acc per epoch 0.6339539992602704
+Epoch 15/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[16,    99] loss: 0.110 running loss:  4.270
+accuracy: 0.639 
+Score: 0.708 
+[16,   199] loss: 0.077 running loss:  4.423
+accuracy: 0.644 
+Score: 0.731 
+[16,   299] loss: 0.073 running loss:  4.339
+accuracy: 0.643 
+Score: 0.692 
+[16,   399] loss: 0.083 running loss:  4.369
+accuracy: 0.642 
+Score: 0.717 
+[16,   499] loss: 0.104 running loss:  4.354
+accuracy: 0.641 
+Score: 0.590 
+[16,   599] loss: 0.091 running loss:  4.693
+accuracy: 0.640 
+Score: 0.675 
+[16,   699] loss: 0.084 running loss:  4.258
+accuracy: 0.641 
+Score: 0.602 
+[16,   799] loss: 0.094 running loss:  4.326
+accuracy: 0.642 
+Score: 0.600 
+[16,   899] loss: 0.053 running loss:  4.420
+accuracy: 0.640 
+Score: 0.365 
+[16,   999] loss: 0.102 running loss:  4.334
+accuracy: 0.638 
+Score: 0.651 
+[16,  1099] loss: 0.071 running loss:  4.511
+accuracy: 0.638 
+Score: 0.760 
+[16,  1199] loss: 0.088 running loss:  4.358
+accuracy: 0.639 
+Score: 0.620 
+[16,  1299] loss: 0.082 running loss:  4.431
+accuracy: 0.638 
+Score: 0.631 
+[16,  1399] loss: 0.084 running loss:  4.595
+accuracy: 0.637 
+Score: 0.557 
+[16,  1499] loss: 0.100 running loss:  4.177
+accuracy: 0.638 
+Score: 0.670 
+[16,  1599] loss: 0.088 running loss:  4.398
+accuracy: 0.637 
+Score: 0.596 
+[16,  1699] loss: 0.096 running loss:  4.242
+accuracy: 0.637 
+Score: 0.706 
+learning_rate:  [3.618988602962478e-05]
+learning_rate:  [3.618988602962478e-05]
+mean Acc per epoch 0.6370737340354966
+Epoch 16/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[17,    99] loss: 0.104 running loss:  4.234
+accuracy: 0.642 
+Score: 0.681 
+[17,   199] loss: 0.109 running loss:  4.309
+accuracy: 0.646 
+Score: 0.575 
+[17,   299] loss: 0.087 running loss:  4.160
+accuracy: 0.643 
+Score: 0.612 
+[17,   399] loss: 0.098 running loss:  4.410
+accuracy: 0.643 
+Score: 0.586 
+[17,   499] loss: 0.108 running loss:  4.192
+accuracy: 0.642 
+Score: 0.479 
+[17,   599] loss: 0.083 running loss:  4.318
+accuracy: 0.640 
+Score: 0.524 
+[17,   699] loss: 0.086 running loss:  4.184
+accuracy: 0.637 
+Score: 0.672 
+[17,   799] loss: 0.075 running loss:  4.368
+accuracy: 0.637 
+Score: 0.640 
+[17,   899] loss: 0.090 running loss:  4.554
+accuracy: 0.636 
+Score: 0.649 
+[17,   999] loss: 0.080 running loss:  4.177
+accuracy: 0.636 
+Score: 0.685 
+[17,  1099] loss: 0.074 running loss:  4.364
+accuracy: 0.636 
+Score: 0.603 
+[17,  1199] loss: 0.082 running loss:  4.031
+accuracy: 0.636 
+Score: 0.628 
+[17,  1299] loss: 0.082 running loss:  4.383
+accuracy: 0.636 
+Score: 0.643 
+[17,  1399] loss: 0.077 running loss:  4.273
+accuracy: 0.637 
+Score: 0.618 
+[17,  1499] loss: 0.084 running loss:  4.401
+accuracy: 0.636 
+Score: 0.697 
+[17,  1599] loss: 0.096 running loss:  4.332
+accuracy: 0.637 
+Score: 0.739 
+[17,  1699] loss: 0.097 running loss:  4.291
+accuracy: 0.636 
+Score: 0.654 
+learning_rate:  [3.546608830903228e-05]
+learning_rate:  [3.546608830903228e-05]
+mean Acc per epoch 0.6358568249009093
+Epoch 17/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[18,    99] loss: 0.081 running loss:  4.110
+accuracy: 0.637 
+Score: 0.616 
+[18,   199] loss: 0.103 running loss:  4.214
+accuracy: 0.643 
+Score: 0.623 
+[18,   299] loss: 0.063 running loss:  4.404
+accuracy: 0.644 
+Score: 0.610 
+[18,   399] loss: 0.111 running loss:  4.138
+accuracy: 0.640 
+Score: 0.603 
+[18,   499] loss: 0.107 running loss:  4.210
+accuracy: 0.640 
+Score: 0.609 
+[18,   599] loss: 0.094 running loss:  4.208
+accuracy: 0.639 
+Score: 0.540 
+[18,   699] loss: 0.103 running loss:  4.290
+accuracy: 0.640 
+Score: 0.571 
+[18,   799] loss: 0.096 running loss:  4.378
+accuracy: 0.639 
+Score: 0.520 
+[18,   899] loss: 0.065 running loss:  4.138
+accuracy: 0.639 
+Score: 0.669 
+[18,   999] loss: 0.120 running loss:  4.758
+accuracy: 0.638 
+Score: 0.640 
+[18,  1099] loss: 0.073 running loss:  4.051
+accuracy: 0.640 
+Score: 0.675 
+[18,  1199] loss: 0.053 running loss:  4.118
+accuracy: 0.640 
+Score: 0.649 
+[18,  1299] loss: 0.084 running loss:  4.189
+accuracy: 0.640 
+Score: 0.558 
+[18,  1399] loss: 0.074 running loss:  4.201
+accuracy: 0.640 
+Score: 0.656 
+[18,  1499] loss: 0.095 running loss:  4.298
+accuracy: 0.640 
+Score: 0.696 
+[18,  1599] loss: 0.068 running loss:  4.126
+accuracy: 0.638 
+Score: 0.600 
+[18,  1699] loss: 0.074 running loss:  4.079
+accuracy: 0.639 
+Score: 0.616 
+learning_rate:  [3.475676654285164e-05]
+learning_rate:  [3.475676654285164e-05]
+mean Acc per epoch 0.6388493976316308
+Epoch 18/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[19,    99] loss: 0.104 running loss:  4.001
+accuracy: 0.643 
+Score: 0.685 
+[19,   199] loss: 0.090 running loss:  4.237
+accuracy: 0.643 
+Score: 0.663 
+[19,   299] loss: 0.109 running loss:  3.983
+accuracy: 0.642 
+Score: 0.693 
+[19,   399] loss: 0.044 running loss:  4.019
+accuracy: 0.646 
+Score: 0.673 
+[19,   499] loss: 0.069 running loss:  4.115
+accuracy: 0.645 
+Score: 0.557 
+[19,   599] loss: 0.057 running loss:  4.365
+accuracy: 0.645 
+Score: 0.648 
+[19,   699] loss: 0.069 running loss:  4.191
+accuracy: 0.646 
+Score: 0.657 
+[19,   799] loss: 0.086 running loss:  4.034
+accuracy: 0.646 
+Score: 0.764 
+[19,   899] loss: 0.092 running loss:  4.593
+accuracy: 0.643 
+Score: 0.621 
+[19,   999] loss: 0.078 running loss:  4.307
+accuracy: 0.644 
+Score: 0.725 
+[19,  1099] loss: 0.070 running loss:  4.147
+accuracy: 0.644 
+Score: 0.667 
+[19,  1199] loss: 0.094 running loss:  4.214
+accuracy: 0.644 
+Score: 0.725 
+[19,  1299] loss: 0.091 running loss:  4.096
+accuracy: 0.644 
+Score: 0.619 
+[19,  1399] loss: 0.116 running loss:  4.268
+accuracy: 0.644 
+Score: 0.600 
+[19,  1499] loss: 0.072 running loss:  4.190
+accuracy: 0.644 
+Score: 0.647 
+[19,  1599] loss: 0.087 running loss:  4.115
+accuracy: 0.644 
+Score: 0.653 
+[19,  1699] loss: 0.069 running loss:  4.251
+accuracy: 0.644 
+Score: 0.632 
+learning_rate:  [3.4061631211994604e-05]
+learning_rate:  [3.4061631211994604e-05]
+mean Acc per epoch 0.6438072825303299
+Epoch 19/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[20,    99] loss: 0.105 running loss:  4.008
+accuracy: 0.643 
+Score: 0.595 
+[20,   199] loss: 0.081 running loss:  4.184
+accuracy: 0.642 
+Score: 0.655 
+[20,   299] loss: 0.081 running loss:  4.094
+accuracy: 0.642 
+Score: 0.742 
+[20,   399] loss: 0.074 running loss:  4.145
+accuracy: 0.643 
+Score: 0.675 
+[20,   499] loss: 0.099 running loss:  4.032
+accuracy: 0.644 
+Score: 0.506 
+[20,   599] loss: 0.114 running loss:  4.033
+accuracy: 0.641 
+Score: 0.673 
+[20,   699] loss: 0.102 running loss:  4.084
+accuracy: 0.642 
+Score: 0.664 
+[20,   799] loss: 0.070 running loss:  4.157
+accuracy: 0.642 
+Score: 0.714 
+[20,   899] loss: 0.105 running loss:  4.279
+accuracy: 0.643 
+Score: 0.596 
+[20,   999] loss: 0.077 running loss:  4.020
+accuracy: 0.643 
+Score: 0.692 
+[20,  1099] loss: 0.074 running loss:  3.982
+accuracy: 0.642 
+Score: 0.650 
+[20,  1199] loss: 0.088 running loss:  4.309
+accuracy: 0.640 
+Score: 0.626 
+[20,  1299] loss: 0.070 running loss:  4.238
+accuracy: 0.640 
+Score: 0.586 
+[20,  1399] loss: 0.079 running loss:  4.094
+accuracy: 0.641 
+Score: 0.667 
+[20,  1499] loss: 0.111 running loss:  4.280
+accuracy: 0.640 
+Score: 0.692 
+[20,  1599] loss: 0.046 running loss:  4.152
+accuracy: 0.641 
+Score: 0.670 
+[20,  1699] loss: 0.095 running loss:  4.045
+accuracy: 0.640 
+Score: 0.685 
+learning_rate:  [3.338039858775471e-05]
+learning_rate:  [3.338039858775471e-05]
+mean Acc per epoch 0.6401028809965802
+Epoch 20/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[21,    99] loss: 0.077 running loss:  4.084
+accuracy: 0.652 
+Score: 0.656 
+[21,   199] loss: 0.059 running loss:  4.124
+accuracy: 0.638 
+Score: 0.713 
+[21,   299] loss: 0.064 running loss:  4.124
+accuracy: 0.642 
+Score: 0.690 
+[21,   399] loss: 0.071 running loss:  4.204
+accuracy: 0.641 
+Score: 0.664 
+[21,   499] loss: 0.076 running loss:  4.016
+accuracy: 0.643 
+Score: 0.637 
+[21,   599] loss: 0.099 running loss:  4.068
+accuracy: 0.643 
+Score: 0.688 
+[21,   699] loss: 0.079 running loss:  4.224
+accuracy: 0.640 
+Score: 0.523 
+[21,   799] loss: 0.106 running loss:  4.035
+accuracy: 0.640 
+Score: 0.637 
+[21,   899] loss: 0.084 running loss:  4.004
+accuracy: 0.642 
+Score: 0.582 
+[21,   999] loss: 0.079 running loss:  4.015
+accuracy: 0.642 
+Score: 0.588 
+[21,  1099] loss: 0.084 running loss:  3.994
+accuracy: 0.642 
+Score: 0.644 
+[21,  1199] loss: 0.122 running loss:  4.071
+accuracy: 0.642 
+Score: 0.613 
+[21,  1299] loss: 0.084 running loss:  4.673
+accuracy: 0.642 
+Score: 0.640 
+[21,  1399] loss: 0.091 running loss:  3.962
+accuracy: 0.641 
+Score: 0.563 
+[21,  1499] loss: 0.103 running loss:  4.072
+accuracy: 0.643 
+Score: 0.746 
+[21,  1599] loss: 0.060 running loss:  4.265
+accuracy: 0.643 
+Score: 0.653 
+[21,  1699] loss: 0.092 running loss:  4.044
+accuracy: 0.643 
+Score: 0.673 
+learning_rate:  [3.271279061599962e-05]
+learning_rate:  [3.271279061599962e-05]
+mean Acc per epoch 0.6429011188942213
+Epoch 21/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[22,    99] loss: 0.057 running loss:  3.735
+accuracy: 0.649 
+Score: 0.678 
+[22,   199] loss: 0.082 running loss:  4.074
+accuracy: 0.648 
+Score: 0.630 
+[22,   299] loss: 0.083 running loss:  4.046
+accuracy: 0.649 
+Score: 0.652 
+[22,   399] loss: 0.071 running loss:  4.099
+accuracy: 0.650 
+Score: 0.641 
+[22,   499] loss: 0.084 running loss:  3.995
+accuracy: 0.646 
+Score: 0.206 
+[22,   599] loss: 0.084 running loss:  4.636
+accuracy: 0.646 
+Score: 0.658 
+[22,   699] loss: 0.110 running loss:  4.043
+accuracy: 0.647 
+Score: 0.679 
+[22,   799] loss: 0.075 running loss:  4.073
+accuracy: 0.647 
+Score: 0.609 
+[22,   899] loss: 0.076 running loss:  4.045
+accuracy: 0.646 
+Score: 0.747 
+[22,   999] loss: 0.071 running loss:  4.203
+accuracy: 0.645 
+Score: 0.615 
+[22,  1099] loss: 0.072 running loss:  4.110
+accuracy: 0.645 
+Score: 0.724 
+[22,  1199] loss: 0.111 running loss:  3.959
+accuracy: 0.646 
+Score: 0.533 
+[22,  1299] loss: 0.088 running loss:  3.918
+accuracy: 0.647 
+Score: 0.713 
+[22,  1399] loss: 0.084 running loss:  3.985
+accuracy: 0.647 
+Score: 0.642 
+[22,  1499] loss: 0.077 running loss:  4.130
+accuracy: 0.646 
+Score: 0.614 
+[22,  1599] loss: 0.082 running loss:  4.122
+accuracy: 0.645 
+Score: 0.574 
+[22,  1699] loss: 0.088 running loss:  3.998
+accuracy: 0.645 
+Score: 0.648 
+learning_rate:  [3.2058534803679624e-05]
+learning_rate:  [3.2058534803679624e-05]
+mean Acc per epoch 0.6451568876376192
+Epoch 22/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[23,    99] loss: 0.085 running loss:  3.913
+accuracy: 0.643 
+Score: 0.592 
+[23,   199] loss: 0.074 running loss:  3.953
+accuracy: 0.644 
+Score: 0.618 
+[23,   299] loss: 0.092 running loss:  4.037
+accuracy: 0.645 
+Score: 0.586 
+[23,   399] loss: 0.088 running loss:  4.025
+accuracy: 0.648 
+Score: 0.617 
+[23,   499] loss: 0.080 running loss:  4.223
+accuracy: 0.646 
+Score: 0.589 
+[23,   599] loss: 0.054 running loss:  4.436
+accuracy: 0.645 
+Score: 0.727 
+[23,   699] loss: 0.080 running loss:  3.852
+accuracy: 0.644 
+Score: 0.640 
+[23,   799] loss: 0.088 running loss:  3.999
+accuracy: 0.644 
+Score: 0.553 
+[23,   899] loss: 0.056 running loss:  3.843
+accuracy: 0.646 
+Score: 0.690 
+[23,   999] loss: 0.086 running loss:  4.112
+accuracy: 0.646 
+Score: 0.634 
+[23,  1099] loss: 0.103 running loss:  4.009
+accuracy: 0.646 
+Score: 0.588 
+[23,  1199] loss: 0.060 running loss:  3.872
+accuracy: 0.645 
+Score: 0.662 
+[23,  1299] loss: 0.079 running loss:  4.373
+accuracy: 0.645 
+Score: 0.714 
+[23,  1399] loss: 0.087 running loss:  3.986
+accuracy: 0.646 
+Score: 0.587 
+[23,  1499] loss: 0.083 running loss:  4.107
+accuracy: 0.645 
+Score: 0.641 
+[23,  1599] loss: 0.060 running loss:  3.948
+accuracy: 0.644 
+Score: 0.613 
+[23,  1699] loss: 0.069 running loss:  3.923
+accuracy: 0.643 
+Score: 0.563 
+learning_rate:  [3.141736410760603e-05]
+learning_rate:  [3.141736410760603e-05]
+mean Acc per epoch 0.6430767593856537
+Epoch 23/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[24,    99] loss: 0.092 running loss:  4.314
+accuracy: 0.645 
+Score: 0.714 
+[24,   199] loss: 0.080 running loss:  3.814
+accuracy: 0.647 
+Score: 0.660 
+[24,   299] loss: 0.069 running loss:  3.913
+accuracy: 0.647 
+Score: 0.544 
+[24,   399] loss: 0.083 running loss:  3.878
+accuracy: 0.650 
+Score: 0.654 
+[24,   499] loss: 0.079 running loss:  3.958
+accuracy: 0.647 
+Score: 0.665 
+[24,   599] loss: 0.076 running loss:  4.342
+accuracy: 0.646 
+Score: 0.713 
+[24,   699] loss: 0.094 running loss:  4.023
+accuracy: 0.644 
+Score: 0.600 
+[24,   799] loss: 0.083 running loss:  3.796
+accuracy: 0.643 
+Score: 0.672 
+[24,   899] loss: 0.095 running loss:  3.926
+accuracy: 0.643 
+Score: 0.629 
+[24,   999] loss: 0.042 running loss:  3.828
+accuracy: 0.645 
+Score: 0.743 
+[24,  1099] loss: 0.093 running loss:  3.970
+accuracy: 0.645 
+Score: 0.641 
+[24,  1199] loss: 0.078 running loss:  3.958
+accuracy: 0.642 
+Score: 0.640 
+[24,  1299] loss: 0.088 running loss:  3.851
+accuracy: 0.643 
+Score: 0.578 
+[24,  1399] loss: 0.093 running loss:  4.117
+accuracy: 0.643 
+Score: 0.663 
+[24,  1499] loss: 0.056 running loss:  3.819
+accuracy: 0.643 
+Score: 0.517 
+[24,  1599] loss: 0.088 running loss:  3.788
+accuracy: 0.644 
+Score: 0.555 
+[24,  1699] loss: 0.059 running loss:  4.009
+accuracy: 0.644 
+Score: 0.638 
+learning_rate:  [3.078901682545391e-05]
+learning_rate:  [3.078901682545391e-05]
+mean Acc per epoch 0.6436644856436452
+Epoch 24/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[25,    99] loss: 0.096 running loss:  4.115
+accuracy: 0.616 
+Score: 0.391 
+[25,   199] loss: 0.104 running loss:  3.900
+accuracy: 0.634 
+Score: 0.700 
+[25,   299] loss: 0.035 running loss:  3.881
+accuracy: 0.642 
+Score: 0.643 
+[25,   399] loss: 0.073 running loss:  3.862
+accuracy: 0.642 
+Score: 0.641 
+[25,   499] loss: 0.070 running loss:  3.708
+accuracy: 0.643 
+Score: 0.672 
+[25,   599] loss: 0.064 running loss:  3.885
+accuracy: 0.646 
+Score: 0.699 
+[25,   699] loss: 0.064 running loss:  3.947
+accuracy: 0.646 
+Score: 0.698 
+[25,   799] loss: 0.061 running loss:  3.947
+accuracy: 0.645 
+Score: 0.706 
+[25,   899] loss: 0.076 running loss:  3.798
+accuracy: 0.645 
+Score: 0.674 
+[25,   999] loss: 0.089 running loss:  3.856
+accuracy: 0.645 
+Score: 0.658 
+[25,  1099] loss: 0.070 running loss:  4.202
+accuracy: 0.646 
+Score: 0.730 
+[25,  1199] loss: 0.081 running loss:  3.705
+accuracy: 0.647 
+Score: 0.733 
+[25,  1299] loss: 0.102 running loss:  3.817
+accuracy: 0.645 
+Score: 0.666 
+[25,  1399] loss: 0.115 running loss:  3.749
+accuracy: 0.646 
+Score: 0.594 
+[25,  1499] loss: 0.082 running loss:  3.839
+accuracy: 0.646 
+Score: 0.676 
+[25,  1599] loss: 0.077 running loss:  3.923
+accuracy: 0.646 
+Score: 0.735 
+[25,  1699] loss: 0.090 running loss:  3.812
+accuracy: 0.646 
+Score: 0.641 
+learning_rate:  [3.0173236488944832e-05]
+learning_rate:  [3.0173236488944832e-05]
+mean Acc per epoch 0.6465878600668199
+Epoch 25/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[26,    99] loss: 0.068 running loss:  3.738
+accuracy: 0.638 
+Score: 0.688 
+[26,   199] loss: 0.079 running loss:  3.777
+accuracy: 0.644 
+Score: 0.605 
+[26,   299] loss: 0.070 running loss:  3.876
+accuracy: 0.644 
+Score: 0.625 
+[26,   399] loss: 0.082 running loss:  3.773
+accuracy: 0.646 
+Score: 0.657 
+[26,   499] loss: 0.095 running loss:  3.760
+accuracy: 0.642 
+Score: 0.681 
+[26,   599] loss: 0.060 running loss:  3.896
+accuracy: 0.642 
+Score: 0.717 
+[26,   699] loss: 0.082 running loss:  3.855
+accuracy: 0.642 
+Score: 0.673 
+[26,   799] loss: 0.073 running loss:  4.118
+accuracy: 0.641 
+Score: 0.536 
+[26,   899] loss: 0.070 running loss:  4.126
+accuracy: 0.643 
+Score: 0.601 
+[26,   999] loss: 0.063 running loss:  3.776
+accuracy: 0.643 
+Score: 0.720 
+[26,  1099] loss: 0.085 running loss:  3.766
+accuracy: 0.643 
+Score: 0.702 
+[26,  1199] loss: 0.079 running loss:  3.807
+accuracy: 0.644 
+Score: 0.689 
+[26,  1299] loss: 0.087 running loss:  4.000
+accuracy: 0.643 
+Score: 0.536 
+[26,  1399] loss: 0.104 running loss:  3.845
+accuracy: 0.644 
+Score: 0.663 
+[26,  1499] loss: 0.099 running loss:  3.874
+accuracy: 0.644 
+Score: 0.618 
+[26,  1599] loss: 0.083 running loss:  3.976
+accuracy: 0.644 
+Score: 0.644 
+[26,  1699] loss: 0.061 running loss:  3.779
+accuracy: 0.645 
+Score: 0.668 
+learning_rate:  [2.9569771759165934e-05]
+learning_rate:  [2.9569771759165934e-05]
+mean Acc per epoch 0.6447624553888055
+Epoch 26/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[27,    99] loss: 0.097 running loss:  3.880
+accuracy: 0.644 
+Score: 0.744 
+[27,   199] loss: 0.062 running loss:  3.789
+accuracy: 0.640 
+Score: 0.721 
+[27,   299] loss: 0.072 running loss:  3.769
+accuracy: 0.643 
+Score: 0.707 
+[27,   399] loss: 0.061 running loss:  3.801
+accuracy: 0.646 
+Score: 0.692 
+[27,   499] loss: 0.055 running loss:  3.922
+accuracy: 0.646 
+Score: 0.705 
+[27,   599] loss: 0.094 running loss:  3.896
+accuracy: 0.647 
+Score: 0.589 
+[27,   699] loss: 0.082 running loss:  3.670
+accuracy: 0.646 
+Score: 0.245 
+[27,   799] loss: 0.072 running loss:  3.877
+accuracy: 0.646 
+Score: 0.533 
+[27,   899] loss: 0.054 running loss:  3.767
+accuracy: 0.647 
+Score: 0.709 
+[27,   999] loss: 0.090 running loss:  3.955
+accuracy: 0.647 
+Score: 0.757 
+[27,  1099] loss: 0.076 running loss:  3.720
+accuracy: 0.647 
+Score: 0.685 
+[27,  1199] loss: 0.050 running loss:  3.860
+accuracy: 0.647 
+Score: 0.659 
+[27,  1299] loss: 0.058 running loss:  3.749
+accuracy: 0.645 
+Score: 0.595 
+[27,  1399] loss: 0.064 running loss:  3.686
+accuracy: 0.644 
+Score: 0.599 
+[27,  1499] loss: 0.068 running loss:  3.879
+accuracy: 0.645 
+Score: 0.774 
+[27,  1599] loss: 0.058 running loss:  3.737
+accuracy: 0.646 
+Score: 0.624 
+[27,  1699] loss: 0.076 running loss:  3.879
+accuracy: 0.646 
+Score: 0.599 
+learning_rate:  [2.8978376323982616e-05]
+learning_rate:  [2.8978376323982616e-05]
+mean Acc per epoch 0.6462779312265672
+Epoch 27/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[28,    99] loss: 0.105 running loss:  3.642
+accuracy: 0.649 
+Score: 0.632 
+[28,   199] loss: 0.066 running loss:  3.877
+accuracy: 0.653 
+Score: 0.747 
+[28,   299] loss: 0.071 running loss:  3.686
+accuracy: 0.653 
+Score: 0.569 
+[28,   399] loss: 0.057 running loss:  3.689
+accuracy: 0.653 
+Score: 0.712 
+[28,   499] loss: 0.087 running loss:  3.897
+accuracy: 0.654 
+Score: 0.693 
+[28,   599] loss: 0.092 running loss:  3.851
+accuracy: 0.652 
+Score: 0.636 
+[28,   699] loss: 0.080 running loss:  3.645
+accuracy: 0.651 
+Score: 0.633 
+[28,   799] loss: 0.064 running loss:  3.667
+accuracy: 0.650 
+Score: 0.684 
+[28,   899] loss: 0.058 running loss:  4.026
+accuracy: 0.648 
+Score: 0.669 
+[28,   999] loss: 0.057 running loss:  3.760
+accuracy: 0.647 
+Score: 0.667 
+[28,  1099] loss: 0.143 running loss:  3.722
+accuracy: 0.645 
+Score: 0.642 
+[28,  1199] loss: 0.074 running loss:  3.909
+accuracy: 0.645 
+Score: 0.713 
+[28,  1299] loss: 0.094 running loss:  3.763
+accuracy: 0.645 
+Score: 0.627 
+[28,  1399] loss: 0.050 running loss:  3.652
+accuracy: 0.646 
+Score: 0.659 
+[28,  1499] loss: 0.087 running loss:  3.814
+accuracy: 0.646 
+Score: 0.619 
+[28,  1599] loss: 0.080 running loss:  3.801
+accuracy: 0.647 
+Score: 0.726 
+[28,  1699] loss: 0.092 running loss:  3.652
+accuracy: 0.647 
+Score: 0.673 
+learning_rate:  [2.8398808797502962e-05]
+learning_rate:  [2.8398808797502962e-05]
+mean Acc per epoch 0.6472681583154658
+Epoch 28/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[29,    99] loss: 0.084 running loss:  3.759
+accuracy: 0.642 
+Score: 0.613 
+[29,   199] loss: 0.063 running loss:  3.821
+accuracy: 0.644 
+Score: 0.690 
+[29,   299] loss: 0.070 running loss:  3.721
+accuracy: 0.643 
+Score: 0.674 
+[29,   399] loss: 0.084 running loss:  4.121
+accuracy: 0.641 
+Score: 0.736 
+[29,   499] loss: 0.072 running loss:  3.750
+accuracy: 0.643 
+Score: 0.715 
+[29,   599] loss: 0.056 running loss:  3.676
+accuracy: 0.644 
+Score: 0.610 
+[29,   699] loss: 0.052 running loss:  3.726
+accuracy: 0.645 
+Score: 0.711 
+[29,   799] loss: 0.068 running loss:  3.806
+accuracy: 0.645 
+Score: 0.678 
+[29,   899] loss: 0.085 running loss:  3.727
+accuracy: 0.646 
+Score: 0.694 
+[29,   999] loss: 0.082 running loss:  3.752
+accuracy: 0.646 
+Score: 0.687 
+[29,  1099] loss: 0.056 running loss:  3.675
+accuracy: 0.647 
+Score: 0.607 
+[29,  1199] loss: 0.061 running loss:  3.695
+accuracy: 0.647 
+Score: 0.647 
+[29,  1299] loss: 0.082 running loss:  3.701
+accuracy: 0.648 
+Score: 0.585 
+[29,  1399] loss: 0.094 running loss:  4.049
+accuracy: 0.648 
+Score: 0.619 
+[29,  1499] loss: 0.091 running loss:  3.747
+accuracy: 0.648 
+Score: 0.641 
+[29,  1599] loss: 0.063 running loss:  3.622
+accuracy: 0.649 
+Score: 0.709 
+[29,  1699] loss: 0.062 running loss:  3.622
+accuracy: 0.649 
+Score: 0.508 
+learning_rate:  [2.78308326215529e-05]
+learning_rate:  [2.78308326215529e-05]
+mean Acc per epoch 0.6491393433878719
+Epoch 29/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[30,    99] loss: 0.069 running loss:  3.789
+accuracy: 0.647 
+Score: 0.635 
+[30,   199] loss: 0.086 running loss:  3.809
+accuracy: 0.647 
+Score: 0.622 
+[30,   299] loss: 0.087 running loss:  3.793
+accuracy: 0.648 
+Score: 0.598 
+[30,   399] loss: 0.068 running loss:  3.762
+accuracy: 0.651 
+Score: 0.579 
+[30,   499] loss: 0.059 running loss:  3.577
+accuracy: 0.650 
+Score: 0.610 
+[30,   599] loss: 0.084 running loss:  3.695
+accuracy: 0.652 
+Score: 0.577 
+[30,   699] loss: 0.089 running loss:  3.744
+accuracy: 0.653 
+Score: 0.722 
+[30,   799] loss: 0.069 running loss:  3.731
+accuracy: 0.652 
+Score: 0.518 
+[30,   899] loss: 0.109 running loss:  3.731
+accuracy: 0.651 
+Score: 0.618 
+[30,   999] loss: 0.071 running loss:  3.612
+accuracy: 0.650 
+Score: 0.593 
+[30,  1099] loss: 0.074 running loss:  3.603
+accuracy: 0.650 
+Score: 0.652 
+[30,  1199] loss: 0.068 running loss:  3.750
+accuracy: 0.650 
+Score: 0.605 
+[30,  1299] loss: 0.080 running loss:  3.751
+accuracy: 0.649 
+Score: 0.682 
+[30,  1399] loss: 0.098 running loss:  3.723
+accuracy: 0.650 
+Score: 0.687 
+[30,  1499] loss: 0.068 running loss:  3.773
+accuracy: 0.650 
+Score: 0.617 
+[30,  1599] loss: 0.080 running loss:  3.804
+accuracy: 0.650 
+Score: 0.546 
+[30,  1699] loss: 0.068 running loss:  3.764
+accuracy: 0.650 
+Score: 0.691 
+learning_rate:  [2.7274215969121842e-05]
+learning_rate:  [2.7274215969121842e-05]
+mean Acc per epoch 0.6504870420911976
+Epoch 30/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[31,    99] loss: 0.087 running loss:  3.664
+accuracy: 0.656 
+Score: 0.702 
+[31,   199] loss: 0.082 running loss:  3.611
+accuracy: 0.656 
+Score: 0.664 
+[31,   299] loss: 0.078 running loss:  3.650
+accuracy: 0.655 
+Score: 0.718 
+[31,   399] loss: 0.075 running loss:  3.510
+accuracy: 0.656 
+Score: 0.777 
+[31,   499] loss: 0.068 running loss:  3.837
+accuracy: 0.653 
+Score: 0.688 
+[31,   599] loss: 0.076 running loss:  3.553
+accuracy: 0.654 
+Score: 0.617 
+[31,   699] loss: 0.079 running loss:  3.555
+accuracy: 0.652 
+Score: 0.726 
+[31,   799] loss: 0.089 running loss:  3.874
+accuracy: 0.651 
+Score: 0.619 
+[31,   899] loss: 0.064 running loss:  3.872
+accuracy: 0.652 
+Score: 0.713 
+[31,   999] loss: 0.092 running loss:  3.717
+accuracy: 0.651 
+Score: 0.637 
+[31,  1099] loss: 0.090 running loss:  3.608
+accuracy: 0.651 
+Score: 0.644 
+[31,  1199] loss: 0.052 running loss:  3.630
+accuracy: 0.650 
+Score: 0.755 
+[31,  1299] loss: 0.055 running loss:  3.728
+accuracy: 0.650 
+Score: 0.628 
+[31,  1399] loss: 0.046 running loss:  3.696
+accuracy: 0.650 
+Score: 0.698 
+[31,  1499] loss: 0.045 running loss:  3.542
+accuracy: 0.651 
+Score: 0.656 
+[31,  1599] loss: 0.090 running loss:  3.601
+accuracy: 0.651 
+Score: 0.683 
+[31,  1699] loss: 0.056 running loss:  3.693
+accuracy: 0.651 
+Score: 0.668 
+learning_rate:  [2.6728731649739406e-05]
+learning_rate:  [2.6728731649739406e-05]
+mean Acc per epoch 0.6506300390444371
+Epoch 31/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[32,    99] loss: 0.055 running loss:  3.668
+accuracy: 0.638 
+Score: 0.596 
+[32,   199] loss: 0.084 running loss:  3.786
+accuracy: 0.644 
+Score: 0.632 
+[32,   299] loss: 0.075 running loss:  3.633
+accuracy: 0.649 
+Score: 0.657 
+[32,   399] loss: 0.082 running loss:  3.573
+accuracy: 0.649 
+Score: 0.604 
+[32,   499] loss: 0.087 running loss:  3.852
+accuracy: 0.648 
+Score: 0.661 
+[32,   599] loss: 0.079 running loss:  3.514
+accuracy: 0.651 
+Score: 0.688 
+[32,   699] loss: 0.063 running loss:  3.724
+accuracy: 0.651 
+Score: 0.625 
+[32,   799] loss: 0.044 running loss:  3.448
+accuracy: 0.651 
+Score: 0.668 
+[32,   899] loss: 0.067 running loss:  3.765
+accuracy: 0.651 
+Score: 0.575 
+[32,   999] loss: 0.073 running loss:  3.681
+accuracy: 0.650 
+Score: 0.652 
+[32,  1099] loss: 0.054 running loss:  3.472
+accuracy: 0.651 
+Score: 0.567 
+[32,  1199] loss: 0.085 running loss:  3.862
+accuracy: 0.652 
+Score: 0.721 
+[32,  1299] loss: 0.086 running loss:  3.560
+accuracy: 0.652 
+Score: 0.801 
+[32,  1399] loss: 0.069 running loss:  3.555
+accuracy: 0.652 
+Score: 0.587 
+[32,  1499] loss: 0.078 running loss:  3.621
+accuracy: 0.651 
+Score: 0.631 
+[32,  1599] loss: 0.065 running loss:  3.536
+accuracy: 0.651 
+Score: 0.604 
+[32,  1699] loss: 0.089 running loss:  3.614
+accuracy: 0.651 
+Score: 0.581 
+learning_rate:  [2.6194157016744618e-05]
+learning_rate:  [2.6194157016744618e-05]
+mean Acc per epoch 0.65101207488316
+Epoch 32/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[33,    99] loss: 0.072 running loss:  3.629
+accuracy: 0.654 
+Score: 0.657 
+[33,   199] loss: 0.072 running loss:  3.537
+accuracy: 0.654 
+Score: 0.635 
+[33,   299] loss: 0.064 running loss:  3.655
+accuracy: 0.651 
+Score: 0.647 
+[33,   399] loss: 0.067 running loss:  3.547
+accuracy: 0.652 
+Score: 0.732 
+[33,   499] loss: 0.081 running loss:  3.689
+accuracy: 0.651 
+Score: 0.674 
+[33,   599] loss: 0.069 running loss:  3.560
+accuracy: 0.650 
+Score: 0.669 
+[33,   699] loss: 0.088 running loss:  3.703
+accuracy: 0.650 
+Score: 0.532 
+[33,   799] loss: 0.066 running loss:  3.551
+accuracy: 0.651 
+Score: 0.678 
+[33,   899] loss: 0.041 running loss:  3.681
+accuracy: 0.650 
+Score: 0.673 
+[33,   999] loss: 0.059 running loss:  3.627
+accuracy: 0.650 
+Score: 0.581 
+[33,  1099] loss: 0.073 running loss:  3.704
+accuracy: 0.648 
+Score: 0.600 
+[33,  1199] loss: 0.065 running loss:  3.518
+accuracy: 0.650 
+Score: 0.564 
+[33,  1299] loss: 0.093 running loss:  3.765
+accuracy: 0.649 
+Score: 0.644 
+[33,  1399] loss: 0.109 running loss:  3.572
+accuracy: 0.649 
+Score: 0.594 
+[33,  1499] loss: 0.074 running loss:  3.594
+accuracy: 0.649 
+Score: 0.725 
+[33,  1599] loss: 0.058 running loss:  3.447
+accuracy: 0.649 
+Score: 0.635 
+[33,  1699] loss: 0.049 running loss:  3.608
+accuracy: 0.649 
+Score: 0.604 
+learning_rate:  [2.5670273876409724e-05]
+learning_rate:  [2.5670273876409724e-05]
+mean Acc per epoch 0.6494819293606373
+Epoch 33/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[34,    99] loss: 0.086 running loss:  3.566
+accuracy: 0.666 
+Score: 0.587 
+[34,   199] loss: 0.048 running loss:  3.728
+accuracy: 0.663 
+Score: 0.679 
+[34,   299] loss: 0.063 running loss:  3.595
+accuracy: 0.660 
+Score: 0.710 
+[34,   399] loss: 0.060 running loss:  3.553
+accuracy: 0.654 
+Score: 0.620 
+[34,   499] loss: 0.065 running loss:  3.653
+accuracy: 0.652 
+Score: 0.486 
+[34,   599] loss: 0.081 running loss:  3.546
+accuracy: 0.653 
+Score: 0.648 
+[34,   699] loss: 0.090 running loss:  3.812
+accuracy: 0.654 
+Score: 0.668 
+[34,   799] loss: 0.063 running loss:  3.463
+accuracy: 0.653 
+Score: 0.737 
+[34,   899] loss: 0.068 running loss:  3.473
+accuracy: 0.652 
+Score: 0.620 
+[34,   999] loss: 0.063 running loss:  3.640
+accuracy: 0.651 
+Score: 0.701 
+[34,  1099] loss: 0.073 running loss:  3.655
+accuracy: 0.652 
+Score: 0.599 
+[34,  1199] loss: 0.064 running loss:  3.720
+accuracy: 0.652 
+Score: 0.656 
+[34,  1299] loss: 0.084 running loss:  3.611
+accuracy: 0.651 
+Score: 0.617 
+[34,  1399] loss: 0.065 running loss:  3.578
+accuracy: 0.651 
+Score: 0.640 
+[34,  1499] loss: 0.096 running loss:  3.555
+accuracy: 0.651 
+Score: 0.700 
+[34,  1599] loss: 0.050 running loss:  3.407
+accuracy: 0.650 
+Score: 0.657 
+[34,  1699] loss: 0.067 running loss:  3.509
+accuracy: 0.651 
+Score: 0.746 
+learning_rate:  [2.515686839888153e-05]
+learning_rate:  [2.515686839888153e-05]
+mean Acc per epoch 0.6513973853727328
+Epoch 34/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[35,    99] loss: 0.090 running loss:  3.679
+accuracy: 0.651 
+Score: 0.716 
+[35,   199] loss: 0.045 running loss:  3.568
+accuracy: 0.649 
+Score: 0.715 
+[35,   299] loss: 0.062 running loss:  3.473
+accuracy: 0.650 
+Score: 0.644 
+[35,   399] loss: 0.078 running loss:  3.629
+accuracy: 0.645 
+Score: 0.583 
+[35,   499] loss: 0.098 running loss:  3.613
+accuracy: 0.647 
+Score: 0.637 
+[35,   599] loss: 0.078 running loss:  3.577
+accuracy: 0.647 
+Score: 0.640 
+[35,   699] loss: 0.069 running loss:  3.642
+accuracy: 0.649 
+Score: 0.692 
+[35,   799] loss: 0.081 running loss:  3.475
+accuracy: 0.650 
+Score: 0.571 
+[35,   899] loss: 0.058 running loss:  3.773
+accuracy: 0.651 
+Score: 0.711 
+[35,   999] loss: 0.068 running loss:  3.460
+accuracy: 0.651 
+Score: 0.686 
+[35,  1099] loss: 0.069 running loss:  3.652
+accuracy: 0.651 
+Score: 0.539 
+[35,  1199] loss: 0.064 running loss:  3.446
+accuracy: 0.651 
+Score: 0.629 
+[35,  1299] loss: 0.056 running loss:  3.491
+accuracy: 0.650 
+Score: 0.588 
+[35,  1399] loss: 0.053 running loss:  3.637
+accuracy: 0.650 
+Score: 0.638 
+[35,  1499] loss: 0.092 running loss:  3.608
+accuracy: 0.650 
+Score: 0.757 
+[35,  1599] loss: 0.073 running loss:  3.470
+accuracy: 0.650 
+Score: 0.563 
+[35,  1699] loss: 0.063 running loss:  3.485
+accuracy: 0.650 
+Score: 0.580 
+learning_rate:  [2.4653731030903898e-05]
+learning_rate:  [2.4653731030903898e-05]
+mean Acc per epoch 0.6500294694224121
+Epoch 35/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[36,    99] loss: 0.075 running loss:  3.592
+accuracy: 0.651 
+Score: 0.638 
+[36,   199] loss: 0.081 running loss:  3.528
+accuracy: 0.650 
+Score: 0.712 
+[36,   299] loss: 0.092 running loss:  3.673
+accuracy: 0.650 
+Score: 0.655 
+[36,   399] loss: 0.083 running loss:  3.562
+accuracy: 0.650 
+Score: 0.668 
+[36,   499] loss: 0.065 running loss:  3.593
+accuracy: 0.652 
+Score: 0.699 
+[36,   599] loss: 0.077 running loss:  3.548
+accuracy: 0.653 
+Score: 0.681 
+[36,   699] loss: 0.054 running loss:  3.536
+accuracy: 0.653 
+Score: 0.671 
+[36,   799] loss: 0.069 running loss:  3.413
+accuracy: 0.651 
+Score: 0.611 
+[36,   899] loss: 0.088 running loss:  3.545
+accuracy: 0.651 
+Score: 0.635 
+[36,   999] loss: 0.087 running loss:  3.654
+accuracy: 0.651 
+Score: 0.599 
+[36,  1099] loss: 0.082 running loss:  3.452
+accuracy: 0.651 
+Score: 0.656 
+[36,  1199] loss: 0.056 running loss:  3.496
+accuracy: 0.650 
+Score: 0.668 
+[36,  1299] loss: 0.059 running loss:  3.707
+accuracy: 0.648 
+Score: 0.581 
+[36,  1399] loss: 0.075 running loss:  3.426
+accuracy: 0.647 
+Score: 0.657 
+[36,  1499] loss: 0.050 running loss:  3.547
+accuracy: 0.647 
+Score: 0.683 
+[36,  1599] loss: 0.063 running loss:  3.718
+accuracy: 0.647 
+Score: 0.651 
+[36,  1699] loss: 0.089 running loss:  3.561
+accuracy: 0.647 
+Score: 0.781 
+learning_rate:  [2.416065641028582e-05]
+learning_rate:  [2.416065641028582e-05]
+mean Acc per epoch 0.6468503946583749
+Epoch 36/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[37,    99] loss: 0.066 running loss:  3.598
+accuracy: 0.652 
+Score: 0.494 
+[37,   199] loss: 0.051 running loss:  3.826
+accuracy: 0.657 
+Score: 0.726 
+[37,   299] loss: 0.067 running loss:  3.363
+accuracy: 0.659 
+Score: 0.697 
+[37,   399] loss: 0.129 running loss:  3.571
+accuracy: 0.660 
+Score: 0.772 
+[37,   499] loss: 0.065 running loss:  3.566
+accuracy: 0.657 
+Score: 0.744 
+[37,   599] loss: 0.102 running loss:  3.875
+accuracy: 0.657 
+Score: 0.636 
+[37,   699] loss: 0.070 running loss:  3.498
+accuracy: 0.656 
+Score: 0.632 
+[37,   799] loss: 0.066 running loss:  3.493
+accuracy: 0.654 
+Score: 0.658 
+[37,   899] loss: 0.048 running loss:  3.491
+accuracy: 0.654 
+Score: 0.619 
+[37,   999] loss: 0.065 running loss:  3.480
+accuracy: 0.654 
+Score: 0.666 
+[37,  1099] loss: 0.068 running loss:  3.484
+accuracy: 0.653 
+Score: 0.738 
+[37,  1199] loss: 0.090 running loss:  3.672
+accuracy: 0.654 
+Score: 0.614 
+[37,  1299] loss: 0.067 running loss:  3.526
+accuracy: 0.654 
+Score: 0.626 
+[37,  1399] loss: 0.066 running loss:  3.669
+accuracy: 0.653 
+Score: 0.699 
+[37,  1499] loss: 0.068 running loss:  3.424
+accuracy: 0.653 
+Score: 0.562 
+[37,  1599] loss: 0.134 running loss:  3.712
+accuracy: 0.652 
+Score: 0.598 
+[37,  1699] loss: 0.068 running loss:  3.628
+accuracy: 0.651 
+Score: 0.656 
+learning_rate:  [2.3677443282080104e-05]
+learning_rate:  [2.3677443282080104e-05]
+mean Acc per epoch 0.6509668484194765
+Epoch 37/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[38,    99] loss: 0.079 running loss:  3.617
+accuracy: 0.658 
+Score: 0.689 
+[38,   199] loss: 0.060 running loss:  3.474
+accuracy: 0.661 
+Score: 0.684 
+[38,   299] loss: 0.070 running loss:  3.581
+accuracy: 0.653 
+Score: 0.707 
+[38,   399] loss: 0.077 running loss:  3.630
+accuracy: 0.652 
+Score: 0.629 
+[38,   499] loss: 0.049 running loss:  3.432
+accuracy: 0.653 
+Score: 0.665 
+[38,   599] loss: 0.046 running loss:  3.543
+accuracy: 0.652 
+Score: 0.745 
+[38,   699] loss: 0.048 running loss:  3.351
+accuracy: 0.653 
+Score: 0.523 
+[38,   799] loss: 0.062 running loss:  3.512
+accuracy: 0.652 
+Score: 0.680 
+[38,   899] loss: 0.069 running loss:  3.390
+accuracy: 0.651 
+Score: 0.673 
+[38,   999] loss: 0.057 running loss:  3.371
+accuracy: 0.652 
+Score: 0.676 
+[38,  1099] loss: 0.079 running loss:  3.428
+accuracy: 0.651 
+Score: 0.647 
+[38,  1199] loss: 0.060 running loss:  3.624
+accuracy: 0.651 
+Score: 0.682 
+[38,  1299] loss: 0.056 running loss:  3.432
+accuracy: 0.651 
+Score: 0.577 
+[38,  1399] loss: 0.097 running loss:  3.451
+accuracy: 0.651 
+Score: 0.703 
+[38,  1499] loss: 0.063 running loss:  3.490
+accuracy: 0.650 
+Score: 0.677 
+[38,  1599] loss: 0.073 running loss:  3.459
+accuracy: 0.650 
+Score: 0.693 
+[38,  1699] loss: 0.068 running loss:  3.485
+accuracy: 0.650 
+Score: 0.641 
+learning_rate:  [2.32038944164385e-05]
+learning_rate:  [2.32038944164385e-05]
+mean Acc per epoch 0.6501696521564557
+Epoch 38/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[39,    99] loss: 0.064 running loss:  3.389
+accuracy: 0.645 
+Score: 0.682 
+[39,   199] loss: 0.076 running loss:  3.443
+accuracy: 0.647 
+Score: 0.666 
+[39,   299] loss: 0.053 running loss:  3.407
+accuracy: 0.651 
+Score: 0.602 
+[39,   399] loss: 0.070 running loss:  3.460
+accuracy: 0.650 
+Score: 0.643 
+[39,   499] loss: 0.065 running loss:  3.497
+accuracy: 0.650 
+Score: 0.613 
+[39,   599] loss: 0.090 running loss:  3.484
+accuracy: 0.652 
+Score: 0.617 
+[39,   699] loss: 0.059 running loss:  3.525
+accuracy: 0.653 
+Score: 0.699 
+[39,   799] loss: 0.057 running loss:  3.338
+accuracy: 0.653 
+Score: 0.593 
+[39,   899] loss: 0.044 running loss:  3.509
+accuracy: 0.654 
+Score: 0.691 
+[39,   999] loss: 0.069 running loss:  3.596
+accuracy: 0.653 
+Score: 0.698 
+[39,  1099] loss: 0.068 running loss:  3.447
+accuracy: 0.653 
+Score: 0.554 
+[39,  1199] loss: 0.057 running loss:  3.470
+accuracy: 0.653 
+Score: 0.644 
+[39,  1299] loss: 0.056 running loss:  3.528
+accuracy: 0.653 
+Score: 0.728 
+[39,  1399] loss: 0.115 running loss:  3.472
+accuracy: 0.653 
+Score: 0.664 
+[39,  1499] loss: 0.079 running loss:  3.620
+accuracy: 0.653 
+Score: 0.598 
+[39,  1599] loss: 0.054 running loss:  3.494
+accuracy: 0.652 
+Score: 0.752 
+[39,  1699] loss: 0.071 running loss:  3.407
+accuracy: 0.652 
+Score: 0.630 
+learning_rate:  [2.273981652810973e-05]
+learning_rate:  [2.273981652810973e-05]
+mean Acc per epoch 0.6518907055858425
+Epoch 39/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[40,    99] loss: 0.058 running loss:  3.313
+accuracy: 0.650 
+Score: 0.640 
+[40,   199] loss: 0.065 running loss:  3.476
+accuracy: 0.648 
+Score: 0.753 
+[40,   299] loss: 0.071 running loss:  3.344
+accuracy: 0.650 
+Score: 0.706 
+[40,   399] loss: 0.053 running loss:  3.424
+accuracy: 0.647 
+Score: 0.617 
+[40,   499] loss: 0.059 running loss:  3.421
+accuracy: 0.647 
+Score: 0.677 
+[40,   599] loss: 0.098 running loss:  3.423
+accuracy: 0.647 
+Score: 0.704 
+[40,   699] loss: 0.093 running loss:  3.579
+accuracy: 0.649 
+Score: 0.584 
+[40,   799] loss: 0.074 running loss:  3.512
+accuracy: 0.649 
+Score: 0.682 
+[40,   899] loss: 0.074 running loss:  3.354
+accuracy: 0.651 
+Score: 0.656 
+[40,   999] loss: 0.088 running loss:  3.503
+accuracy: 0.651 
+Score: 0.576 
+[40,  1099] loss: 0.078 running loss:  3.317
+accuracy: 0.651 
+Score: 0.622 
+[40,  1199] loss: 0.063 running loss:  3.363
+accuracy: 0.650 
+Score: 0.687 
+[40,  1299] loss: 0.065 running loss:  3.521
+accuracy: 0.649 
+Score: 0.732 
+[40,  1399] loss: 0.079 running loss:  3.625
+accuracy: 0.650 
+Score: 0.712 
+[40,  1499] loss: 0.068 running loss:  3.643
+accuracy: 0.649 
+Score: 0.525 
+[40,  1599] loss: 0.042 running loss:  3.371
+accuracy: 0.650 
+Score: 0.704 
+[40,  1699] loss: 0.079 running loss:  3.478
+accuracy: 0.649 
+Score: 0.648 
+learning_rate:  [2.2285020197547537e-05]
+learning_rate:  [2.2285020197547537e-05]
+mean Acc per epoch 0.6488769370582049
+Epoch 40/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[41,    99] loss: 0.063 running loss:  3.596
+accuracy: 0.659 
+Score: 0.503 
+[41,   199] loss: 0.078 running loss:  3.375
+accuracy: 0.653 
+Score: 0.603 
+[41,   299] loss: 0.073 running loss:  3.429
+accuracy: 0.656 
+Score: 0.678 
+[41,   399] loss: 0.067 running loss:  3.233
+accuracy: 0.654 
+Score: 0.549 
+[41,   499] loss: 0.084 running loss:  3.576
+accuracy: 0.654 
+Score: 0.675 
+[41,   599] loss: 0.061 running loss:  3.475
+accuracy: 0.650 
+Score: 0.678 
+[41,   699] loss: 0.067 running loss:  3.512
+accuracy: 0.650 
+Score: 0.622 
+[41,   799] loss: 0.068 running loss:  3.463
+accuracy: 0.651 
+Score: 0.673 
+[41,   899] loss: 0.079 running loss:  3.390
+accuracy: 0.651 
+Score: 0.657 
+[41,   999] loss: 0.073 running loss:  3.252
+accuracy: 0.651 
+Score: 0.730 
+[41,  1099] loss: 0.079 running loss:  3.365
+accuracy: 0.651 
+Score: 0.582 
+[41,  1199] loss: 0.083 running loss:  3.473
+accuracy: 0.651 
+Score: 0.694 
+[41,  1299] loss: 0.079 running loss:  3.450
+accuracy: 0.650 
+Score: 0.681 
+[41,  1399] loss: 0.082 running loss:  3.529
+accuracy: 0.649 
+Score: 0.646 
+[41,  1499] loss: 0.084 running loss:  3.467
+accuracy: 0.648 
+Score: 0.587 
+[41,  1599] loss: 0.093 running loss:  3.362
+accuracy: 0.649 
+Score: 0.666 
+[41,  1699] loss: 0.062 running loss:  3.354
+accuracy: 0.649 
+Score: 0.708 
+learning_rate:  [2.1839319793596584e-05]
+learning_rate:  [2.1839319793596584e-05]
+mean Acc per epoch 0.6490446766721178
+Epoch 41/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[42,    99] loss: 0.071 running loss:  3.293
+accuracy: 0.651 
+Score: 0.586 
+[42,   199] loss: 0.063 running loss:  3.333
+accuracy: 0.651 
+Score: 0.696 
+[42,   299] loss: 0.051 running loss:  3.515
+accuracy: 0.648 
+Score: 0.551 
+[42,   399] loss: 0.049 running loss:  3.416
+accuracy: 0.650 
+Score: 0.560 
+[42,   499] loss: 0.086 running loss:  3.369
+accuracy: 0.651 
+Score: 0.650 
+[42,   599] loss: 0.066 running loss:  3.307
+accuracy: 0.651 
+Score: 0.541 
+[42,   699] loss: 0.062 running loss:  3.352
+accuracy: 0.652 
+Score: 0.657 
+[42,   799] loss: 0.083 running loss:  3.455
+accuracy: 0.651 
+Score: 0.703 
+[42,   899] loss: 0.071 running loss:  3.421
+accuracy: 0.651 
+Score: 0.652 
+[42,   999] loss: 0.074 running loss:  3.482
+accuracy: 0.653 
+Score: 0.786 
+[42,  1099] loss: 0.049 running loss:  3.449
+accuracy: 0.653 
+Score: 0.455 
+[42,  1199] loss: 0.065 running loss:  3.374
+accuracy: 0.652 
+Score: 0.682 
+[42,  1299] loss: 0.060 running loss:  3.422
+accuracy: 0.652 
+Score: 0.610 
+[42,  1399] loss: 0.052 running loss:  3.339
+accuracy: 0.653 
+Score: 0.710 
+[42,  1499] loss: 0.079 running loss:  3.574
+accuracy: 0.652 
+Score: 0.732 
+[42,  1599] loss: 0.090 running loss:  3.541
+accuracy: 0.653 
+Score: 0.568 
+[42,  1699] loss: 0.068 running loss:  3.441
+accuracy: 0.652 
+Score: 0.598 
+learning_rate:  [2.1402533397724653e-05]
+learning_rate:  [2.1402533397724653e-05]
+mean Acc per epoch 0.6521455687748167
+Epoch 42/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[43,    99] loss: 0.058 running loss:  3.460
+accuracy: 0.658 
+Score: 0.598 
+[43,   199] loss: 0.112 running loss:  3.344
+accuracy: 0.654 
+Score: 0.660 
+[43,   299] loss: 0.060 running loss:  3.461
+accuracy: 0.654 
+Score: 0.529 
+[43,   399] loss: 0.037 running loss:  3.329
+accuracy: 0.650 
+Score: 0.649 
+[43,   499] loss: 0.061 running loss:  3.349
+accuracy: 0.652 
+Score: 0.654 
+[43,   599] loss: 0.122 running loss:  3.399
+accuracy: 0.653 
+Score: 0.652 
+[43,   699] loss: 0.076 running loss:  3.328
+accuracy: 0.652 
+Score: 0.718 
+[43,   799] loss: 0.047 running loss:  3.418
+accuracy: 0.652 
+Score: 0.645 
+[43,   899] loss: 0.068 running loss:  3.405
+accuracy: 0.651 
+Score: 0.621 
+[43,   999] loss: 0.053 running loss:  3.415
+accuracy: 0.651 
+Score: 0.668 
+[43,  1099] loss: 0.036 running loss:  3.393
+accuracy: 0.651 
+Score: 0.669 
+[43,  1199] loss: 0.044 running loss:  3.330
+accuracy: 0.653 
+Score: 0.742 
+[43,  1299] loss: 0.075 running loss:  3.487
+accuracy: 0.653 
+Score: 0.641 
+[43,  1399] loss: 0.071 running loss:  3.375
+accuracy: 0.653 
+Score: 0.581 
+[43,  1499] loss: 0.051 running loss:  3.349
+accuracy: 0.653 
+Score: 0.497 
+[43,  1599] loss: 0.095 running loss:  3.314
+accuracy: 0.653 
+Score: 0.652 
+[43,  1699] loss: 0.070 running loss:  3.492
+accuracy: 0.653 
+Score: 0.495 
+learning_rate:  [2.097448272977016e-05]
+learning_rate:  [2.097448272977016e-05]
+mean Acc per epoch 0.6533193099977492
+Epoch 43/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[44,    99] loss: 0.054 running loss:  3.199
+accuracy: 0.652 
+Score: 0.783 
+[44,   199] loss: 0.054 running loss:  3.391
+accuracy: 0.646 
+Score: 0.519 
+[44,   299] loss: 0.087 running loss:  3.503
+accuracy: 0.654 
+Score: 0.649 
+[44,   399] loss: 0.044 running loss:  3.411
+accuracy: 0.652 
+Score: 0.665 
+[44,   499] loss: 0.076 running loss:  3.272
+accuracy: 0.651 
+Score: 0.673 
+[44,   599] loss: 0.039 running loss:  3.315
+accuracy: 0.651 
+Score: 0.365 
+[44,   699] loss: 0.070 running loss:  3.322
+accuracy: 0.651 
+Score: 0.649 
+[44,   799] loss: 0.060 running loss:  3.542
+accuracy: 0.652 
+Score: 0.701 
+[44,   899] loss: 0.081 running loss:  3.423
+accuracy: 0.652 
+Score: 0.669 
+[44,   999] loss: 0.089 running loss:  3.405
+accuracy: 0.652 
+Score: 0.644 
+[44,  1099] loss: 0.078 running loss:  3.525
+accuracy: 0.651 
+Score: 0.572 
+[44,  1199] loss: 0.040 running loss:  3.474
+accuracy: 0.651 
+Score: 0.649 
+[44,  1299] loss: 0.071 running loss:  3.428
+accuracy: 0.650 
+Score: 0.679 
+[44,  1399] loss: 0.060 running loss:  3.365
+accuracy: 0.651 
+Score: 0.720 
+[44,  1499] loss: 0.088 running loss:  3.417
+accuracy: 0.650 
+Score: 0.740 
+[44,  1599] loss: 0.061 running loss:  3.390
+accuracy: 0.651 
+Score: 0.561 
+[44,  1699] loss: 0.089 running loss:  3.351
+accuracy: 0.650 
+Score: 0.522 
+learning_rate:  [2.0554993075174757e-05]
+learning_rate:  [2.0554993075174757e-05]
+mean Acc per epoch 0.6504959871708801
+Epoch 44/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[45,    99] loss: 0.072 running loss:  3.249
+accuracy: 0.645 
+Score: 0.528 
+[45,   199] loss: 0.074 running loss:  3.389
+accuracy: 0.646 
+Score: 0.563 
+[45,   299] loss: 0.081 running loss:  3.333
+accuracy: 0.649 
+Score: 0.696 
+[45,   399] loss: 0.045 running loss:  3.403
+accuracy: 0.652 
+Score: 0.679 
+[45,   499] loss: 0.085 running loss:  3.458
+accuracy: 0.651 
+Score: 0.716 
+[45,   599] loss: 0.090 running loss:  3.458
+accuracy: 0.651 
+Score: 0.577 
+[45,   699] loss: 0.071 running loss:  3.273
+accuracy: 0.651 
+Score: 0.659 
+[45,   799] loss: 0.066 running loss:  3.452
+accuracy: 0.652 
+Score: 0.754 
+[45,   899] loss: 0.077 running loss:  3.348
+accuracy: 0.650 
+Score: 0.609 
+[45,   999] loss: 0.063 running loss:  3.322
+accuracy: 0.651 
+Score: 0.618 
+[45,  1099] loss: 0.063 running loss:  3.467
+accuracy: 0.651 
+Score: 0.668 
+[45,  1199] loss: 0.090 running loss:  3.321
+accuracy: 0.651 
+Score: 0.715 
+[45,  1299] loss: 0.063 running loss:  3.312
+accuracy: 0.652 
+Score: 0.606 
+[45,  1399] loss: 0.060 running loss:  3.299
+accuracy: 0.652 
+Score: 0.644 
+[45,  1499] loss: 0.048 running loss:  3.411
+accuracy: 0.653 
+Score: 0.730 
+[45,  1599] loss: 0.065 running loss:  3.396
+accuracy: 0.652 
+Score: 0.669 
+[45,  1699] loss: 0.049 running loss:  3.376
+accuracy: 0.652 
+Score: 0.587 
+learning_rate:  [2.014389321367126e-05]
+learning_rate:  [2.014389321367126e-05]
+mean Acc per epoch 0.6523263304683805
+Epoch 45/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[46,    99] loss: 0.080 running loss:  3.420
+accuracy: 0.646 
+Score: 0.751 
+[46,   199] loss: 0.054 running loss:  3.524
+accuracy: 0.643 
+Score: 0.611 
+[46,   299] loss: 0.097 running loss:  3.369
+accuracy: 0.650 
+Score: 0.657 
+[46,   399] loss: 0.082 running loss:  3.247
+accuracy: 0.649 
+Score: 0.632 
+[46,   499] loss: 0.053 running loss:  3.385
+accuracy: 0.650 
+Score: 0.644 
+[46,   599] loss: 0.059 running loss:  3.296
+accuracy: 0.652 
+Score: 0.657 
+[46,   699] loss: 0.077 running loss:  3.382
+accuracy: 0.651 
+Score: 0.656 
+[46,   799] loss: 0.064 running loss:  3.342
+accuracy: 0.649 
+Score: 0.631 
+[46,   899] loss: 0.069 running loss:  3.363
+accuracy: 0.650 
+Score: 0.672 
+[46,   999] loss: 0.056 running loss:  3.269
+accuracy: 0.650 
+Score: 0.686 
+[46,  1099] loss: 0.068 running loss:  3.372
+accuracy: 0.650 
+Score: 0.631 
+[46,  1199] loss: 0.055 running loss:  3.260
+accuracy: 0.649 
+Score: 0.591 
+[46,  1299] loss: 0.083 running loss:  3.269
+accuracy: 0.650 
+Score: 0.612 
+[46,  1399] loss: 0.067 running loss:  3.335
+accuracy: 0.650 
+Score: 0.716 
+[46,  1499] loss: 0.050 running loss:  3.355
+accuracy: 0.650 
+Score: 0.648 
+[46,  1599] loss: 0.065 running loss:  3.326
+accuracy: 0.650 
+Score: 0.522 
+[46,  1699] loss: 0.046 running loss:  3.352
+accuracy: 0.650 
+Score: 0.675 
+learning_rate:  [1.9741015349397835e-05]
+learning_rate:  [1.9741015349397835e-05]
+mean Acc per epoch 0.6497001451743363
+Epoch 46/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[47,    99] loss: 0.083 running loss:  3.299
+accuracy: 0.649 
+Score: 0.674 
+[47,   199] loss: 0.124 running loss:  3.272
+accuracy: 0.647 
+Score: 0.641 
+[47,   299] loss: 0.046 running loss:  3.294
+accuracy: 0.648 
+Score: 0.622 
+[47,   399] loss: 0.066 running loss:  3.261
+accuracy: 0.650 
+Score: 0.686 
+[47,   499] loss: 0.085 running loss:  3.365
+accuracy: 0.652 
+Score: 0.669 
+[47,   599] loss: 0.073 running loss:  3.342
+accuracy: 0.648 
+Score: 0.690 
+[47,   699] loss: 0.084 running loss:  3.228
+accuracy: 0.649 
+Score: 0.718 
+[47,   799] loss: 0.074 running loss:  3.403
+accuracy: 0.650 
+Score: 0.777 
+[47,   899] loss: 0.065 running loss:  3.424
+accuracy: 0.649 
+Score: 0.625 
+[47,   999] loss: 0.054 running loss:  3.306
+accuracy: 0.647 
+Score: 0.606 
+[47,  1099] loss: 0.087 running loss:  3.298
+accuracy: 0.647 
+Score: 0.695 
+[47,  1199] loss: 0.060 running loss:  3.284
+accuracy: 0.648 
+Score: 0.646 
+[47,  1299] loss: 0.094 running loss:  3.328
+accuracy: 0.648 
+Score: 0.685 
+[47,  1399] loss: 0.058 running loss:  3.364
+accuracy: 0.647 
+Score: 0.696 
+[47,  1499] loss: 0.052 running loss:  3.286
+accuracy: 0.648 
+Score: 0.691 
+[47,  1599] loss: 0.058 running loss:  3.338
+accuracy: 0.647 
+Score: 0.669 
+[47,  1699] loss: 0.078 running loss:  3.428
+accuracy: 0.648 
+Score: 0.637 
+learning_rate:  [1.9346195042409877e-05]
+learning_rate:  [1.9346195042409877e-05]
+mean Acc per epoch 0.6474859914742171
+Epoch 47/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[48,    99] loss: 0.081 running loss:  3.334
+accuracy: 0.649 
+Score: 0.554 
+[48,   199] loss: 0.080 running loss:  3.403
+accuracy: 0.651 
+Score: 0.707 
+[48,   299] loss: 0.042 running loss:  3.155
+accuracy: 0.651 
+Score: 0.687 
+[48,   399] loss: 0.065 running loss:  3.225
+accuracy: 0.654 
+Score: 0.682 
+[48,   499] loss: 0.078 running loss:  3.324
+accuracy: 0.655 
+Score: 0.810 
+[48,   599] loss: 0.086 running loss:  3.216
+accuracy: 0.653 
+Score: 0.637 
+[48,   699] loss: 0.069 running loss:  3.237
+accuracy: 0.653 
+Score: 0.671 
+[48,   799] loss: 0.042 running loss:  3.400
+accuracy: 0.653 
+Score: 0.660 
+[48,   899] loss: 0.072 running loss:  3.213
+accuracy: 0.653 
+Score: 0.553 
+[48,   999] loss: 0.064 running loss:  3.336
+accuracy: 0.652 
+Score: 0.639 
+[48,  1099] loss: 0.089 running loss:  3.382
+accuracy: 0.653 
+Score: 0.599 
+[48,  1199] loss: 0.041 running loss:  3.340
+accuracy: 0.654 
+Score: 0.722 
+[48,  1299] loss: 0.029 running loss:  3.326
+accuracy: 0.654 
+Score: 0.653 
+[48,  1399] loss: 0.054 running loss:  3.296
+accuracy: 0.654 
+Score: 0.640 
+[48,  1499] loss: 0.034 running loss:  3.276
+accuracy: 0.653 
+Score: 0.563 
+[48,  1599] loss: 0.061 running loss:  3.286
+accuracy: 0.653 
+Score: 0.745 
+[48,  1699] loss: 0.089 running loss:  3.405
+accuracy: 0.652 
+Score: 0.698 
+learning_rate:  [1.895927114156168e-05]
+learning_rate:  [1.895927114156168e-05]
+mean Acc per epoch 0.6521322524841859
+Epoch 48/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[49,    99] loss: 0.066 running loss:  3.185
+accuracy: 0.664 
+Score: 0.672 
+[49,   199] loss: 0.088 running loss:  3.265
+accuracy: 0.658 
+Score: 0.671 
+[49,   299] loss: 0.068 running loss:  3.373
+accuracy: 0.658 
+Score: 0.740 
+[49,   399] loss: 0.055 running loss:  3.211
+accuracy: 0.652 
+Score: 0.714 
+[49,   499] loss: 0.055 running loss:  3.342
+accuracy: 0.649 
+Score: 0.516 
+[49,   599] loss: 0.069 running loss:  3.208
+accuracy: 0.650 
+Score: 0.702 
+[49,   699] loss: 0.043 running loss:  3.418
+accuracy: 0.648 
+Score: 0.658 
+[49,   799] loss: 0.066 running loss:  3.254
+accuracy: 0.649 
+Score: 0.837 
+[49,   899] loss: 0.045 running loss:  3.256
+accuracy: 0.650 
+Score: 0.652 
+[49,   999] loss: 0.070 running loss:  3.402
+accuracy: 0.650 
+Score: 0.652 
+[49,  1099] loss: 0.056 running loss:  3.272
+accuracy: 0.650 
+Score: 0.698 
+[49,  1199] loss: 0.052 running loss:  3.422
+accuracy: 0.650 
+Score: 0.596 
+[49,  1299] loss: 0.073 running loss:  3.249
+accuracy: 0.651 
+Score: 0.562 
+[49,  1399] loss: 0.061 running loss:  3.244
+accuracy: 0.651 
+Score: 0.705 
+[49,  1499] loss: 0.066 running loss:  3.192
+accuracy: 0.652 
+Score: 0.734 
+[49,  1599] loss: 0.075 running loss:  3.227
+accuracy: 0.652 
+Score: 0.759 
+[49,  1699] loss: 0.067 running loss:  3.249
+accuracy: 0.652 
+Score: 0.559 
+learning_rate:  [1.8580085718730445e-05]
+learning_rate:  [1.8580085718730445e-05]
+mean Acc per epoch 0.6522824759072283
+Epoch 49/49
+----------
+  0%|          | 0/1716 [00:00<?, ?it/s]
+[50,    99] loss: 0.061 running loss:  3.333
+accuracy: 0.649 
+Score: 0.628 
+[50,   199] loss: 0.077 running loss:  3.338
+accuracy: 0.649 
+Score: 0.725 
+[50,   299] loss: 0.055 running loss:  3.061
+accuracy: 0.652 
+Score: 0.638 
+[50,   399] loss: 0.071 running loss:  3.323
+accuracy: 0.653 
+Score: 0.646 
+[50,   499] loss: 0.084 running loss:  3.449
+accuracy: 0.654 
+Score: 0.651 
+[50,   599] loss: 0.070 running loss:  3.451
+accuracy: 0.653 
+Score: 0.602 
+[50,   699] loss: 0.078 running loss:  3.218
+accuracy: 0.651 
+Score: 0.673 
+[50,   799] loss: 0.055 running loss:  3.194
+accuracy: 0.650 
+Score: 0.747 
+[50,   899] loss: 0.053 running loss:  3.394
+accuracy: 0.649 
+Score: 0.637 
+[50,   999] loss: 0.053 running loss:  3.133
+accuracy: 0.648 
+Score: 0.713 
+[50,  1099] loss: 0.060 running loss:  3.255
+accuracy: 0.649 
+Score: 0.649 
+[50,  1199] loss: 0.069 running loss:  3.306
+accuracy: 0.649 
+Score: 0.615 
+[50,  1299] loss: 0.079 running loss:  3.360
+accuracy: 0.649 
+Score: 0.680 
+[50,  1399] loss: 0.057 running loss:  3.201
+accuracy: 0.648 
+Score: 0.738 
+[50,  1499] loss: 0.063 running loss:  3.290
+accuracy: 0.649 
+Score: 0.705 
+[50,  1599] loss: 0.054 running loss:  3.249
+accuracy: 0.649 
+Score: 0.607 
+[50,  1699] loss: 0.052 running loss:  3.228
+accuracy: 0.649 
+Score: 0.657 
+learning_rate:  [1.8208484004355836e-05]
+learning_rate:  [1.8208484004355836e-05]
+mean Acc per epoch 0.6484967836752606

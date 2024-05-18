@@ -2,7 +2,7 @@ import sys
 import os
 import time
 #from Utilities.SaveAnimation import Video
-
+import uuid
 from druida import Stack
 from druida import setup
 from druida.DataManager import datamanager
@@ -66,36 +66,44 @@ Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
 
 def arguments():
 
-    parser.add_argument("run_name",type=str)
-    parser.add_argument("epochs",type=int)
-    parser.add_argument("batch_size",type=int)
-    parser.add_argument("workers",type=int)
-    parser.add_argument("gpu_number",type=int)
-    parser.add_argument("device",type=str)
-    parser.add_argument("learning_rate",type=float)
-    parser.add_argument("condition_len",type=int) #This defines the length of our conditioning vector
-    parser.add_argument("metricType",type=str) #This defines the length of our conditioning vector
-    parser.add_argument("cond_channel",type=int) #This defines the length of our conditioning vector
-    parser.add_argument("cond_channel",type=int) #This defines the length of our conditioning vector
-    parser.add_argument("resnet_arch",type=str) #This defines the length of our conditioning vector
-    parser.add_argument("gen_model",type=str) #This defines the length of our conditioning vector
-    parser.add_argument("one_hot_encoding",type=int)
 
-    parser.run_name = "Predictor Training"
-    parser.epochs = 1
-    parser.batch_size = 2
-    parser.workers=1
-    parser.gpu_number=1
-    parser.image_size = 64
-    parser.dataset_path = os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/')
-    parser.device = "cpu"
-    parser.learning_rate =2e-5
-    parser.metricType='AbsorbanceTM' #this is to be modified when training for different metrics.
-    parser.cond_channel=3 #this is to be modified when training for different metrics.
-    parser.condition_len=6 #this is to be modified when training for different metrics.
-    parser.resnet_arch="resnet152" #this is to be modified when training for different metrics.
-    parser.model='models/trainedModelTM_abs__RESNET152_Bands_6May_2e-5_50epc_h1000_f1000_64_MSE_arrayCond_1TOP1Freq.pth'
-    parser.one_hot_encoding = 0 #if used OHE Incliuding 3 top frequencies
+    parser.add_argument("-run_name",type=str)
+    parser.add_argument("-epochs",type=int)
+    parser.add_argument("-batch_size",type=int)
+    parser.add_argument("-workers",type=int)
+    parser.add_argument("-gpu_number",type=int)
+    parser.add_argument("-dataset_path",type=str)
+    parser.add_argument("-image_size",type=int)
+    parser.add_argument("-device",type=str)
+    parser.add_argument("-learning_rate",type=float)
+    parser.add_argument("-condition_len",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-metricType",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-cond_channel",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-resnet_arch",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-model",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-one_hot_encoding",type=int)
+    parser.add_argument("-output_path",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
+
+    parser.run_name = args["-run_name"]
+    parser.epochs =  args["-epochs"]
+    parser.batch_size = args["-batch_size"]
+    parser.workers=args["-workers"]
+    parser.gpu_number=args["-gpu_number"]
+    parser.image_size = args["-image_size"]
+    parser.dataset_path = args["-dataset_path"]
+    parser.device = args["-device"]
+    parser.learning_rate = args["-learning_rate"]
+    parser.condition_len = args["-condition_len"] #Incliuding 3 top frequencies
+    parser.metricType= args["-metricType"] #this is to be modified when training for different metrics.
+    parser.cond_channel= args["-cond_channel"] #this is to be modified when training for different metrics.
+    parser.resnet_arch= args["-resnet_arch"] #this is to be modified when training for different metrics.
+    parser.model= args["-model"] #this is to be modified when training for different metrics.
+    parser.one_hot_encoding = args["-one_hot_encoding"] #if used OHE Incliuding 3 top frequencies
+    parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
+    parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
+
+
 
 
 
@@ -187,7 +195,7 @@ def prepare_data(names, device,df,classes,classes_types):
             values=np.around(values, decimals=2, out=None)
 
             """labels criteria"""
-            tops, indx = torch.topk(torch.from_numpy(values[1]), 1, largest=True)
+            tops, indx = torch.topk(torch.from_numpy(values[1]), 2, largest=True)
             max_val = tops
             max_indx = indx
             all_frequencies=torch.from_numpy(values[0])
@@ -290,7 +298,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
 
 def test(model,criterion,device):
     
-    df = pd.read_csv("../out.csv")
+    df = pd.read_csv("out.csv")
     
     vdataloader = utils.get_data_with_labels(parser.image_size, parser.image_size,1,
                                             validationImages,parser.batch_size, 
@@ -305,12 +313,14 @@ def test(model,criterion,device):
         labels,condition= prepare_data(names, device,df,classes,classes_types)
 
         print(labels)
+
         if condition.shape[1]==parser.condition_len:
 
             y_predicted=model(input_=inputs, conditioning=condition.to(device) ,b_size=inputs.shape[0])
 
             y_predicted=y_predicted.to(device)
             y_truth = torch.stack(labels).to(device)
+
             print(y_predicted)
             err = criterion(y_predicted.float(), y_truth.float())  
             score = r2_score(y_predicted, y_truth)
@@ -388,13 +398,11 @@ def main():
     os.environ["PYTORCH_USE_CUDA_DSA"] = "1"
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
-    arguments()
-    join_simulationData()  
 
     arguments()
     join_simulationData()  
 
-    net,criterion=get_net_resnet(device,hiden_num=1000,dropout=0.1,features=1000, Y_prediction_size=2)
+    net,criterion=get_net_resnet(device,hiden_num=1000,dropout=0.1,features=1000, Y_prediction_size=4)
     net = net.to(device)
     print(net)
 
@@ -402,4 +410,29 @@ def main():
     #testwithLabels(netG,device)
 
 if __name__ == "__main__":
+
+
+
+    name = str(uuid.uuid4())[:8]
+
+
+    args =  {"-model":"models/trainedModelTM_abs__RESNET152_Bands_11May_2e-5_100epc_h1000_f1000_64_MSE_arrayCond_2TOP2Freq.pth",
+                                       "-run_name":"Predictor ",
+                                       "-epochs":1,
+                                       "-batch_size":2,
+                                       "-workers":1,
+                                       "-gpu_number":1,
+                                       "-image_size":64,
+                                       "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
+                                       "-device":"cpu",
+                                       "-learning_rate":2e-5,
+                                       "-metricType":"AbsorbanceTM",
+                                       "-cond_channel":3,
+                                       "-condition_len":6,
+                                       "-resnet_arch":"resnet152",
+                                       "-one_hot_encoding":0,
+                                       "-working_path":"./Generator_eval/",
+                                       "-output_path":"../output/"+name} #OJO etepath lo lee el otro main
+
+
     main()

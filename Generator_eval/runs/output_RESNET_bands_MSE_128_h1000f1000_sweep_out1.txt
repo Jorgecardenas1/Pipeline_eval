@@ -1,0 +1,781 @@
+cuda:0
+Predictor_RESNET(
+  (l1): Linear(in_features=768, out_features=49152, bias=False)
+  (model): ResNet(
+    (conv1): Conv2d(6, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3))
+    (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (relu): ReLU(inplace=True)
+    (maxpool): MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
+    (layer1): Sequential(
+      (0): Bottleneck(
+        (conv1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): Bottleneck(
+        (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (2): Bottleneck(
+        (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (layer2): Sequential(
+      (0): Bottleneck(
+        (conv1): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (2): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (3): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (layer3): Sequential(
+      (0): Bottleneck(
+        (conv1): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(512, 1024, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (2): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (3): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (4): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (5): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (layer4): Sequential(
+      (0): Bottleneck(
+        (conv1): Conv2d(1024, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(1024, 2048, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): Bottleneck(
+        (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (2): Bottleneck(
+        (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (avgpool): AdaptiveAvgPool2d(output_size=(1, 1))
+    (fc): Sequential(
+      (0): Linear(in_features=2048, out_features=2048, bias=False)
+      (1): Linear(in_features=2048, out_features=1000, bias=False)
+      (2): Linear(in_features=1000, out_features=1000, bias=False)
+      (3): Dropout(p=0.2, inplace=False)
+      (4): Linear(in_features=1000, out_features=1, bias=False)
+    )
+  )
+  (linear): Sequential(
+    (0): Linear(in_features=2048, out_features=2048, bias=False)
+    (1): Linear(in_features=2048, out_features=1000, bias=False)
+    (2): Linear(in_features=1000, out_features=1000, bias=False)
+    (3): Dropout(p=0.2, inplace=False)
+    (4): Linear(in_features=1000, out_features=1, bias=False)
+  )
+)
+Epoch 0/4
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,    99] loss: 0.000 running loss:  0.011
+accuracy: -14.943 
+Score: -2.632 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,   199] loss: 0.000 running loss:  0.006
+accuracy: -9.031 
+Score: -0.073 
+[1,   299] loss: 0.000 running loss:  0.006
+accuracy: -6.855 
+Score: -0.061 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,   399] loss: 0.000 running loss:  0.004
+accuracy: -5.651 
+Score: -0.357 
+[1,   499] loss: 0.000 running loss:  0.005
+accuracy: -4.885 
+Score: -0.067 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,   599] loss: 0.000 running loss:  0.005
+accuracy: -4.109 
+Score: 0.059 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,   699] loss: 0.000 running loss:  0.005
+accuracy: -3.584 
+Score: -0.058 
+[1,   799] loss: 0.000 running loss:  0.003
+accuracy: -3.325 
+Score: -3.271 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,   899] loss: 0.000 running loss:  0.003
+accuracy: -3.046 
+Score: -0.399 
+[1,   999] loss: 0.000 running loss:  0.004
+accuracy: -2.827 
+Score: 0.008 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  1099] loss: 0.000 running loss:  0.005
+accuracy: -2.646 
+Score: -0.835 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  1199] loss: 0.000 running loss:  0.003
+accuracy: -2.473 
+Score: -2.083 
+[1,  1299] loss: 0.000 running loss:  0.005
+accuracy: -2.295 
+Score: 0.119 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  1399] loss: 0.000 running loss:  0.005
+accuracy: -2.145 
+Score: -0.018 
+[1,  1499] loss: 0.000 running loss:  0.004
+accuracy: -2.023 
+Score: -0.029 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  1599] loss: 0.000 running loss:  0.004
+accuracy: -1.920 
+Score: -0.125 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  1699] loss: 0.000 running loss:  0.004
+accuracy: -1.836 
+Score: 0.028 
+[1,  1799] loss: 0.000 running loss:  0.004
+accuracy: -1.754 
+Score: -0.262 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  1899] loss: 0.000 running loss:  0.004
+accuracy: -1.704 
+Score: -1.841 
+[1,  1999] loss: 0.000 running loss:  0.002
+accuracy: -1.669 
+Score: -0.103 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  2099] loss: 0.000 running loss:  0.003
+accuracy: -1.615 
+Score: -0.119 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  2199] loss: 0.000 running loss:  0.003
+accuracy: -1.555 
+Score: -0.106 
+[1,  2299] loss: 0.000 running loss:  0.004
+accuracy: -1.500 
+Score: 0.244 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  2399] loss: 0.000 running loss:  0.005
+accuracy: -1.463 
+Score: -0.506 
+[1,  2499] loss: 0.000 running loss:  0.003
+accuracy: -1.433 
+Score: -0.093 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  2599] loss: 0.000 running loss:  0.003
+accuracy: -1.381 
+Score: 0.546 
+[1,  2699] loss: 0.000 running loss:  0.003
+accuracy: -1.319 
+Score: 0.060 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  2799] loss: 0.000 running loss:  0.004
+accuracy: -1.275 
+Score: -0.019 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  2899] loss: 0.000 running loss:  0.004
+accuracy: -1.234 
+Score: 0.055 
+[1,  2999] loss: 0.000 running loss:  0.006
+accuracy: -1.201 
+Score: -0.020 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  3099] loss: 0.000 running loss:  0.005
+accuracy: -1.183 
+Score: 0.035 
+[1,  3199] loss: 0.000 running loss:  0.003
+accuracy: -1.170 
+Score: -0.135 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  3299] loss: 0.000 running loss:  0.002
+accuracy: -1.157 
+Score: -0.367 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  3399] loss: 0.000 running loss:  0.003
+accuracy: -1.146 
+Score: -5.964 
+[1,  3499] loss: 0.000 running loss:  0.003
+accuracy: -1.136 
+Score: -0.561 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  3599] loss: 0.000 running loss:  0.003
+accuracy: -1.117 
+Score: -0.014 
+[1,  3699] loss: 0.000 running loss:  0.003
+accuracy: -1.102 
+Score: -1.133 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  3799] loss: 0.000 running loss:  0.003
+accuracy: -1.065 
+Score: 0.792 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  3899] loss: 0.000 running loss:  0.002
+accuracy: -1.026 
+Score: -0.155 
+[1,  3999] loss: 0.000 running loss:  0.003
+accuracy: -1.002 
+Score: -0.205 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  4099] loss: 0.000 running loss:  0.003
+accuracy: -0.984 
+Score: -0.096 
+[1,  4199] loss: 0.000 running loss:  0.003
+accuracy: -0.977 
+Score: 0.028 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  4299] loss: 0.000 running loss:  0.005
+accuracy: -0.967 
+Score: -0.067 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  4399] loss: 0.000 running loss:  0.005
+accuracy: -0.966 
+Score: 0.064 
+[1,  4499] loss: 0.000 running loss:  0.005
+accuracy: -0.946 
+Score: -0.251 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  4599] loss: 0.000 running loss:  0.003
+accuracy: -0.927 
+Score: 0.030 
+[1,  4699] loss: 0.000 running loss:  0.004
+accuracy: -0.912 
+Score: 0.196 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  4799] loss: 0.000 running loss:  0.003
+accuracy: -0.896 
+Score: 0.030 
+[1,  4899] loss: 0.000 running loss:  0.003
+accuracy: -0.884 
+Score: -4.506 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  4999] loss: 0.000 running loss:  0.004
+accuracy: -0.868 
+Score: 0.554 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  5099] loss: 0.000 running loss:  0.004
+accuracy: -0.856 
+Score: -0.115 
+[1,  5199] loss: 0.000 running loss:  0.002
+accuracy: -0.850 
+Score: -1.652 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  5299] loss: 0.000 running loss:  0.003
+accuracy: -0.843 
+Score: -0.637 
+[1,  5399] loss: 0.000 running loss:  0.004
+accuracy: -0.834 
+Score: -0.081 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  5499] loss: 0.000 running loss:  0.004
+accuracy: -0.821 
+Score: -0.003 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  5599] loss: 0.000 running loss:  0.003
+accuracy: -0.809 
+Score: 0.129 
+[1,  5699] loss: 0.000 running loss:  0.003
+accuracy: -0.800 
+Score: 0.031 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  5799] loss: 0.000 running loss:  0.003
+accuracy: -0.789 
+Score: 0.056 
+[1,  5899] loss: 0.000 running loss:  0.004
+accuracy: -0.775 
+Score: 0.446 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  5999] loss: 0.000 running loss:  0.005
+accuracy: -0.762 
+Score: -0.024 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  6099] loss: 0.000 running loss:  0.005
+accuracy: -0.749 
+Score: 0.015 
+[1,  6199] loss: 0.000 running loss:  0.004
+accuracy: -0.736 
+Score: 0.177 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  6299] loss: 0.000 running loss:  0.003
+accuracy: -0.731 
+Score: -0.203 
+[1,  6399] loss: 0.000 running loss:  0.003
+accuracy: -0.727 
+Score: -1.822 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  6499] loss: 0.000 running loss:  0.002
+accuracy: -0.711 
+Score: 0.777 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  6599] loss: 0.000 running loss:  0.002
+accuracy: -0.692 
+Score: 0.025 
+[1,  6699] loss: 0.000 running loss:  0.004
+accuracy: -0.681 
+Score: 0.237 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  6799] loss: 0.000 running loss:  0.005
+accuracy: -0.671 
+Score: -0.076 
+[1,  6899] loss: 0.000 running loss:  0.005
+accuracy: -0.663 
+Score: -0.231 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  6999] loss: 0.000 running loss:  0.003
+accuracy: -0.656 
+Score: -0.058 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  7099] loss: 0.000 running loss:  0.003
+accuracy: -0.649 
+Score: -0.752 
+[1,  7199] loss: 0.000 running loss:  0.002
+accuracy: -0.639 
+Score: 0.188 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  7299] loss: 0.000 running loss:  0.004
+accuracy: -0.631 
+Score: -0.556 
+[1,  7399] loss: 0.000 running loss:  0.003
+accuracy: -0.622 
+Score: -0.058 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  7499] loss: 0.000 running loss:  0.002
+accuracy: -0.615 
+Score: -0.021 
+[1,  7599] loss: 0.000 running loss:  0.002
+accuracy: -0.609 
+Score: 0.022 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  7699] loss: 0.000 running loss:  0.003
+accuracy: -0.607 
+Score: 0.040 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  7799] loss: 0.000 running loss:  0.003
+accuracy: -0.601 
+Score: -0.077 
+[1,  7899] loss: 0.000 running loss:  0.003
+accuracy: -0.595 
+Score: 0.212 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  7999] loss: 0.000 running loss:  0.003
+accuracy: -0.591 
+Score: -2.032 
+[1,  8099] loss: 0.000 running loss:  0.002
+accuracy: -0.585 
+Score: 0.159 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  8199] loss: 0.000 running loss:  0.003
+accuracy: -0.578 
+Score: 0.020 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  8299] loss: 0.000 running loss:  0.005
+accuracy: -0.572 
+Score: 0.152 
+[1,  8399] loss: 0.000 running loss:  0.002
+accuracy: -0.564 
+Score: -0.059 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  8499] loss: 0.000 running loss:  0.003
+accuracy: -0.558 
+Score: -0.143 
+[1,  8599] loss: 0.000 running loss:  0.003
+accuracy: -0.553 
+Score: -0.343 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  8699] loss: 0.000 running loss:  0.003
+accuracy: -0.549 
+Score: -0.380 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  8799] loss: 0.000 running loss:  0.003
+accuracy: -0.546 
+Score: 0.086 
+[1,  8899] loss: 0.000 running loss:  0.002
+accuracy: -0.541 
+Score: -0.303 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  8999] loss: 0.000 running loss:  0.003
+accuracy: -0.537 
+Score: 0.017 
+[1,  9099] loss: 0.000 running loss:  0.003
+accuracy: -0.534 
+Score: -0.069 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  9199] loss: 0.000 running loss:  0.003
+accuracy: -0.530 
+Score: 0.294 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  9299] loss: 0.000 running loss:  0.002
+accuracy: -0.524 
+Score: -0.018 
+[1,  9399] loss: 0.000 running loss:  0.003
+accuracy: -0.520 
+Score: -0.025 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  9499] loss: 0.000 running loss:  0.004
+accuracy: -0.515 
+Score: 0.018 
+[1,  9599] loss: 0.000 running loss:  0.004
+accuracy: -0.509 
+Score: 0.113 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  9699] loss: 0.000 running loss:  0.003
+accuracy: -0.504 
+Score: -0.017 
+[1,  9799] loss: 0.000 running loss:  0.004
+accuracy: -0.500 
+Score: 0.012 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  9899] loss: 0.000 running loss:  0.003
+accuracy: -0.496 
+Score: -0.011 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,  9999] loss: 0.000 running loss:  0.004
+accuracy: -0.492 
+Score: 0.069 
+[1, 10099] loss: 0.000 running loss:  0.002
+accuracy: -0.487 
+Score: 0.001 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 10199] loss: 0.000 running loss:  0.004
+accuracy: -0.483 
+Score: 0.025 
+[1, 10299] loss: 0.000 running loss:  0.003
+accuracy: -0.477 
+Score: 0.024 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 10399] loss: 0.000 running loss:  0.004
+accuracy: -0.472 
+Score: 0.095 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 10499] loss: 0.000 running loss:  0.003
+accuracy: -0.466 
+Score: 0.019 
+[1, 10599] loss: 0.000 running loss:  0.003
+accuracy: -0.462 
+Score: 0.118 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 10699] loss: 0.000 running loss:  0.003
+accuracy: -0.458 
+Score: 0.144 
+[1, 10799] loss: 0.000 running loss:  0.003
+accuracy: -0.454 
+Score: 0.043 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 10899] loss: 0.000 running loss:  0.003
+accuracy: -0.450 
+Score: 0.040 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 10999] loss: 0.000 running loss:  0.003
+accuracy: -0.446 
+Score: 0.003 
+[1, 11099] loss: 0.000 running loss:  0.003
+accuracy: -0.441 
+Score: 0.222 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 11199] loss: 0.000 running loss:  0.003
+accuracy: -0.437 
+Score: 0.037 
+[1, 11299] loss: 0.000 running loss:  0.002
+accuracy: -0.433 
+Score: -0.671 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 11399] loss: 0.000 running loss:  0.004
+accuracy: -0.429 
+Score: 0.135 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 11499] loss: 0.000 running loss:  0.004
+accuracy: -0.423 
+Score: 0.303 
+[1, 11599] loss: 0.000 running loss:  0.005
+accuracy: -0.419 
+Score: 0.025 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 11699] loss: 0.000 running loss:  0.004
+accuracy: -0.415 
+Score: 0.583 
+[1, 11799] loss: 0.000 running loss:  0.002
+accuracy: -0.411 
+Score: 0.062 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 11899] loss: 0.000 running loss:  0.002
+accuracy: -0.408 
+Score: 0.212 
+[1, 11999] loss: 0.000 running loss:  0.003
+accuracy: -0.405 
+Score: -0.006 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 12099] loss: 0.000 running loss:  0.003
+accuracy: -0.402 
+Score: 0.230 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 12199] loss: 0.000 running loss:  0.004
+accuracy: -0.399 
+Score: 0.388 
+[1, 12299] loss: 0.000 running loss:  0.004
+accuracy: -0.395 
+Score: 0.294 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 12399] loss: 0.000 running loss:  0.003
+accuracy: -0.389 
+Score: 0.582 
+[1, 12499] loss: 0.000 running loss:  0.002
+accuracy: -0.383 
+Score: 0.344 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 12599] loss: 0.000 running loss:  0.004
+accuracy: -0.380 
+Score: 0.038 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 12699] loss: 0.000 running loss:  0.003
+accuracy: -0.377 
+Score: 0.069 
+[1, 12799] loss: 0.000 running loss:  0.004
+accuracy: -0.373 
+Score: 0.063 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 12899] loss: 0.000 running loss:  0.002
+accuracy: -0.368 
+Score: 0.238 
+[1, 12999] loss: 0.000 running loss:  0.002
+accuracy: -0.364 
+Score: 0.065 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 13099] loss: 0.000 running loss:  0.003
+accuracy: -0.362 
+Score: 0.149 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 13199] loss: 0.000 running loss:  0.003
+accuracy: -0.359 
+Score: 0.132 
+[1, 13299] loss: 0.000 running loss:  0.003
+accuracy: -0.358 
+Score: -1.188 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 13399] loss: 0.000 running loss:  0.002
+accuracy: -0.356 
+Score: 0.037 
+[1, 13499] loss: 0.000 running loss:  0.001
+accuracy: -0.354 
+Score: -0.014 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 13599] loss: 0.000 running loss:  0.003
+accuracy: -0.350 
+Score: 0.207 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 13699] loss: 0.000 running loss:  0.003
+accuracy: -0.347 
+Score: 0.050 
+[1, 13799] loss: 0.000 running loss:  0.003
+accuracy: -0.345 
+Score: -0.010 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 13899] loss: 0.000 running loss:  0.003
+accuracy: -0.342 
+Score: 0.009 
+[1, 13999] loss: 0.000 running loss:  0.003
+accuracy: -0.340 
+Score: -0.009 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 14099] loss: 0.000 running loss:  0.004
+accuracy: -0.338 
+Score: 0.185 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 14199] loss: 0.000 running loss:  0.006
+accuracy: -0.335 
+Score: 0.149 
+[1, 14299] loss: 0.000 running loss:  0.003
+accuracy: -0.333 
+Score: 0.131 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 14399] loss: 0.000 running loss:  0.003
+accuracy: -0.331 
+Score: 0.236 
+[1, 14499] loss: 0.000 running loss:  0.003
+accuracy: -0.329 
+Score: -0.147 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 14599] loss: 0.000 running loss:  0.002
+accuracy: -0.327 
+Score: 0.024 
+[1, 14699] loss: 0.000 running loss:  0.003
+accuracy: -0.325 
+Score: 0.134 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 14799] loss: 0.000 running loss:  0.003
+accuracy: -0.322 
+Score: 0.089 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 14899] loss: 0.000 running loss:  0.003
+accuracy: -0.320 
+Score: 0.154 
+[1, 14999] loss: 0.000 running loss:  0.003
+accuracy: -0.317 
+Score: 0.161 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 15099] loss: 0.000 running loss:  0.005
+accuracy: -0.315 
+Score: 0.372 
+[1, 15199] loss: 0.000 running loss:  0.003
+accuracy: -0.313 
+Score: 0.283 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 15299] loss: 0.000 running loss:  0.002
+accuracy: -0.311 
+Score: 0.004 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 15399] loss: 0.000 running loss:  0.002
+accuracy: -0.310 
+Score: 0.028 
+[1, 15499] loss: 0.000 running loss:  0.003
+accuracy: -0.308 
+Score: 0.101 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 15599] loss: 0.000 running loss:  0.003
+accuracy: -0.306 
+Score: 0.113 
+[1, 15699] loss: 0.000 running loss:  0.003
+accuracy: -0.305 
+Score: 0.243 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 15799] loss: 0.000 running loss:  0.003
+accuracy: -0.303 
+Score: 0.043 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 15899] loss: 0.000 running loss:  0.003
+accuracy: -0.301 
+Score: 0.041 
+[1, 15999] loss: 0.000 running loss:  0.002
+accuracy: -0.299 
+Score: 0.076 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 16099] loss: 0.000 running loss:  0.003
+accuracy: -0.297 
+Score: -0.043 
+[1, 16199] loss: 0.000 running loss:  0.003
+accuracy: -0.295 
+Score: 0.293 
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1, 16299] loss: 0.000 running loss:  0.003
+accuracy: -0.293 
+Score: 0.014 

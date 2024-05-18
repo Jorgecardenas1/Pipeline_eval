@@ -2,7 +2,8 @@ import sys
 import os
 import time
 #from Utilities.SaveAnimation import Video
-
+from typing import Sequence, Optional
+import uuid
 from druida import Stack
 from druida import setup
 from druida.DataManager import datamanager
@@ -51,7 +52,6 @@ parser = argparse.ArgumentParser()
 
 boxImagesPath="../../../data/MetasufacesData/Images-512-Bands/"
 #boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
-
 DataPath="../../../data/MetasufacesData/Exports/output/"
 simulationData="../../../data/MetasufacesData/DBfiles/"
 validationImages="../../../data/MetasufacesData/testImages/"
@@ -65,39 +65,46 @@ Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
 
 
 
-def arguments():
+def arguments(args):
 
-    parser.add_argument("run_name",type=str)
-    parser.add_argument("epochs",type=int)
-    parser.add_argument("batch_size",type=int)
-    parser.add_argument("workers",type=int)
-    parser.add_argument("gpu_number",type=int)
-    parser.add_argument("device",type=str)
-    parser.add_argument("learning_rate",type=float)
-    parser.add_argument("condition_len",type=float) #This defines the length of our conditioning vector
-    parser.add_argument("metricType",type=float) #This defines the length of our conditioning vector
-    parser.add_argument("latent",type=int) #This defines the length of our conditioning vector
-    parser.add_argument("spectra_length",type=int) #This defines the length of our conditioning vector
-    parser.add_argument("gen_model",type=str) #This defines the length of our conditioning vector
-    parser.add_argument("one_hot_encoding",type=int)
+    
 
-    parser.run_name = "GAN Training"
-    parser.epochs = 1
-    parser.batch_size = 1
-    parser.workers=1
-    parser.gpu_number=1
-    parser.image_size = 64
-    parser.dataset_path = os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/')
-    parser.device = "cpu"
-    parser.learning_rate =5e-5
-    parser.condition_len = 6 #Incliuding 3 top frequencies
-    parser.metricType='AbsorbanceTM' #this is to be modified when training for different metrics.
-    parser.latent=106 #this is to be modified when training for different metrics.
-    parser.spectra_length=100 #this is to be modified when training for different metrics.
-    parser.gen_model='models/NETGModelTM_abs__GAN_Bands_9May_100epc_64_6conds_zprod.pth'
-    parser.one_hot_encoding = 0 #if used OHE Incliuding 3 top frequencies
+    parser.add_argument("-run_name",type=str)
+    parser.add_argument("-epochs",type=int)
+    parser.add_argument("-batch_size",type=int)
+    parser.add_argument("-workers",type=int)
+    parser.add_argument("-gpu_number",type=int)
+    parser.add_argument("-image_size",type=int)
+    parser.add_argument("-dataset_path",type=str)
+    parser.add_argument("-device",type=str)
+    parser.add_argument("-learning_rate",type=float)
+    parser.add_argument("-condition_len",type=float) #This defines the length of our conditioning vector
+    parser.add_argument("-metricType",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-latent",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-spectra_length",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-gen_model",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-one_hot_encoding",type=int)
+    parser.add_argument("-output_path",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
 
-    categories=["box", "circle", "cross"]
+
+    parser.run_name = args["-run_name"]
+    parser.epochs =  args["-epochs"]
+    parser.batch_size = args["-batch_size"]
+    parser.workers=args["-workers"]
+    parser.gpu_number=args["-gpu_number"]
+    parser.image_size = args["-image_size"]
+    parser.dataset_path = args["-dataset_path"]
+    parser.device = args["-device"]
+    parser.learning_rate = args["-learning_rate"]
+    parser.condition_len = args["-condition_len"] #Incliuding 3 top frequencies
+    parser.metricType= args["-metricType"] #this is to be modified when training for different metrics.
+    parser.latent=args["-latent"] #this is to be modified when training for different metrics.
+    parser.spectra_length=args["-spectra_length"] #this is to be modified when training for different metrics.
+    parser.gen_model=args["-gen_model"]
+    parser.one_hot_encoding = args["-one_hot_encoding"] #if used OHE Incliuding 3 top frequencies
+    parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
+    parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
 
 
 #From the DCGAN paper, the authors specify that all model weights shall be randomly initialized
@@ -107,6 +114,7 @@ def arguments():
 
 # Data pre-processing
 def join_simulationData():
+
     df = pd.DataFrame()
     for file in glob.glob(simulationData+"*.csv"): 
         df2 = pd.read_csv(file)
@@ -375,6 +383,9 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
     batch=name.split('_')[4]
     iteration=series.split('-')[-1]
     row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
+
+    print(categories)
+    print(batch)
         #print(batch)
         #print(iteration)
 
@@ -441,7 +452,6 @@ def test(netG,device):
         classes = classes.to(device)
         _, _, noise,tensor1,real_values,sustratoHeight = prepare_data(names, device,df,classes,classes_types)
 
-
         testTensor = noise.type(torch.float).to(device)
 
         ##Eval
@@ -449,10 +459,13 @@ def test(netG,device):
 
         """Saving Data"""
 
-        if not os.path.exists("output/"+str(names)):
-            os.makedirs("output/"+str(names))
+        if not os.path.exists(parser.output_path):
+            os.makedirs(parser.output_path)
 
-        with open("output/"+str(names)+"/usedmodel.txt", "a") as f:
+        with open(parser.output_path+"/usedmodel.txt", "a") as f:
+            f.write("original batch:"+str(names))
+            f.write("\n")
+
             f.write("image_size:"+str(parser.image_size))
             f.write("\n")
             
@@ -475,26 +488,27 @@ def test(netG,device):
         t_np = torch.squeeze(noise,(2,3)).cpu().numpy() #convert to Numpy array
         df_ = pd.DataFrame(t_np) #convert to a dataframe
         df_real = pd.DataFrame(real_values)
-        df_.to_csv("output/"+str(names)+"/eval_data",index=True) #save to file
-        df_real.to_csv("output/"+str(names)+"/spectra"+str(classes_types),index=True) #save to file
+        #save read data
+        df_.to_csv(parser.output_path+"/eval_data",index=True) #save to file
+        df_real.to_csv(parser.output_path+"/spectra"+str(classes_types),index=True) #save to file
 
         plt.plot(real_values[0], real_values[1])
          # Saving figure by changing parameter values
-        plt.savefig("output/"+str(names)+"/spectra"+str(classes_types)+".png")
+        plt.savefig(parser.output_path+"/spectra"+str(classes_types)+".png")
 
         
         # upscaling
-        save_image(fake, "output/"+str(names)+"/generated_image.png")
-        image = cv2.imread("output/"+str(names)+"/generated_image.png")
+        save_image(fake, parser.output_path+"/generated_image.png")
+        image = cv2.imread(parser.output_path+"/generated_image.png")
 
         r = 512.0 / image.shape[1]
         dim = (512, int(image.shape[0] * r))
         # perform the actual resizing of the image using cv2 resize
         resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
-        cv2.imwrite("output/"+str(names)+"/generated_image_512.png", resized) 
+        cv2.imwrite(parser.output_path+"/generated_image_512.png", resized) 
 
-        imagesFolder = "output/"+str(names)+"/"
-        destinationFolder = "output/"+str(names)+"/"
+        imagesFolder = parser.output_path+"/"
+        destinationFolder = parser.output_path+"/"
         image_name = "generated_image_512.png"
         time.sleep(3)
         cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight)
@@ -564,23 +578,26 @@ def encoders(dictionary):
 
 
 
-def main():
+def main(args):
 
     os.environ["PYTORCH_USE_CUDA_DSA"] = "1"
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
 
-    arguments()
+    arguments(args)
     join_simulationData()  
+
+
 
     trainer = Stack.Trainer(parser)
 
     # Sizes for discrimnator and generator
     """Z product"""
     input_size=parser.spectra_length+parser.condition_len
-    
+
     """this for Z concat"""
     #input_size=parser.spectra_length+parser.condition_len+parser.latent
+    
     
     generator_mapping_size=parser.image_size
     output_channels=3
@@ -590,11 +607,33 @@ def main():
     netG.eval()
     netG.cuda()
 
-    
     print(netG)
-
     test(netG,device)
     #testwithLabels(netG,device)
 
 if __name__ == "__main__":
-    main()
+
+    name = str(uuid.uuid4())[:8]
+
+    #if not os.path.exists("output/"+str(name)):
+    #        os.makedirs("output/"+str(name))
+            
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_15May_110epc_64_6conds_zprod.pth",
+                                       "-run_name":"GAN Training",
+                                       "-epochs":1,
+                                       "-batch_size":1,
+                                       "-workers":1,
+                                       "-gpu_number":1,
+                                       "-image_size":64,
+                                       "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
+                                       "-device":"cpu",
+                                       "-learning_rate":5e-5,
+                                       "-condition_len":6,
+                                       "-metricType":"AbsorbanceTM",
+                                       "-latent":106,
+                                       "-spectra_length":100,
+                                       "-one_hot_encoding":0,
+                                       "-working_path":"./Generator_eval/",
+                                       "-output_path":"../output/"+name} #OJO etepath lo lee el otro main
+
+    main(args)

@@ -1,0 +1,643 @@
+cuda:0
+Predictor_RESNET(
+  (l1): Linear(in_features=768, out_features=4096, bias=False)
+  (model): ResNet(
+    (conv1): Conv2d(4, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3))
+    (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (relu): ReLU(inplace=True)
+    (maxpool): MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
+    (layer1): Sequential(
+      (0): Bottleneck(
+        (conv1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): Bottleneck(
+        (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (2): Bottleneck(
+        (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (layer2): Sequential(
+      (0): Bottleneck(
+        (conv1): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (2): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (3): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (layer3): Sequential(
+      (0): Bottleneck(
+        (conv1): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(512, 1024, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (2): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (3): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (4): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (5): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (layer4): Sequential(
+      (0): Bottleneck(
+        (conv1): Conv2d(1024, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(1024, 2048, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): Bottleneck(
+        (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      (2): Bottleneck(
+        (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+    )
+    (avgpool): AdaptiveAvgPool2d(output_size=(1, 1))
+    (fc): Sequential(
+      (0): Linear(in_features=2048, out_features=2048, bias=False)
+      (1): Linear(in_features=2048, out_features=1000, bias=False)
+      (2): Linear(in_features=1000, out_features=1000, bias=False)
+      (3): Dropout(p=0.2, inplace=False)
+      (4): Linear(in_features=1000, out_features=1, bias=False)
+    )
+  )
+  (linear): Sequential(
+    (0): Linear(in_features=2048, out_features=2048, bias=False)
+    (1): Linear(in_features=2048, out_features=1000, bias=False)
+    (2): Linear(in_features=1000, out_features=1000, bias=False)
+    (3): Dropout(p=0.2, inplace=False)
+    (4): Linear(in_features=1000, out_features=1, bias=False)
+  )
+)
+Epoch 0/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[1,    99] loss: 0.001 running loss:  0.071
+accuracy: -0.146 
+Score: 0.048 
+learning_rate:  [1.8e-05]
+learning_rate:  [1.8e-05]
+mean Acc per epoch -0.103709289684696
+Epoch 1/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[2,    99] loss: 0.001 running loss:  0.060
+accuracy: 0.038 
+Score: 0.162 
+learning_rate:  [1.62e-05]
+learning_rate:  [1.62e-05]
+mean Acc per epoch 0.025789952371244717
+Epoch 2/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[3,    99] loss: 0.001 running loss:  0.060
+accuracy: 0.041 
+Score: 0.178 
+learning_rate:  [1.4580000000000001e-05]
+learning_rate:  [1.4580000000000001e-05]
+mean Acc per epoch 0.03712320723524062
+Epoch 3/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[4,    99] loss: 0.001 running loss:  0.057
+accuracy: 0.084 
+Score: 0.144 
+learning_rate:  [1.3122e-05]
+learning_rate:  [1.3122e-05]
+mean Acc per epoch 0.08247524723665789
+Epoch 4/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[5,    99] loss: 0.001 running loss:  0.056
+accuracy: 0.097 
+Score: 0.136 
+learning_rate:  [1.1809800000000002e-05]
+learning_rate:  [1.1809800000000002e-05]
+mean Acc per epoch 0.09948839244036387
+Epoch 5/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[6,    99] loss: 0.001 running loss:  0.054
+accuracy: 0.114 
+Score: 0.168 
+learning_rate:  [1.0628820000000002e-05]
+learning_rate:  [1.0628820000000002e-05]
+mean Acc per epoch 0.12238570614810595
+Epoch 6/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[7,    99] loss: 0.001 running loss:  0.053
+accuracy: 0.141 
+Score: 0.235 
+learning_rate:  [9.565938000000002e-06]
+learning_rate:  [9.565938000000002e-06]
+mean Acc per epoch 0.14292270468798315
+Epoch 7/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[8,    99] loss: 0.001 running loss:  0.054
+accuracy: 0.143 
+Score: 0.107 
+learning_rate:  [8.609344200000001e-06]
+learning_rate:  [8.609344200000001e-06]
+mean Acc per epoch 0.1370790946864108
+Epoch 8/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[9,    99] loss: 0.001 running loss:  0.052
+accuracy: 0.176 
+Score: 0.175 
+learning_rate:  [7.748409780000001e-06]
+learning_rate:  [7.748409780000001e-06]
+mean Acc per epoch 0.16513142975665146
+Epoch 9/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[10,    99] loss: 0.001 running loss:  0.052
+accuracy: 0.162 
+Score: 0.346 
+learning_rate:  [6.973568802000001e-06]
+learning_rate:  [6.973568802000001e-06]
+mean Acc per epoch 0.16941107938191963
+Epoch 10/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[11,    99] loss: 0.001 running loss:  0.050
+accuracy: 0.194 
+Score: 0.231 
+learning_rate:  [6.276211921800001e-06]
+learning_rate:  [6.276211921800001e-06]
+mean Acc per epoch 0.19904501692474783
+Epoch 11/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[12,    99] loss: 0.001 running loss:  0.050
+accuracy: 0.186 
+Score: -0.184 
+learning_rate:  [5.648590729620001e-06]
+learning_rate:  [5.648590729620001e-06]
+mean Acc per epoch 0.19545449310463742
+Epoch 12/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[13,    99] loss: 0.001 running loss:  0.049
+accuracy: 0.211 
+Score: 0.210 
+learning_rate:  [5.083731656658001e-06]
+learning_rate:  [5.083731656658001e-06]
+mean Acc per epoch 0.2116895793108735
+Epoch 13/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[14,    99] loss: 0.001 running loss:  0.047
+accuracy: 0.213 
+Score: 0.098 
+learning_rate:  [4.575358490992201e-06]
+learning_rate:  [4.575358490992201e-06]
+mean Acc per epoch 0.2210971529046003
+Epoch 14/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[15,    99] loss: 0.001 running loss:  0.048
+accuracy: 0.221 
+Score: 0.040 
+learning_rate:  [4.117822641892981e-06]
+learning_rate:  [4.117822641892981e-06]
+mean Acc per epoch 0.22195053818572105
+Epoch 15/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[16,    99] loss: 0.001 running loss:  0.049
+accuracy: 0.229 
+Score: 0.234 
+learning_rate:  [3.706040377703683e-06]
+learning_rate:  [3.706040377703683e-06]
+mean Acc per epoch 0.24012373223182545
+Epoch 16/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[17,    99] loss: 0.001 running loss:  0.048
+accuracy: 0.241 
+Score: 0.198 
+learning_rate:  [3.3354363399333148e-06]
+learning_rate:  [3.3354363399333148e-06]
+mean Acc per epoch 0.2398753832783489
+Epoch 17/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[18,    99] loss: 0.001 running loss:  0.047
+accuracy: 0.244 
+Score: 0.358 
+learning_rate:  [3.0018927059399835e-06]
+learning_rate:  [3.0018927059399835e-06]
+mean Acc per epoch 0.25056792297879654
+Epoch 18/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[19,    99] loss: 0.001 running loss:  0.046
+accuracy: 0.256 
+Score: 0.292 
+learning_rate:  [2.701703435345985e-06]
+learning_rate:  [2.701703435345985e-06]
+mean Acc per epoch 0.2549020921838813
+Epoch 19/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[20,    99] loss: 0.001 running loss:  0.045
+accuracy: 0.253 
+Score: 0.285 
+learning_rate:  [2.4315330918113866e-06]
+learning_rate:  [2.4315330918113866e-06]
+mean Acc per epoch 0.2546793824371375
+Epoch 20/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[21,    99] loss: 0.001 running loss:  0.045
+accuracy: 0.279 
+Score: 0.171 
+learning_rate:  [2.1883797826302482e-06]
+learning_rate:  [2.1883797826302482e-06]
+mean Acc per epoch 0.26709352607817544
+Epoch 21/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[22,    99] loss: 0.001 running loss:  0.044
+accuracy: 0.285 
+Score: 0.363 
+learning_rate:  [1.9695418043672235e-06]
+learning_rate:  [1.9695418043672235e-06]
+mean Acc per epoch 0.2812127606730063
+Epoch 22/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[23,    99] loss: 0.001 running loss:  0.045
+accuracy: 0.275 
+Score: 0.138 
+learning_rate:  [1.7725876239305011e-06]
+learning_rate:  [1.7725876239305011e-06]
+mean Acc per epoch 0.2757353939673664
+Epoch 23/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[24,    99] loss: 0.001 running loss:  0.044
+accuracy: 0.292 
+Score: 0.180 
+learning_rate:  [1.595328861537451e-06]
+learning_rate:  [1.595328861537451e-06]
+mean Acc per epoch 0.29138842733746856
+Epoch 24/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[25,    99] loss: 0.001 running loss:  0.044
+accuracy: 0.296 
+Score: -0.029 
+learning_rate:  [1.435795975383706e-06]
+learning_rate:  [1.435795975383706e-06]
+mean Acc per epoch 0.2936611110973375
+Epoch 25/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[26,    99] loss: 0.001 running loss:  0.043
+accuracy: 0.294 
+Score: 0.184 
+learning_rate:  [1.2922163778453354e-06]
+learning_rate:  [1.2922163778453354e-06]
+mean Acc per epoch 0.2978114745704255
+Epoch 26/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[27,    99] loss: 0.001 running loss:  0.043
+accuracy: 0.304 
+Score: 0.002 
+learning_rate:  [1.1629947400608018e-06]
+learning_rate:  [1.1629947400608018e-06]
+mean Acc per epoch 0.30485134753957
+Epoch 27/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[28,    99] loss: 0.001 running loss:  0.043
+accuracy: 0.315 
+Score: 0.326 
+learning_rate:  [1.0466952660547218e-06]
+learning_rate:  [1.0466952660547218e-06]
+mean Acc per epoch 0.31355392824668205
+Epoch 28/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[29,    99] loss: 0.000 running loss:  0.044
+accuracy: 0.304 
+Score: 0.426 
+learning_rate:  [9.420257394492496e-07]
+learning_rate:  [9.420257394492496e-07]
+mean Acc per epoch 0.30851863573879473
+Epoch 29/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[30,    99] loss: 0.001 running loss:  0.043
+accuracy: 0.313 
+Score: 0.386 
+learning_rate:  [8.478231655043246e-07]
+learning_rate:  [8.478231655043246e-07]
+mean Acc per epoch 0.32016089400642495
+Epoch 30/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[31,    99] loss: 0.000 running loss:  0.043
+accuracy: 0.311 
+Score: 0.593 
+learning_rate:  [7.630408489538922e-07]
+learning_rate:  [7.630408489538922e-07]
+mean Acc per epoch 0.3180150273925622
+Epoch 31/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[32,    99] loss: 0.000 running loss:  0.042
+accuracy: 0.325 
+Score: 0.413 
+learning_rate:  [6.86736764058503e-07]
+learning_rate:  [6.86736764058503e-07]
+mean Acc per epoch 0.32279652183221585
+Epoch 32/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[33,    99] loss: 0.001 running loss:  0.043
+accuracy: 0.325 
+Score: 0.396 
+learning_rate:  [6.180630876526526e-07]
+learning_rate:  [6.180630876526526e-07]
+mean Acc per epoch 0.32792548101533897
+Epoch 33/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[34,    99] loss: 0.000 running loss:  0.041
+accuracy: 0.333 
+Score: 0.399 
+learning_rate:  [5.562567788873874e-07]
+learning_rate:  [5.562567788873874e-07]
+mean Acc per epoch 0.3316070621969325
+Epoch 34/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[35,    99] loss: 0.001 running loss:  0.042
+accuracy: 0.347 
+Score: 0.209 
+learning_rate:  [5.006311009986486e-07]
+learning_rate:  [5.006311009986486e-07]
+mean Acc per epoch 0.33175771970168527
+Epoch 35/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[36,    99] loss: 0.001 running loss:  0.042
+accuracy: 0.337 
+Score: 0.304 
+learning_rate:  [4.505679908987838e-07]
+learning_rate:  [4.505679908987838e-07]
+mean Acc per epoch 0.3388442912649684
+Epoch 36/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[37,    99] loss: 0.000 running loss:  0.041
+accuracy: 0.344 
+Score: 0.334 
+learning_rate:  [4.055111918089054e-07]
+learning_rate:  [4.055111918089054e-07]
+mean Acc per epoch 0.3374022448277216
+Epoch 37/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[38,    99] loss: 0.001 running loss:  0.041
+accuracy: 0.334 
+Score: 0.314 
+learning_rate:  [3.649600726280149e-07]
+learning_rate:  [3.649600726280149e-07]
+mean Acc per epoch 0.34023218564270397
+Epoch 38/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[39,    99] loss: 0.001 running loss:  0.040
+accuracy: 0.346 
+Score: 0.305 
+learning_rate:  [3.2846406536521344e-07]
+learning_rate:  [3.2846406536521344e-07]
+mean Acc per epoch 0.3350115638249927
+Epoch 39/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[40,    99] loss: 0.001 running loss:  0.040
+accuracy: 0.340 
+Score: 0.324 
+learning_rate:  [2.956176588286921e-07]
+learning_rate:  [2.956176588286921e-07]
+mean Acc per epoch 0.3401280565970222
+Epoch 40/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[41,    99] loss: 0.001 running loss:  0.041
+accuracy: 0.340 
+Score: 0.311 
+learning_rate:  [2.660558929458229e-07]
+learning_rate:  [2.660558929458229e-07]
+mean Acc per epoch 0.34313027293016624
+Epoch 41/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[42,    99] loss: 0.001 running loss:  0.040
+accuracy: 0.352 
+Score: 0.058 
+learning_rate:  [2.394503036512406e-07]
+learning_rate:  [2.394503036512406e-07]
+mean Acc per epoch 0.33737697371591496
+Epoch 42/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[43,    99] loss: 0.001 running loss:  0.041
+accuracy: 0.335 
+Score: 0.309 
+learning_rate:  [2.1550527328611657e-07]
+learning_rate:  [2.1550527328611657e-07]
+mean Acc per epoch 0.3392201801093838
+Epoch 43/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[44,    99] loss: 0.001 running loss:  0.041
+accuracy: 0.347 
+Score: 0.159 
+learning_rate:  [1.939547459575049e-07]
+learning_rate:  [1.939547459575049e-07]
+mean Acc per epoch 0.3456535445020639
+Epoch 44/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[45,    99] loss: 0.001 running loss:  0.040
+accuracy: 0.352 
+Score: 0.377 
+learning_rate:  [1.7455927136175443e-07]
+learning_rate:  [1.7455927136175443e-07]
+mean Acc per epoch 0.34293098806569855
+Epoch 45/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[46,    99] loss: 0.001 running loss:  0.040
+accuracy: 0.353 
+Score: 0.221 
+learning_rate:  [1.5710334422557899e-07]
+learning_rate:  [1.5710334422557899e-07]
+mean Acc per epoch 0.34711249541858274
+Epoch 46/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[47,    99] loss: 0.001 running loss:  0.041
+accuracy: 0.346 
+Score: 0.451 
+learning_rate:  [1.413930098030211e-07]
+learning_rate:  [1.413930098030211e-07]
+mean Acc per epoch 0.3433117817064412
+Epoch 47/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[48,    99] loss: 0.001 running loss:  0.041
+accuracy: 0.328 
+Score: 0.243 
+learning_rate:  [1.2725370882271898e-07]
+learning_rate:  [1.2725370882271898e-07]
+mean Acc per epoch 0.3444589283069813
+Epoch 48/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[49,    99] loss: 0.001 running loss:  0.041
+accuracy: 0.346 
+Score: 0.303 
+learning_rate:  [1.1452833794044709e-07]
+learning_rate:  [1.1452833794044709e-07]
+mean Acc per epoch 0.3555398229442029
+Epoch 49/49
+----------
+  0%|          | 0/169 [00:00<?, ?it/s]
+[50,    99] loss: 0.000 running loss:  0.040
+accuracy: 0.356 
+Score: 0.554 
+learning_rate:  [1.0307550414640238e-07]
+learning_rate:  [1.0307550414640238e-07]
+mean Acc per epoch 0.34899422110881595
