@@ -431,7 +431,7 @@ if __name__ == "__main__":
                                        "-condition_len":6,
                                        "-resnet_arch":"resnet152",
                                        "-one_hot_encoding":0,
-                                       "-working_path":"./Generator_eval/",
+                                       "-working_path":"./Predictor_eval/",
                                        "-output_path":"../output/"+name} #OJO etepath lo lee el otro main
 
 
