@@ -43,6 +43,7 @@ import cv2
 
 from druida.tools.utils import CAD 
 
+print('Check import functions: Done.')
 
 # Arguments
 parser = argparse.ArgumentParser()
@@ -66,9 +67,7 @@ Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
 
 
 def arguments(args):
-
     
-
     parser.add_argument("-run_name",type=str)
     parser.add_argument("-epochs",type=int)
     parser.add_argument("-batch_size",type=int)
@@ -106,6 +105,8 @@ def arguments(args):
     parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
     parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
 
+    print('Check arguments function: Done.')
+
 
 #From the DCGAN paper, the authors specify that all model weights shall be randomly initialized
 #from a Normal distribution with mean=0, stdev=0.02.
@@ -115,12 +116,15 @@ def arguments(args):
 # Data pre-processing
 def join_simulationData():
 
+
     df = pd.DataFrame()
     for file in glob.glob(simulationData+"*.csv"): 
         df2 = pd.read_csv(file)
         df = pd.concat([df, df2], ignore_index=True)
     
     df.to_csv('out.csv',index=False)
+
+print('Check join_simulationData function: Done.')
     
 def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight):
 
@@ -217,6 +221,8 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
         }
     
     ImageProcessor.elevation_file(layers,**kwargs)
+
+print('Check cad_generation function: Done.')
 
 
 def prepare_data(names, device,df,classes,classes_types):
@@ -328,6 +334,9 @@ def prepare_data(names, device,df,classes,classes_types):
 
     return array1, array2, noise,tensor1, values,sustratoHeight
 
+print('Check prepare_data function: Done.')
+
+
 def set_conditioning_one_hot(df,name,target,categories,band_name,top_freqs,substrate_encoder,materials_encoder,surfaceType_encoder,TargetGeometries_encoder,bands_encoder):
     series=name.split('_')[-2]
     batch=name.split('_')[4]
@@ -376,6 +385,8 @@ def set_conditioning_one_hot(df,name,target,categories,band_name,top_freqs,subst
     """ Values array solo pouede llenarse con n+umero y no con textos"""
     # values_array = torch.Tensor(values_array)
     return values_array, sustratoHeight
+
+print('Check prepare_data function: Done.')
 
 
 def set_conditioning(df,name,target,categories,band_name,top_freqs):
@@ -430,7 +441,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
     
     return values_array,sustratoHeight
 
-
+print('Check set_conditioning function: Done.')
 
 def test(netG,device):
     
@@ -516,6 +527,8 @@ def test(netG,device):
 
         break
 
+print('Check test function: Done.')
+
 def testwithLabels(netG,device):
     
     #geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band
@@ -565,6 +578,7 @@ def testwithLabels(netG,device):
     resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
     cv2.imwrite("Test_512.png", resized) 
 
+print('Check testwithLabels function: Done.')
 
 def encoders(dictionary):
     index = []
@@ -576,7 +590,7 @@ def encoders(dictionary):
     enc.fit(index)
     return enc
 
-
+print('Check encoders function: Done.')
 
 def main(args):
 
@@ -586,8 +600,6 @@ def main(args):
 
     arguments(args)
     join_simulationData()  
-
-
 
     trainer = Stack.Trainer(parser)
 
@@ -610,6 +622,7 @@ def main(args):
     print(netG)
     test(netG,device)
     #testwithLabels(netG,device)
+
 
 if __name__ == "__main__":
 
@@ -637,3 +650,5 @@ if __name__ == "__main__":
                                        "-output_path":"../output/"+name} #OJO etepath lo lee el otro main
 
     main(args)
+
+print('Check main function: Done.')

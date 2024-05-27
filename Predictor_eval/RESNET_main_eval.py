@@ -411,10 +411,7 @@ def main():
 
 if __name__ == "__main__":
 
-
-
     name = str(uuid.uuid4())[:8]
-
 
     args =  {"-model":"models/trainedModelTM_abs__RESNET152_Bands_11May_2e-5_100epc_h1000_f1000_64_MSE_arrayCond_2TOP2Freq.pth",
                                        "-run_name":"Predictor ",
