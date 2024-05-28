@@ -199,8 +199,9 @@ def main(args):
     #predict
     predictor_obj = predictor.Predictor(args=args)
     print(predictor_obj.model)
-
-
+    
+    y_predicted=predictor_obj.model(input_=fake, conditioning=values_array.to(device) ,b_size=parser.batch_size)
+    print(y_predicted)
     #loss 
 
 

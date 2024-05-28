@@ -68,7 +68,7 @@ class Predictor:
                                        dropout=dropout, 
                                        Y_prediction_size=Y_prediction_size) #size of the output vector in this case frenquency points
 
-        model.load_state_dict(torch.load(parser.pred_model))
+        model.load_state_dict(torch.load(parser.pred_model,map_location=torch.device(device)))
         model.eval()
 
         if device.type!='cpu':
