@@ -38,10 +38,48 @@ import argparse
 import json
 from PIL import Image
 import cv2 
+import json
 
 
 from Pipe import optimize, generator
 
+Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
+Materials={"copper":0,"pec":1}
+Surfacetypes={"Reflective":0,"Transmissive":1}
+TargetGeometries={"circ":0,"box":1, "cross":2}
+Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
+
+
+
+def load_request():
+
+    f = open('data.json')
+    data = json.load(f)
+
+    target_val=data["target"]
+    category=data["category"]
+    geometry=TargetGeometries[category]
+    band=Bands[data["band"]]
+    """"
+    surface type: reflective, transmissive
+    layers: conductor and conductor material / Substrate information
+    """
+    surfacetype=Surfacetypes[data["surfacetype"]]
+    materialconductor=Materials[data['conductor']]
+    materialsustrato=Substrates[data['substrate']]
+    sustratoHeight= data["substrateHeight"]
+        
+    #conditions
+    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
+    
+    #load spectra
+    x = np.array(data["band"].split("-")).astype(float)
+    upper = x[1]
+    lower = x[0]
+    array =  np.arange(lower+0.1, upper, 0.1, dtype=float)
+    spectra = np.zeros(100)
+
+    return values_array
 
 def main(args):
 
@@ -51,6 +89,7 @@ def main(args):
     #load predictor
 
     #load user request
+    values_array = load_request()
     #generate
     #predict
     #optimize

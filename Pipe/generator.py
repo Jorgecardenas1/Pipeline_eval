@@ -77,6 +77,9 @@ class Generator:
         self.model.eval()
         self.model.cuda()
 
+    def generate(conditions, data, noise):
+        pass
+
 
 
     def arguments(self,args):
