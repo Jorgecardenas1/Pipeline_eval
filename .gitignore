@@ -1,12 +1,2 @@
-/Predictor/CNN multitarget/*.pth
-/Predictor/CNN One Target/*.pth
-/Predictor/CNN_multitarget_server_RESNET/*.pth
-/Predictor/CNN_multitarget_server/*.pth
-/Predictor/CNN_RESNET_server_bands/*.pth
-/Predictor/Flattened/*.pth
-/Predictor/ViT/Multiclass/*.pth
-/Generator/CDGAN/CGAN_MODEL/*.pt
-/Predictor/CNN multitarget/*.csv
-/Predictor/CNN_multitarget_server/*.csv
-*.pth
-*.pt
+/Generator_eval/models/*.pth
+/Predictor_eval/models/*.pth
