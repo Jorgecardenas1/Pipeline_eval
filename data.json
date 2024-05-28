@@ -1,12 +1,12 @@
 {
-    "category":"circ",
+    "category":"cross",
     "target":0,
     "band":"80-90",
     "surfacetype":"Reflective",
     "conductor":"copper",
     "substrate":"Rogers RT/duroid 5880 (tm)",
     "substrateHeight":0.787,
-    "frequencies":[85.3,85,89.1],
+    "frequencies":[85,85.3,89.1],
     "values":[0.6,0.35,0.1]
 
 }

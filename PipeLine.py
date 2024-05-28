@@ -41,7 +41,7 @@ import cv2
 import json
 
 
-from Pipe import optimize, generator
+from Pipe import optimize, generator,predictor
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
@@ -49,6 +49,9 @@ Surfacetypes={"Reflective":0,"Transmissive":1}
 TargetGeometries={"circ":0,"box":1, "cross":2}
 Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
 
+optimizing=False
+
+parser = argparse.ArgumentParser()
 
 
 def load_request():
@@ -72,16 +75,101 @@ def load_request():
     #conditions
     values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
     
-    #load spectra
-    x = np.array(data["band"].split("-")).astype(float)
-    upper = x[1]
-    lower = x[0]
-    array =  np.arange(lower+0.1, upper, 0.1, dtype=float)
-    spectra = np.zeros(100)
+    #building requested spectra
+    x = np.array(data["band"].split("-"))
+    upper = float(x[1])
+    lower = float(x[0])
+    array_frequs =  torch.tensor(np.arange(lower+0.1, upper+0.1, 0.1),dtype=torch.float32)
 
-    return values_array
+    spectra = torch.zeros(100)
+
+    filtered = torch.isin(array_frequs,torch.tensor(data["frequencies"]))
+    indexes = torch.where(filtered == True)[0]
+
+    #this is the requeste spectra by the user
+    spectra[indexes] = torch.tensor(data["values"])
+
+    return values_array,spectra
+
+def arguments(args):
+
+    
+    parser.add_argument("-run_name",type=str)
+    parser.add_argument("-epochs",type=int)
+    parser.add_argument("-batch_size",type=int)
+    parser.add_argument("-workers",type=int)
+    parser.add_argument("-gpu_number",type=int)
+    parser.add_argument("-image_size",type=int)
+    parser.add_argument("-device",type=str)
+    parser.add_argument("-learning_rate",type=float)
+    parser.add_argument("-condition_len",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-metricType",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-latent",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-cond_channel",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-spectra_length",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-gen_model",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-pred_model",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-one_hot_encoding",type=int)
+    parser.add_argument("-output_path",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
+
+
+    parser.run_name = args["-run_name"]
+    parser.epochs =  args["-epochs"]
+    parser.batch_size = args["-batch_size"]
+    parser.workers=args["-workers"]
+    parser.gpu_number=args["-gpu_number"]
+    parser.image_size = args["-image_size"]
+    parser.device = args["-device"]
+    parser.learning_rate = args["-learning_rate"]
+    parser.condition_len = args["-condition_len"] #Incliuding 3 top frequencies
+    parser.cond_channel = args["-cond_channel"] #Incliuding 3 top frequencies
+ 
+    parser.metricType= args["-metricType"] #this is to be modified when training for different metrics.
+    parser.latent=args["-latent"] #this is to be modified when training for different metrics.
+    parser.spectra_length=args["-spectra_length"] #this is to be modified when training for different metrics.
+    parser.gen_model=args["-gen_model"]
+    parser.pred_model=args["-pred_model"]
+    parser.one_hot_encoding = args["-one_hot_encoding"] #if used OHE Incliuding 3 top frequencies
+    parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
+    parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
+
+    print('Check arguments function: Done.')
+
+
+def prepare_data(device,spectra,conditional_data,latent_tensor):
+    noise = torch.Tensor()
+
+    labels = torch.cat((conditional_data.to(device),spectra.to(device))) #concat side
+
+    """multiply noise and labels to get a single vector"""
+    tensor1=torch.mul(labels.to(device),latent_tensor.to(device) )
+
+    """concat noise and labels adjacent"""
+    #tensor1 = torch.cat((conditional_data.to(device),tensorA.to(device),latent_tensor.to(device),)) #concat side
+    #un vector que inclue
+    #datos desde el dataset y otros datos aleatorios latentes.
+
+    """No lo veo tan claro pero es necesario para pasar los datos al ConvTranspose2d"""
+    tensor2 = tensor1.unsqueeze(1).unsqueeze(1).unsqueeze(1).to(device)
+    tensor3 = tensor2.permute(1,0,2,3)
+    noise = torch.cat((noise.to(device),tensor3.to(device)),0)
+
+    testTensor = noise.type(torch.float).to(device)
+
+        ##Eval
+
+    return testTensor
+
 
 def main(args):
+
+    os.environ["PYTORCH_USE_CUDA_DSA"] = "1"
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(device)
+
+    #load args
+    arguments(args)
 
     #load generator
     generator_obj = generator.Generator(args=args)
@@ -89,9 +177,33 @@ def main(args):
     #load predictor
 
     #load user request
-    values_array = load_request()
+    values_array,spectra = load_request()
+
+    if optimizing:
+        pass
+    else:
+       z=torch.rand(parser.latent)
+
+    input_tensor = prepare_data(device,spectra,values_array,z)
+    
     #generate
+            
+    fake = generator_obj.model(input_tensor).detach().cpu()
+    
+    if not os.path.exists(parser.output_path):
+        os.makedirs(parser.output_path)
+
+    save_image(fake, parser.output_path+"/generated_image.png")
+    image = cv2.imread(parser.output_path+"/generated_image.png")
+
     #predict
+    predictor_obj = predictor.Predictor(args=args)
+    print(predictor_obj.model)
+
+
+    #loss 
+
+
     #optimize
 
     #save results
@@ -124,7 +236,7 @@ if __name__ == "__main__":
              "-spectra_length":100,
              "-one_hot_encoding":0,
              "-working_path":"./Generator_eval/",
-             "-output_path":"../output/"+name} #OJO etepath lo lee el otro main
+             "-output_path":"./output/"+name} #OJO etepath lo lee el otro main
 
     main(args)
 
