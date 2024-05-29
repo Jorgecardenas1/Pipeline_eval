@@ -1,12 +1,11 @@
 {
-    "category":"cross",
-    "target":2, 
-    "band":"80-90",
+    "category":"box",
+    "target":1, 
+    "substrateHeight":0.25,
     "surfacetype":"Reflective",
     "conductor":"copper",
     "substrate":"Rogers RT/duroid 5880 (tm)",
-    "substrateHeight":0.508,
-    "frequencies":[86.0,88.6],
+    "band":"70-80",
+    "frequencies":[73.0,75.6],
     "values":[0.8,0.05]
-
 }

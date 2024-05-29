@@ -42,6 +42,7 @@ import json
 
 
 from Pipe import optimize, generator,predictor
+from Pipe import pso
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
@@ -161,6 +162,14 @@ def prepare_data(device,spectra,conditional_data,latent_tensor):
 
     return testTensor
 
+def opt_loop():
+    var_max  = [random.uniform(0.8,0.9) for _ in range(parser.latent)]
+    var_min = [random.uniform(0.0,0.2) for _ in range(parser.latent)]
+
+    swarm = pso.Swarm(particles_number=5, variables_number=parser.latent, var_max=var_max, var_min=var_min)
+    swarm.create()
+    
+
 
 def main(args):
 
@@ -172,9 +181,7 @@ def main(args):
     arguments(args)
 
     #load generator
-    generator_obj = generator.Generator(args=args)
-    print(generator_obj.model)
-    #load predictor
+    #generator_obj = generator.Generator(args=args)
 
     #load user request
     values_array,spectra = load_request()
@@ -182,31 +189,30 @@ def main(args):
     if optimizing:
         pass
     else:
-       z=torch.rand(parser.latent)
+        z=torch.rand(parser.latent)
 
     input_tensor = prepare_data(device,spectra,values_array,z)
     
     #generate
             
-    fake = generator_obj.model(input_tensor).detach().cpu()
+    #fake = generator_obj.model(input_tensor).detach().cpu()
     
     if not os.path.exists(parser.output_path):
         os.makedirs(parser.output_path)
 
-    save_image(fake, parser.output_path+"/generated_image.png")
-    image = cv2.imread(parser.output_path+"/generated_image.png")
+    #save_image(fake, parser.output_path+"/generated_image.png")
 
-    #predict
+    #load predictor
     predictor_obj = predictor.Predictor(args=args)
-    print(predictor_obj.model)
     
-    y_predicted=predictor_obj.model(input_=fake, conditioning=values_array.to(device) ,b_size=parser.batch_size)
-    print(y_predicted)
+    #y_predicted=predictor_obj.model(input_=fake, conditioning=values_array.to(device) ,b_size=parser.batch_size)
+    #print(y_predicted)
+
     #loss 
 
 
     #optimize
-
+    opt_loop()
     #save results
 
 
