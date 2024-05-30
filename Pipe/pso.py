@@ -22,7 +22,8 @@ from sklearn.metrics import mean_squared_error
 from numpy.random import seed
 from numpy.random import randn
 
-
+import torch
+import torch.nn as nn
 #seed control
 #seed(1)
 
@@ -52,7 +53,7 @@ class Particle:
 
 class Swarm:
     
-    phiv=0.9
+    phiv=0.95
 
     particles=[] # array with all particles part of the swar
     x_particles=[] # array with all particles part of the swar
@@ -97,17 +98,6 @@ class Swarm:
             #Scale the random values
             particle.values_array = particle.values_array*(self.var_max-self.var_min) + self.var_min
 
-            # if particle.values_array[2] < particle.values_array[1]:
-                
-            #     random = np.random.random_sample()
-            #     maximo = particle.values_array[1]-0.1
-            #     particle.values_array[2] = random*(maximo-self.var_min[2]) + self.var_min[2]
-
-            """pendiete por revisar"""
-            """  if particulas[i,2] > particulas[i,1]:
-            random = np.random.random_sample()
-            maximo = particulas[i,1]-1
-            particulas[i,2] = random*(maximo-var_min[j]) + var_min[j] """
 
 
     def nuevas_particulas(self,particulas_ant, pi_best, pg, vel_anterior, iteration):
@@ -121,10 +111,10 @@ class Swarm:
         vel = np.zeros([self.particles_number, self.variables_number])#llenar de ceros la variable velocidad
         
         #Cambio dinámico de la inercia
-        phi = 0.85 * self.phiv**(iteration-0.15) #0.8 y 1
-        phi1 = 2.0 #valores que se pueden revisar. Seguir el valor el mejor fit propio
-        phi2 = 2.1 #esto va valores componen self-knowledge.  seguir el mejor fit global
-        damping = 0.7 #este damping se utiliza cando las particulas tocan los limitesmáximos y mínimos.
+        phi = 0.7 * self.phiv**(iteration-0.1) #0.8 y 1
+        phi1 = 2.1 #valores que se pueden revisar. Seguir el valor el mejor fit propio
+        phi2 = 2.0 #esto va valores componen self-knowledge.  seguir el mejor fit global
+        damping = 0.8 #este damping se utiliza cando las particulas tocan los limitesmáximos y mínimos.
 
         for i in range(self.particles_number):
             
@@ -164,7 +154,7 @@ class Swarm:
                     
 
                 #Calculating new paticles
-                self.x_particles[i].values_array[idx] = (particulas_ant[i].values_array[idx] + vel[i][idx]).round(decimals=2, out=None) ## xi(t-1)+vi( 
+                self.x_particles[i].values_array[idx] = (particulas_ant[i].values_array[idx] + vel[i][idx]).round(decimals=3, out=None) ## xi(t-1)+vi( 
 
                 """In this part we apply a bounce tecnique in the wall defined
                 by the limits of max and min values for dimensions"""       
@@ -173,17 +163,17 @@ class Swarm:
                     
                     vel[i][idx]= vel[i][idx]*damping
 
-                    self.x_particles[i].values_array[idx] = (self.var_max[idx]-np.abs(vel[i][idx])).round(decimals=2, out=None) ## xi(t-1)+vi(t)
+                    self.x_particles[i].values_array[idx] = (self.var_max[idx]-np.abs(vel[i][idx])).round(decimals=3, out=None) ## xi(t-1)+vi(t)
                     
 
                 elif self.x_particles[i].values_array[idx] < self.var_min[idx]:
                    
                     vel[i][idx]= vel[i][idx]*damping
 
-                    self.x_particles[i].values_array[idx] = (self.var_min[idx]+np.abs(vel[i][idx]) ).round(decimals=2, out=None) ## xi(t-1)+vi(t)
+                    self.x_particles[i].values_array[idx] = (self.var_min[idx]+np.abs(vel[i][idx]) ).round(decimals=3, out=None) ## xi(t-1)+vi(t)
                     
                 else:
-                    self.x_particles[i].values_array[idx] = (particulas_ant[i].values_array[idx] + vel[i][idx]).round(decimals=2, out=None) ## xi(t-1)+vi( 
+                    self.x_particles[i].values_array[idx] = (particulas_ant[i].values_array[idx] + vel[i][idx]).round(decimals=3, out=None) ## xi(t-1)+vi( 
 
                 #This sections is used to force a=B*2
                 # if idx==global_.A_dimension_index+1:
@@ -203,20 +193,19 @@ class Swarm:
         return index_pg
 
 #Fitness func how close a given solution is to the optimum solution
-def fitness(truth,predicted,iter):
+def fitness(predicted,truth,iter):
     
     #get results
-        
     Y_true = truth
-    Y_pred = predicted
+    Y_pred = predicted[0]
 
     # Calculation of Mean Squared Error (MSE)
-    cost = mean_squared_error(Y_true,Y_pred)
+    loss = nn.MSELoss()
 
-    fitness =  cost  #Esta variable quedará para hacer una funcion compuesta en el futuro
-    fitness = fitness.round(decimals=2, out=None)
+    fitness =  loss(Y_true,Y_pred)  #Esta variable quedará para hacer una funcion compuesta en el futuro
+    #fitness = fitness.round(decimals=2, out=None)
 
-    print("fitness="+str(iter))
+    print("iter="+str(iter))
     print("fitness="+str(fitness))
     
  
