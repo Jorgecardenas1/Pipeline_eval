@@ -1,3 +1,3 @@
 /Generator_eval/models/*.pth
 /Predictor_eval/models/*.pth
-/models/trainedModelTM_abs__RESNET152_Bands_11May_2e-5_100epc_h1000_f1000_64_MSE_arrayCond_2TOP2Freq.pth
+/models/*.pth

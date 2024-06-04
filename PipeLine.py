@@ -176,9 +176,10 @@ def load_request():
     materialconductor=Materials[data['conductor']]
     materialsustrato=Substrates[data['substrate']]
     sustratoHeight= data["substrateHeight"]
-        
+    SubsLength=data["substrateLength"]
+
     #conditions
-    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
+    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,SubsLength,band])
     
     spectra,_ = spectra_builder(data)
     y_truth = torch.concat( (torch.tensor(data["values"]), torch.tensor(data["frequencies"])),0)
@@ -197,8 +198,7 @@ def spectra_builder(data):
 
     filtered = torch.isin(array_frequs,torch.tensor(data["frequencies"]))
     indexes = torch.where(filtered == True)[0]
-
-    #this is the requeste spectra by the user
+    #this is the requested spectra by the user
     spectra[indexes] = torch.tensor(data["values"])
     return spectra,array_frequs
 
@@ -493,8 +493,8 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_15May_110epc_64_6conds_zprod.pth",
-             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_11May_2e-5_100epc_h1000_f1000_64_MSE_arrayCond_2TOP2Freq.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_1June_110epc_64_7conds_zprod.pth",
+             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_1June_2e-5_100epc_h1000_f1000_64_MSE_3top3freq.pth",
              "-run_name":name,
              "-epochs":30,
              "-batch_size":1,
@@ -505,10 +505,10 @@ if __name__ == "__main__":
              "-device":"cpu",
              "-metricType":"AbsorbanceTM",
              "-cond_channel":3,
-             "-condition_len":6,
+             "-condition_len":7,
              "-n_particles":10,
              "-resnet_arch":"resnet152",
-             "-latent":106,
+             "-latent":107,
              "-spectra_length":100,
              "-one_hot_encoding":0,
              "-working_path":"./Generator_eval/",
