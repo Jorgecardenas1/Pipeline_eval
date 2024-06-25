@@ -493,8 +493,8 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_1June_110epc_64_7conds_zprod.pth",
-             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_1June_2e-5_100epc_h1000_f1000_64_MSE_3top3freq.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_11June_110epc_64_7conds_zprod.pth",
+             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_11June_2e-5_100epc_h1000_f1000_64_MSE_3top3freq.pth",
              "-run_name":name,
              "-epochs":30,
              "-batch_size":1,
