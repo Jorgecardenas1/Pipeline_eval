@@ -506,7 +506,7 @@ if __name__ == "__main__":
              "-metricType":"AbsorbanceTM",
              "-cond_channel":3,
              "-condition_len":7,
-             "-n_particles":10,
+             "-n_particles":30,
              "-resnet_arch":"resnet152",
              "-latent":107,
              "-spectra_length":100,
