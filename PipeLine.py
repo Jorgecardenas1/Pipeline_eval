@@ -278,8 +278,8 @@ def prepare_data(device,spectra,conditional_data,latent_tensor):
 
 def opt_loop(device,generator,predictor,conditioning,spectra,z,y_predicted,y_truth):
     
-    var_max  = [random.uniform(1.,1.3) for _ in range(parser.latent)]
-    var_min = [random.uniform(0.5,0.99) for _ in range(parser.latent)]
+    var_max  = [random.uniform(1.,1.2) for _ in range(parser.latent)]
+    var_min = [random.uniform(0.7,0.99) for _ in range(parser.latent)]
     z = z.detach().cpu().numpy()
 
     #take first original random Z
@@ -493,7 +493,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_11June_110epc_64_7conds_zprod.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_1July_110epc_64_7conds_zprod.pth",
              "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_11June_2e-5_100epc_h1000_f1000_64_MSE_3top3freq.pth",
              "-run_name":name,
              "-epochs":30,
@@ -506,7 +506,7 @@ if __name__ == "__main__":
              "-metricType":"AbsorbanceTM",
              "-cond_channel":3,
              "-condition_len":7,
-             "-n_particles":30,
+             "-n_particles":100,
              "-resnet_arch":"resnet152",
              "-latent":107,
              "-spectra_length":100,

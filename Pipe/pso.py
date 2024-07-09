@@ -111,9 +111,9 @@ class Swarm:
         vel = np.zeros([self.particles_number, self.variables_number])#llenar de ceros la variable velocidad
         
         #Cambio dinámico de la inercia
-        phi = 0.7 * self.phiv**(iteration-0.1) #0.8 y 1
-        phi1 = 2.1 #valores que se pueden revisar. Seguir el valor el mejor fit propio
-        phi2 = 2.0 #esto va valores componen self-knowledge.  seguir el mejor fit global
+        phi = 0.85 * self.phiv**(iteration-0.1) #0.8 y 1
+        phi1 = 2.0 #valores que se pueden revisar. Seguir el valor el mejor fit propio
+        phi2 = 2.1 #esto va valores componen self-knowledge.  seguir el mejor fit global
         damping = 0.8 #este damping se utiliza cando las particulas tocan los limitesmáximos y mínimos.
 
         for i in range(self.particles_number):
