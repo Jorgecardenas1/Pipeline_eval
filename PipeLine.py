@@ -278,8 +278,8 @@ def prepare_data(device,spectra,conditional_data,latent_tensor):
 
 def opt_loop(device,generator,predictor,conditioning,spectra,z,y_predicted,y_truth):
     
-    var_max  = [random.uniform(1.,1.2) for _ in range(parser.latent)]
-    var_min = [random.uniform(0.7,0.99) for _ in range(parser.latent)]
+    var_max  = [np.random.normal(1,0.2) for _ in range(parser.latent)]
+    var_min = [np.random.normal(1,0.2) for _ in range(parser.latent)]
     z = z.detach().cpu().numpy()
 
     #take first original random Z
@@ -452,8 +452,8 @@ def main(args):
     y_predicted=predictor_obj.model(input_=fake, conditioning=values_array.to(device) ,b_size=parser.batch_size)
 
     #loss 
-    fitness = pso.fitness(y_predicted,y_truth,0)
-    if fitness > 0.01:
+    fitness = pso.fitness(y_predicted,spectra,0)
+    if fitness > 1:
 
         #optimize
         best_z = opt_loop(device=device, generator=generator_obj,
@@ -462,7 +462,9 @@ def main(args):
                 spectra=spectra,
                 z=z,
                 y_predicted=y_predicted,
-                y_truth=y_truth)
+                y_truth=spectra)
+    else:
+        best_z=z
     
 
     #final generation
@@ -479,10 +481,10 @@ def main(args):
     y_predicted=predictor_obj.model(input_=fake, conditioning=values_array.to(device) ,b_size=parser.batch_size)
 
     #loss 
-    fitness = pso.fitness(y_predicted,y_truth,0)
+    fitness = pso.fitness(y_predicted,spectra,0)
     print("final fitness:",fitness)
     #save results
-    save_results(fitness, y_predicted,y_truth,fake,z,values_array)
+    save_results(fitness, y_predicted,spectra,fake,z,values_array)
 
     
 
@@ -493,8 +495,8 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_1July_110epc_64_7conds_zprod.pth",
-             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_11June_2e-5_100epc_h1000_f1000_64_MSE_3top3freq.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_22July-lr10-5_50epc_64_7conds_zprod.pth",
+             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_22July_2e-5_100epc_h1000_f1000_64_MSE_100out.pth",
              "-run_name":name,
              "-epochs":30,
              "-batch_size":1,
