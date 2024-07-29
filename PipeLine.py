@@ -224,6 +224,7 @@ def arguments(args):
     parser.add_argument("-one_hot_encoding",type=int)
     parser.add_argument("-output_path",type=str) #This defines the length of our conditioning vector
     parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-gan_version",type=bool) #This defines the length of our conditioning vector
 
 
     parser.run_name = args["-run_name"]
@@ -246,33 +247,43 @@ def arguments(args):
     parser.one_hot_encoding = args["-one_hot_encoding"] #if used OHE Incliuding 3 top frequencies
     parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
     parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
+    parser.gan_version = args["-gan_version"] #if used OHE Incliuding 3 top frequencies
 
     print('Check arguments function: Done.')
 
 
 def prepare_data(device,spectra,conditional_data,latent_tensor):
+    
     noise = torch.Tensor()
-
+    
     labels = torch.cat((conditional_data.to(device),spectra.to(device))) #concat side
 
-    """multiply noise and labels to get a single vector"""
-    tensor1=torch.mul(labels.to(device),latent_tensor.to(device) )
 
-    """concat noise and labels adjacent"""
-    #tensor1 = torch.cat((conditional_data.to(device),tensorA.to(device),latent_tensor.to(device),)) #concat side
-    #un vector que inclue
-    #datos desde el dataset y otros datos aleatorios latentes.
+    if parser.gan_version:
 
-    """No lo veo tan claro pero es necesario para pasar los datos al ConvTranspose2d"""
-    tensor2 = tensor1.unsqueeze(1).unsqueeze(1).unsqueeze(1).to(device)
-    tensor3 = tensor2.permute(1,0,2,3)
-    noise = torch.cat((noise.to(device),tensor3.to(device)),0)
+        noise = torch.cat((noise.to(device),latent_tensor.to(device)))
+        testTensor = noise.type(torch.float).to(device)
 
-    testTensor = noise.type(torch.float).to(device)
+    else:
+        """multiply noise and labels to get a single vector"""
+        tensor1=torch.mul(labels.to(device),latent_tensor.to(device) )
 
-        ##Eval
+        """concat noise and labels adjacent"""
+        #tensor1 = torch.cat((conditional_data.to(device),spectra.to(device),latent_tensor.to(device),)) #concat side
+        #un vector que inclue
+        #datos desde el dataset y otros datos aleatorios latentes.
+       
 
-    return testTensor
+        #preparing noise in the right format to be sent for generation
+        tensor2 = tensor1.unsqueeze(1).unsqueeze(1).unsqueeze(1).to(device)
+        tensor3 = tensor2.permute(1,0,2,3)
+        noise = torch.cat((noise.to(device),tensor3.to(device)),0)
+
+        testTensor = noise.type(torch.float).to(device)
+
+
+
+    return labels,testTensor
 
 
 
@@ -355,8 +366,15 @@ def opt_loop(device,generator,predictor,conditioning,spectra,z,y_predicted,y_tru
 
 def particle_processing(device,generator,predictor, particle, conditioning, spectra, y_truth):
 
-    input_tensor = prepare_data(device,spectra,conditioning,torch.tensor(particle.values_array))
-    fake = generator.model(input_tensor).detach().cpu()
+
+    label_condition,input_tensor = prepare_data(device,spectra,conditioning,torch.tensor(particle.values_array).float())
+    
+    if parser.gan_version:
+        fake = generator.model( label_condition, torch.tensor(particle.values_array).float(), 1).detach().cpu()
+
+    else:
+        fake = generator.model(input_tensor).detach().cpu()
+
     y_predicted=predictor.model(input_=fake, conditioning=conditioning.to(device) ,b_size=parser.batch_size)
 
     #take particle and generate with its vector
@@ -437,10 +455,15 @@ def main(args):
     else:
         z=torch.rand(parser.latent)
 
-    input_tensor = prepare_data(device,spectra,values_array,z)
+    label_condition,input_tensor = prepare_data(device,spectra,values_array,z)
     
     #generate
-    fake = generator_obj.model(input_tensor).detach().cpu()
+
+    if parser.gan_version:
+        fake = generator_obj.model( label_condition, z, 1).detach().cpu()
+
+    else:
+        fake = generator_obj.model(input_tensor).detach().cpu()
     
     if not os.path.exists(parser.output_path):
         os.makedirs(parser.output_path)
@@ -453,7 +476,7 @@ def main(args):
 
     #loss 
     fitness = pso.fitness(y_predicted,spectra,0)
-    if fitness > 1:
+    if fitness > 0.001:
 
         #optimize
         best_z = opt_loop(device=device, generator=generator_obj,
@@ -468,10 +491,15 @@ def main(args):
     
 
     #final generation
-    input_tensor = prepare_data(device,spectra,values_array,torch.tensor(best_z))
+    label_condition,input_tensor = prepare_data(device,spectra,values_array,torch.tensor(best_z))
     
     #generate
-    fake = generator_obj.model(input_tensor).detach().cpu()
+    
+    if parser.gan_version:
+        fake = generator_obj.model( label_condition, z, 1).detach().cpu()
+    else:
+        fake = generator_obj.model(input_tensor).detach().cpu()
+
     
     if not os.path.exists(parser.output_path):
         os.makedirs(parser.output_path)
@@ -495,7 +523,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_22July-lr10-5_50epc_64_7conds_zprod.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_Bands_27July-lr10-5_80epc_64.pth",
              "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_22July_2e-5_100epc_h1000_f1000_64_MSE_100out.pth",
              "-run_name":name,
              "-epochs":30,
@@ -511,6 +539,7 @@ if __name__ == "__main__":
              "-n_particles":100,
              "-resnet_arch":"resnet152",
              "-latent":107,
+            "-gan_version":True,
              "-spectra_length":100,
              "-one_hot_encoding":0,
              "-working_path":"./Generator_eval/",
