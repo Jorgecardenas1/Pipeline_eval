@@ -435,7 +435,7 @@ def main(args):
     if optimizing:
         pass
     else:
-        z=torch.rand(parser.latent)
+        z=torch.randn(parser.latent)
 
     input_tensor = prepare_data(device,spectra,values_array,z)
     
