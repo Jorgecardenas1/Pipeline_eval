@@ -72,8 +72,28 @@ class Generator:
         generator_mapping_size=parser.image_size
         output_channels=3
 
-        self.model = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
-        self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
+
+ 
+
+        if parser.gan_version:
+
+            initial_depth = 512
+            generator_mapping_size=64
+
+            self.model = Stack.Generator_V2(trainer.gpu_number,
+                                  parser.spectra_length+parser.condition_len,
+                                  parser.latent, generator_mapping_size,
+                                  initial_depth,
+                                  3,
+                                  leakyRelu_flag=False)
+
+            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+            self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
+        else:
+            self.model = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
+            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+            self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
+
         self.model.eval()
         
         if device.type!='cpu':
@@ -102,6 +122,7 @@ class Generator:
         parser.add_argument("-one_hot_encoding",type=int)
         parser.add_argument("-output_path",type=str) #This defines the length of our conditioning vector
         parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
+        parser.add_argument("-gan_version",type=bool) #This defines the length of our conditioning vector
 
 
         parser.run_name = args["-run_name"]
@@ -120,4 +141,5 @@ class Generator:
         parser.one_hot_encoding = args["-one_hot_encoding"] #if used OHE Incliuding 3 top frequencies
         parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
         parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
+        parser.gan_version = args["-gan_version"] #if used OHE Incliuding 3 top frequencies
 

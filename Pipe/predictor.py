@@ -52,7 +52,7 @@ class Predictor:
         os.environ["PYTORCH_USE_CUDA_DSA"] = "1"
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-        self.model=self.get_net_resnet(device,hiden_num=1000,dropout=0.1,features=1000, Y_prediction_size=6)
+        self.model=self.get_net_resnet(device,hiden_num=1000,dropout=0.1,features=1000, Y_prediction_size=100)
         self.model = self.model.to(device)
 
     def get_net_resnet(self,device,hiden_num=1000,dropout=0.1,features=3000, Y_prediction_size=601):
