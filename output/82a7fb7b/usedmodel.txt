@@ -1,0 +1,7 @@
+original batch:('cross_01_freq_reflect_e9503ad7-c681-11ee-809f-047c16a08772_0-980_50-60.png',)
+image_size:64
+condition_len:7
+latent:157
+spectra_length:100
+gen_model:models/NETGModelTM_abs__GANV2_Bands_2Ag-lr1-4_100epc_64.pth
+one_hot_encoding:0
