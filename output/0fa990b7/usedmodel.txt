@@ -1,4 +1,4 @@
-original batch:('circ_01_freq_reflect_9f48b9ce-3a1e-11ef-aea3-047c16a08772_0-274_70-80.png',)
+original batch:('box_01_freq_reflect_0591ca44-13b1-11ef-b8b6-047c16a08772_0-74_70-80.png',)
 image_size:64
 condition_len:13
 latent:313
