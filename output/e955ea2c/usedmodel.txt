@@ -1,0 +1,7 @@
+original batch:('circ_01_freq_reflect_9f48b9ce-3a1e-11ef-aea3-047c16a08772_0-274_70-80.png',)
+image_size:64
+condition_len:13
+latent:313
+spectra_length:100
+gen_model:models/modelnetG10.pt
+one_hot_encoding:0

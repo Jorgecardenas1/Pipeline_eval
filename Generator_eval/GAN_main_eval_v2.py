@@ -1,3 +1,8 @@
+
+"""
+Version 2 : implementa GAn V1 y GAN V2
+Version 3:
+"""
 import sys
 import os
 import time
