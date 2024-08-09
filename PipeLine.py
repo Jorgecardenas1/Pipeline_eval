@@ -523,7 +523,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_Bands_27July-lr10-5_80epc_64.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_Bands_2Ag-lr1-4_100epc_64.pth",
              "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_22July_2e-5_100epc_h1000_f1000_64_MSE_100out.pth",
              "-run_name":name,
              "-epochs":30,
@@ -538,7 +538,7 @@ if __name__ == "__main__":
              "-condition_len":7,
              "-n_particles":100,
              "-resnet_arch":"resnet152",
-             "-latent":107,
+             "-latent":157,
             "-gan_version":True,
              "-spectra_length":100,
              "-one_hot_encoding":0,
