@@ -310,8 +310,8 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
                     fre_peaks = np.append(fre_peaks,all_frequencies[fequencies[idnx]])
                     results_half = np.append(results_half,0)
 
-            labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks)),0)
-            #labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks),torch.from_numpy(results_half)),0)
+            #labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks)),0)
+            labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks),torch.from_numpy(results_half)),0)
 
             conditional_data,sustratoHeight = set_conditioning(df,name,classes[idx],
                                                 classes_types[idx],
@@ -654,7 +654,9 @@ def main(args):
                                   parser.output_channels,
                                   leakyRelu_flag=False)
         
-        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
+
         netG.eval()
         netG.cuda()
     else:
@@ -691,7 +693,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG10.pt",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_FWHM_Bands_9Ag-lr1-4_100epc_64.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -701,9 +703,9 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":13,
+                                       "-condition_len":16,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":313,
+                                       "-latent":316,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
