@@ -1,0 +1,7 @@
+original batch:('box_01_freq_reflect_0591ca44-13b1-11ef-b8b6-047c16a08772_0-4_70-80.png',)
+image_size:64
+condition_len:23
+latent:423
+spectra_length:100
+gen_model:models/modelnetG80.pt
+one_hot_encoding:0
