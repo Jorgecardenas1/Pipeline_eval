@@ -663,8 +663,8 @@ def main(args):
                                   parser.output_channels,
                                   leakyRelu_flag=False)
         
-        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
-        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
+        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
 
         netG.eval()
         netG.cuda()
@@ -702,7 +702,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG80.pt",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV3_FWHM_lowswitch_11Ag-lr1-4_100epc_64.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
