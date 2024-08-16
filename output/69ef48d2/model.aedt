@@ -265,7 +265,7 @@ $begin 'AnsoftProject'
 		AverageSarMethod=0
 		UseAutoDCThickness=true
 		HaveZwaveSupport=true
-		DCThicknessObjects(463998, '"<Effective>"')
+		DCThicknessObjects(467396, '"<Effective>"')
 		$begin 'OutputVariable'
 			NextUniqueID=6
 			MoveBackwards=false
@@ -324,7 +324,7 @@ $begin 'AnsoftProject'
 			WorkingCS=1
 			$begin 'GeometryCore'
 				BlockVersionID=3
-				DataVersion=112
+				DataVersion=113
 				NativeKernel='ACIS'
 				NativeKernelVersionID=13
 				Units='mm'
@@ -618,7 +618,7 @@ $begin 'AnsoftProject'
 						$begin 'GeometryPart'
 							$begin 'Attributes'
 								Name='conductor_2'
-								Flags=''
+								Flags='NonModel#'
 								Color='(255 0 0)'
 								Transparency=0
 								PartCoordinateSystem=1
@@ -24584,7 +24584,7 @@ $begin 'AnsoftProject'
 						$begin 'GeometryPart'
 							$begin 'Attributes'
 								Name='Cylinder1'
-								Flags='NonModel#'
+								Flags=''
 								Color='(255 0 0)'
 								Transparency=0
 								PartCoordinateSystem=1
@@ -25506,10 +25506,10 @@ $begin 'AnsoftProject'
 					ID=48
 					Name='Sweep'
 					$begin 'SimDataExtractor'
-						SimValue('S(FloquetPort1:2,FloquetPort1:2)', 2, 90, false, SimValueID=6901, 3, 0, 2, 0, false, false, -1, 1, 0, 1, 1, '', 0, 0)
-						SimValue('S(FloquetPort2:2,FloquetPort1:2)', 2, 90, false, SimValueID=6902, 3, 0, 2, 0, false, false, -1, 1, 0, 1, 1, '', 0, 0)
-						SimValue('S(FloquetPort1:1,FloquetPort1:1)', 2, 90, false, SimValueID=6903, 3, 0, 2, 0, false, false, -1, 1, 0, 1, 1, '', 0, 0)
-						SimValue('S(FloquetPort2:1,FloquetPort1:1)', 2, 90, false, SimValueID=6904, 3, 0, 2, 0, false, false, -1, 1, 0, 1, 1, '', 0, 0)
+						SimValue('S(FloquetPort2:1,FloquetPort1:1)', 2, 90, false, SimValueID=6854, 3, 0, 2, 0, false, false, -1, 1, 0, 1, 1, '', 0, 0)
+						SimValue('S(FloquetPort2:2,FloquetPort1:2)', 2, 90, false, SimValueID=6855, 3, 0, 2, 0, false, false, -1, 1, 0, 1, 1, '', 0, 0)
+						SimValue('S(FloquetPort1:1,FloquetPort1:1)', 2, 90, false, SimValueID=6856, 3, 0, 2, 0, false, false, -1, 1, 0, 1, 1, '', 0, 0)
+						SimValue('S(FloquetPort1:2,FloquetPort1:2)', 2, 90, false, SimValueID=6857, 3, 0, 2, 0, false, false, -1, 1, 0, 1, 1, '', 0, 0)
 						$begin 'Sweeps'
 							$begin 'Sweep'
 								Variable='Freq'
@@ -25573,15 +25573,15 @@ $begin 'AnsoftProject'
 				$end 'Solution'
 			$end 'SimSetup'
 			$begin 'Version ID Map'
-				V=6793
+				V=6862
 				$begin 'Setup'
 					N='Setup1'
-					V=6793
-					Soln(N='AdaptivePass', V=6793)
-					Soln(N='LastAdaptive', V=6793)
-					Soln(N='Sweep', V=6793)
+					V=6862
+					Soln(N='AdaptivePass', V=6862)
+					Soln(N='LastAdaptive', V=6862)
+					Soln(N='Sweep', V=6862)
 				$end 'Setup'
-				IQM=0
+				IQM=6863
 			$end 'Version ID Map'
 			$begin 'ID Map'
 				$begin 'Setup'
@@ -25605,7 +25605,7 @@ $begin 'AnsoftProject'
 		Notes=$begin_cdata$ $end_cdata$
 		$begin 'AnimationSetups'
 		$end 'AnimationSetups'
-		CacheHeaderFile='HDR127D1086017236738253.tmp'
+		CacheHeaderFile='HDR3119234817238267403.tmp'
 	$end 'HFSSModel'
 	$begin 'DataInstances'
 		DesignEditor='TopLevel'
@@ -25632,7 +25632,7 @@ $begin 'AnsoftProject'
 				DesignInstanceID=1
 				$begin 'WindowPosition'
 					$begin 'EditorWindow'
-						Circuit(Editor3d(View('View Orientation Gadget'=1, WindowPos(5, -1, -1, -9, -38, 96, 96, 1300, 545), OrientationMatrix(-0.113842003047466, -0.182553321123123, 0.288642168045044, 0, 0.341526001691818, -0.0608511082828045, 0.0962140485644341, 0, 0, 0.304255545139313, 0.19242812693119, 0, 1.13841986656189, 0.221650138497353, -5.43105506896973, 1, 0, -2.15075373649597, 2.15075373649597, -1, 1, -1.48495864868164, 11.2804374694824), Drawings[3: 'Rectangle2', 'Box1', 'conductor_2'], 'View Data'('Render Mode'=1, 'Show Ruler'=0, 'Coordinate Systems View Mode'=2, 'CS Triad View Mode'=0, 'Render Facets'=1, GridVisible=2, GridAutoAdjust=1, GridAutoExtents=1, GridType='Rect', GridStyle='Line', NumPixels=30, dXForGrid=0.5, dYForGrid=0.5, dZForGrid=0.5, dRForGrid=0.5, dThetaForGrid=10), ClipPlanes(ClipPlaneOptions(DisableWhenDrawingNewPlane=true, ForceOpqaueForUnclipped=false, ShowClipped=false, Transparency=0, HandleColor=16776960)))))
+						Circuit(Editor3d(View('View Orientation Gadget'=1, WindowPos(5, -1, -1, -9, -38, 96, 96, 1300, 545), OrientationMatrix(-0.113842003047466, -0.182553321123123, 0.288642168045044, 0, 0.341526001691818, -0.0608511082828045, 0.0962140485644341, 0, 0, 0.304255545139313, 0.19242812693119, 0, 1.13841986656189, 0.221650153398514, -5.43105506896973, 1, 0, -2.15075373649597, 2.15075373649597, -1, 1, -1.48495864868164, 11.2804374694824), Drawings[3: 'Rectangle2', 'Box1', 'Cylinder1'], 'View Data'('Render Mode'=1, 'Show Ruler'=0, 'Coordinate Systems View Mode'=2, 'CS Triad View Mode'=0, 'Render Facets'=1, GridVisible=2, GridAutoAdjust=1, GridAutoExtents=1, GridType='Rect', GridStyle='Line', NumPixels=30, dXForGrid=0.5, dYForGrid=0.5, dZForGrid=0.5, dRForGrid=0.5, dThetaForGrid=10), ClipPlanes(ClipPlaneOptions(DisableWhenDrawingNewPlane=true, ForceOpqaueForUnclipped=false, ShowClipped=false, Transparency=0, HandleColor=16776960)))))
 					$end 'EditorWindow'
 				$end 'WindowPosition'
 				$begin 'ReportSetup'
@@ -32400,7 +32400,7 @@ $begin 'AnsoftProject'
 									$end 'Graph2D'
 								$end 'Graph2DsV2'
 								$begin 'PlotDisplayDataManager'
-									NextUniqueID=225
+									NextUniqueID=231
 									MoveBackwards=false
 									$begin 'PlotHeaderDataSource'
 										CompanyName=''
@@ -33958,7 +33958,7 @@ $begin 'AnsoftProject'
 									$end 'DocDefaultAttributes'
 									$begin 'PerViewPlotAttributeStoreMap'
 										$begin 'MapItem'
-											ItemID=224
+											ItemID=230
 											$begin 'PlotAttributeStoreMap'
 												$begin 'MainMapItem'
 													$begin 'SubMapItem'
@@ -34042,7 +34042,7 @@ $begin 'AnsoftProject'
 															X_spc=1000000000
 															X_fwd=4
 															X_fpr=2
-															Y1_spc=0.1
+															Y1_spc=0.05
 															Y1_fwd=3
 															Y1_fpr=2
 														$end 'CartesianCurveGroupLayoutAttribute'
@@ -34160,7 +34160,7 @@ $begin 'AnsoftProject'
 								$begin 'Report2D'
 									$begin 'ViewInfo'
 										$begin 'WrapperView'
-											ID(224)
+											ID(230)
 										$end 'WrapperView'
 										$begin 'WrapperDoc'
 											HiddenDrawings()
@@ -34170,13 +34170,13 @@ $begin 'AnsoftProject'
 													$begin 'MedCamera'
 														$begin 'svrc'
 															svid=4
-															view(224, cam(XYCam(false, true, true, true, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1)))
+															view(230, cam(XYCam(false, true, true, true, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1)))
 														$end 'svrc'
 													$end 'MedCamera'
 												$end 'CurveMed'
 											$end 'DispType'
 										$end 'WrapperDoc'
-										WindowPos(WindowPos(3, -1, -1, -9, -38, 32, 32, 1242, 489))
+										WindowPos(WindowPos(3, -1, -1, -9, -38, 96, 96, 1306, 553))
 									$end 'ViewInfo'
 								$end 'Report2D'
 							$end 'WindowInfoList'
@@ -34222,8 +34222,8 @@ NumFiles= 1
 $begin 'sab'
 Design_0.setup/NativeGeometryFiles/0463998.sab
 BIN000000198864
-ACIS BinaryFileT             SpatialACIS 29.0.1 NTThu Aug 15 22:14:21 2024      ğ?íµ ÷Æ°>»½×Ùß|Û=
-MGZ2RHBCTZ72EJVQ92KFHK_BR899M895M5B4VJA7FY8MBKP6D7CUKER653BDVS66B39UUKP7UACAMJ	body%      ÿÿÿÿÿÿÿÿÿÿÿÿ       ÿÿÿÿ   
+ACIS BinaryFileT             SpatialACIS 29.0.1 NTFri Aug 16 12:28:12 2024      ğ?íµ ÷Æ°>»½×Ùß|Û=
+MMURKHAUYYR_THG7P8N5QEMY3S5FC79QG5B3CQMQEBC_4QJP5Y8J4GXPV6C7CNMQUECQBNC7BFBACJ	body%      ÿÿÿÿÿÿÿÿÿÿÿÿ       ÿÿÿÿ   
 #‡ÙÎ÷Ã?ğÊäŠAVÀ¨ÆK7‰Aà?ğÊäŠAV@+‡ÙÎ÷Ã¿¨ÆK7‰Aà?string_attrib%   name_attrib%   gen%   attrib%   ÿÿÿÿÿÿÿÿ   ÿÿÿÿ    ¦îß ATTRIB_XACIS_NAME%6conductor_2	lump%   ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ       
 #‡ÙÎ÷Ã?ğÊäŠAVÀ¨ÆK7‰Aà?ğÊäŠAV@+‡ÙÎ÷Ã¿¨ÆK7‰Aà?transform%   ÿÿÿÿÿÿÿÿ      ğ?                              ğ?                              ğ?                              ğ?rgb_color%	   st%
    %   ÿÿÿÿÿÿÿÿ          Æîß       ğ?                
@@ -35264,8 +35264,8 @@ D›U²Ù?rh‘í|ÿÀ¨ÆK7‰Aà?%   ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿU	  9	  ÿÿÿÿV	  	   ÿÿ
 # Ansoft project setting data. Non-Ansoft programs
 # should not read the rest of this file.
 B_SETNGS 1.03
-ACIS BinaryFileT             SpatialACIS 29.0.1 NTThu Aug 15 22:14:21 2024      ğ?íµ ÷Æ°>»½×Ùß|Û=
-MG62NUWRA3UFS3PCW6C8Q2UAZK49MY85JSCSMP4PUPC8VP85AFASMF86X6CMBQ46FFBPUKE5UTBQVQtransform%      ÿÿÿÿ      ğ?                              ğ?                              ğ?                              ğ?
+ACIS BinaryFileT             SpatialACIS 29.0.1 NTFri Aug 16 12:28:12 2024      ğ?íµ ÷Æ°>»½×Ùß|Û=
+MJ72VV7MTGT9AYQA66HN42WKX28CVY85PWCSBNAQ5KCUBJMQA7ARKFJ69K8MUQR6EB8TKMG5UTCRVFtransform%      ÿÿÿÿ      ğ?                              ğ?                              ğ?                              ğ?
 point%      ÿÿÿÿÿÿÿÿÿÿÿÿ                        	flag%   ansoft%   attrib%   ÿÿÿÿÿÿÿÿ   ÿÿÿÿ    ¥îÛ     
 color%   %   %   ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ   ¥îÛ ÿ ÿ€
 units%   %   %   ÿÿÿÿÿÿÿÿ          ¥îÛ mm     @@%   %   %   ÿÿÿÿÿÿÿÿÿÿÿÿ       ¥îÛ ÀÀÀ€End-of-ACIS-data
