@@ -68,12 +68,16 @@ validationImages="../../../data/MetasufacesData/testImages/"
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
 Surfacetypes={"Reflective":0,"Transmissive":1}
-#TargetGeometries={"circ":0,"box":1, "cross":2}
+TargetGeometries={"circ":0,"box":1, "cross":2}
 #Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
-TargetGeometries={"circ":[1,0,0],"box":[0,1,0], "cross":[0,0,1]}
+
+#TargetGeometries={"circ":[1,0,0],"box":[0,1,0], "cross":[0,0,1]}
 Bands={"30-40":[1,0,0,0,0,0],"40-50":[0,1,0,0,0,0], 
        "50-60":[0,0,1,0,0,0],"60-70":[0,0,0,1,0,0],"70-80":[0,0,0,0,1,0], 
        "80-90":[1,0,0,0,0,1]}
+
+#Height={"0.252":[1,0,0,0],"0.508":[0,1,0,0], 
+#       "0.787":[0,0,1,0],"1.575":[0,0,0,1]}
 
 
 def arguments(args):
@@ -437,22 +441,22 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         
         
     if (target_val==2): #is cross. Because an added variable to the desing 
-        
         sustratoHeight= json.loads(row["paramValues"].values[0])
         sustratoHeight= sustratoHeight[-2]
-        substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
+        #sustratoHeight = Height[str(sustratoHeight)]
 
+        substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
     else:
     
         sustratoHeight= json.loads(row["paramValues"].values[0])
         sustratoHeight= sustratoHeight[-1]
+        #sustratoHeight = Height[str(sustratoHeight)]
         substrateWidth = 5 # 5 mm size
 
 
 
     #values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth,band])
-    values_array=torch.Tensor([surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth ])
-    values_array = torch.cat((torch.Tensor(geometry),values_array),0)
+    values_array=torch.Tensor([sustratoHeight,geometry])
     values_array = torch.cat((values_array,torch.Tensor(band)),0)
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
@@ -702,7 +706,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV3_FWHM_lowswitch_11Ag-lr1-4_100epc_64.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV3_FWHM_lowswitch_15Ag-lr1-4_100epc_64.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -712,9 +716,9 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":23,
+                                       "-condition_len":17,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":423,
+                                       "-latent":218,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
