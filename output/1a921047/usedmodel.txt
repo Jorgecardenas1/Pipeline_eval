@@ -1,0 +1,7 @@
+original batch:('circ_01_freq_reflect_9f48b9ce-3a1e-11ef-aea3-047c16a08772_0-236_50-60.png',)
+image_size:64
+condition_len:6
+latent:106
+spectra_length:100
+gen_model:models/NETGModelTM_abs__GAN_Bands_15May_110epc_64_6conds_zprod.pth
+one_hot_encoding:0

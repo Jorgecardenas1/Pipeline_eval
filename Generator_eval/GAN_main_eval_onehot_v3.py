@@ -456,7 +456,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
 
 
     #values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth,band])
-    values_array=torch.Tensor([sustratoHeight,geometry])
+    values_array=torch.Tensor([sustratoHeight])
     values_array = torch.cat((values_array,torch.Tensor(band)),0)
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side

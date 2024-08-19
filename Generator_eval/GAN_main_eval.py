@@ -614,7 +614,7 @@ def main(args):
     generator_mapping_size=parser.image_size
     output_channels=3
 
-    netG = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
+    netG = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels, leakyRelu_flag=False)
     netG.load_state_dict(torch.load(parser.gen_model))
     netG.eval()
     netG.cuda()
