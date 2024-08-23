@@ -67,9 +67,15 @@ validationImages="../../../data/MetasufacesData/testImages/"
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
 Surfacetypes={"Reflective":0,"Transmissive":1}
-TargetGeometries={"circ":0,"box":1, "cross":2}
-Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
+#TargetGeometries={"circ":0,"box":1, "cross":2}
+TargetGeometries={"circ":[1,0,0],"box":[0,1,0], "cross":[0,0,1]}
 
+#Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
+
+
+Bands={"30-40":[1,0,0,0,0,0],"40-50":[0,1,0,0,0,0], 
+       "50-60":[0,0,1,0,0,0],"60-70":[0,0,0,1,0,0],"70-80":[0,0,0,0,1,0], 
+       "80-90":[1,0,0,0,0,1]}
 
 
 def arguments(args):
@@ -111,7 +117,7 @@ def arguments(args):
     parser.one_hot_encoding = args["-one_hot_encoding"] #if used OHE Incliuding 3 top frequencies
     parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
     parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
-    parser.GAN_version=True
+    parser.GAN_version=False
     parser.output_channels=args["-output_channels"]
 
     print('Check arguments function: Done.')
@@ -144,14 +150,14 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
     #Feature extraction
     lowerBound=[0,80,80]
-    epsilon_coeff=0.0500
+    epsilon_coeff=0.00200
     threshold_Value=0
     contour_name="RED"
     red_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
 
     upperBound=[90, 255,255]
     lowerBound=[36, 100, 0]
-    epsilon_coeff=0.0500
+    epsilon_coeff=0.002500
     threshold_Value=100
     contour_name="GREEN"
 
@@ -159,7 +165,7 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
     upperBound=[255,255,255]
     lowerBound=[20,0,0]
-    epsilon_coeff=0.0500
+    epsilon_coeff=0.002500
     threshold_Value=0
     contour_name="BLUE"
 
@@ -250,27 +256,27 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
             train = pd.read_csv(file_name)
 
             # # the band is divided in chunks 
-            if Bands[str(band_name)]==0:
+            if Bands[str(band_name)]==[1,0,0,0,0,0]:
                 
                 train=train.loc[1:100]
 
-            elif Bands[str(band_name)]==1:
+            elif Bands[str(band_name)]==[0,1,0,0,0,0]:
                 
                 train=train.loc[101:200]
 
-            elif Bands[str(band_name)]==2:
+            elif Bands[str(band_name)]==[0,0,1,0,0,0]:
                 
                 train=train.loc[201:300]
 
-            elif Bands[str(band_name)]==3:
+            elif Bands[str(band_name)]==[0,0,0,1,0,0]:
                 
                 train=train.loc[301:400]
 
-            elif Bands[str(band_name)]==4:
+            elif Bands[str(band_name)]==[0,0,0,0,1,0]:
                 
                 train=train.loc[401:500]
 
-            elif Bands[str(band_name)]==5:
+            elif Bands[str(band_name)]==[0,0,0,0,0,1]:
 
                 train=train.loc[501:600]
             
@@ -324,19 +330,20 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
             bands_batch.append(band_name)
             labels_conditions.append(labels) # to create stack of tensors
 
-            latent_tensor=torch.randn(1,parser.latent)
 
             if parser.GAN_version:
+                latent_tensor=torch.randn(1,parser.latent)
 
                 noise = torch.cat((noise.to(device),latent_tensor.to(device)))
             else:
             
-                
+                latent_tensor=torch.randn(parser.latent)
+
                 """multiply noise and labels to get a single vector"""
-                #tensor1=torch.mul(labels.to(device),latent_tensor.to(device) )
+                tensor1=torch.mul(labels.to(device),latent_tensor.to(device) )
         
                 """concat noise and labels adjacent"""
-                tensor1 = torch.cat((conditional_data.to(device),tensorA.to(device),latent_tensor.to(device),)) #concat side
+                #tensor1 = torch.cat((labels.to(device),latent_tensor.to(device),)) #concat side
 
                 #preparing noise in the right format to be sent for generation
                 tensor2 = tensor1.unsqueeze(1).unsqueeze(1).unsqueeze(1).to(device)
@@ -445,14 +452,14 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
 
 
 
-    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth,band])
-    
-    """condition with top frequencies"""
+    values_array=torch.Tensor([sustratoHeight])
+    values_array = torch.cat((values_array,torch.Tensor(geometry),torch.Tensor(band)),0)
+    """if wanting to add top frequencies to the conditions"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
 
-    """ conditions no top frequencies"""
+    """ Values array solo pouede llenarse con n+umero y no con textos"""
     values_array = torch.Tensor(values_array)
-    
+    print(values_array.shape)
     return values_array,sustratoHeight
 
 print('Check set_conditioning function: Done.')
@@ -493,10 +500,7 @@ def test(netG,device):
             fake = netG(label_conditions,testTensor,parser.batch_size).detach().cpu()
 
         else:
-
             noise = noise.type(torch.float).to(device) #Generator input espectro+ruido
-            conditions = torch.stack(labels).type(torch.float).to(device) #Discrminator Conditioning spectra
-            
             t_np = torch.squeeze(noise,(2,3)).cpu().numpy() #convert to Numpy array
 
             fake = netG(testTensor).detach().cpu()
@@ -663,17 +667,18 @@ def main(args):
 
         # Sizes for discrimnator and generator
         """Z product"""
-        #input_size=parser.spectra_length+parser.condition_len
+        input_size=parser.spectra_length+parser.condition_len
         
         """this for Z concat"""
-        input_size=parser.spectra_length+parser.condition_len+parser.latent
+        #input_size=parser.spectra_length+parser.condition_len+parser.latent
 
         generator_mapping_size=64
         # Create models
         """leakyRelu_flag=False use leaky 
         flag=True use Relu"""
         netG = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, parser.output_channels,leakyRelu_flag=False)
-        netG.load_state_dict(torch.load(parser.gen_model))
+        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        #netG.load_state_dict(torch.load(parser.gen_model))
         netG.eval()
         netG.cuda()
 
@@ -693,7 +698,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_FWHM_Bands_9Ag-lr1-4_100epc_64.pth",
+    args =  {"-gen_model":"models/modelnetG70.pt",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -703,9 +708,9 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":16,
+                                       "-condition_len":19,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":316,
+                                       "-latent":119,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,

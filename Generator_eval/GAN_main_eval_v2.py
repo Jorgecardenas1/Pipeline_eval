@@ -683,7 +683,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_Bands_2Ag-lr1-4_100epc_64.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_Bands_19Ag-lr1-4_100epc_64.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -695,7 +695,7 @@ if __name__ == "__main__":
                                        "-learning_rate":5e-5,
                                        "-condition_len":7,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":157,
+                                       "-latent":257,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,

@@ -85,6 +85,7 @@ def arguments(args):
     parser.add_argument("-one_hot_encoding",type=int)
     parser.add_argument("-output_path",type=str) #This defines the length of our conditioning vector
     parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-output_channels",type=int)
 
 
     parser.run_name = args["-run_name"]
@@ -104,6 +105,7 @@ def arguments(args):
     parser.one_hot_encoding = args["-one_hot_encoding"] #if used OHE Incliuding 3 top frequencies
     parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
     parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
+    parser.output_channels=args["-output_channels"]
 
     print('Check arguments function: Done.')
 
@@ -135,14 +137,14 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
     #Feature extraction
     lowerBound=[0,80,80]
-    epsilon_coeff=0.0500
+    epsilon_coeff=0.002500
     threshold_Value=0
     contour_name="RED"
     red_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
 
     upperBound=[90, 255,255]
     lowerBound=[36, 100, 0]
-    epsilon_coeff=0.0500
+    epsilon_coeff=0.002500
     threshold_Value=100
     contour_name="GREEN"
 
@@ -150,7 +152,7 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
     upperBound=[255,255,255]
     lowerBound=[20,0,0]
-    epsilon_coeff=0.0500
+    epsilon_coeff=0.002500
     threshold_Value=0
     contour_name="BLUE"
 
@@ -244,6 +246,10 @@ def prepare_data(names, device,df,classes,classes_types):
         band_name=name.split('_')[-1].split('.')[0]#
         batch=name.split('_')[4]
 
+        version_batch=1
+        if batch=="v2":
+            version_batch=2
+            batch=name.split('_')[5]
 
         for file_name in glob.glob(DataPath+batch+'/files/'+'/'+parser.metricType+'*'+series+'.csv'): 
             #loading the absorption data
@@ -259,50 +265,40 @@ def prepare_data(names, device,df,classes,classes_types):
                 train=train.loc[101:200]
 
             elif Bands[str(band_name)]==2:
-                
-                train=train.loc[201:300]
-
+                if version_batch==1:
+                    train=train.loc[201:300]
+                else:
+                    train=train.loc[1:100]
             elif Bands[str(band_name)]==3:
-                
-                train=train.loc[301:400]
+                if version_batch==1:
+                    train=train.loc[301:400]
+                else:
+                    train=train.loc[101:200]
 
             elif Bands[str(band_name)]==4:
-                
-                train=train.loc[401:500]
+                if version_batch==1: 
+                    train=train.loc[401:500]
+                else:
+                    train=train.loc[201:300]
 
             elif Bands[str(band_name)]==5:
 
                 train=train.loc[501:600]
             
             values=np.array(train.values.T)
-            values=np.around(values, decimals=2, out=None)
+            values=np.around(values, decimals=3, out=None)
 
             all_values=torch.from_numpy(values[1])
             all_frequencies=torch.from_numpy(values[0])
             _, indices  = torch.topk(all_values, 3)
 
-            top_frequencies = all_frequencies[indices]
 
-            if parser.one_hot_encoding == 1:  
-                conditional_data,sustratoHeight = set_conditioning_one_hot(df,
+            conditional_data,sustratoHeight = set_conditioning(df,
                                                     name,
                                                     classes[idx],
                                                     classes_types[idx],
                                                     Bands[str(band_name)],
-                                                    top_frequencies,
-                                                    substrate_encoder,
-                                                    materials_encoder,
-                                                    surfaceType_encoder,
-                                                    TargetGeometries_encoder,
-                                                    bands_encoder)
-
-            else:
-                conditional_data,sustratoHeight = set_conditioning(df,
-                                                    name,
-                                                    classes[idx],
-                                                    classes_types[idx],
-                                                    Bands[str(band_name)],
-                                                    top_frequencies,)
+                                                    None,)
 
 
             bands_batch.append(band_name)
@@ -392,6 +388,10 @@ print('Check prepare_data function: Done.')
 def set_conditioning(df,name,target,categories,band_name,top_freqs):
     series=name.split('_')[-2]
     batch=name.split('_')[4]
+
+    if batch=="v2":
+        batch=name.split('_')[5]
+
     iteration=series.split('-')[-1]
     row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
 
@@ -421,23 +421,24 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         
         
     if (target_val==2): #is cross. Because an added variable to the desing 
-        
+      
         sustratoHeight= json.loads(row["paramValues"].values[0])
         sustratoHeight= sustratoHeight[-2]
+        substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
     else:
     
         sustratoHeight= json.loads(row["paramValues"].values[0])
         sustratoHeight= sustratoHeight[-1]
+        substrateWidth = 5 # 5 mm size
         
 
-
-    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
+    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth ,band])
     
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
 
     """ conditions no top frequencies"""
-    values_array = torch.Tensor(values_array)
+    #values_array = torch.Tensor(values_array)
     
     return values_array,sustratoHeight
 
@@ -449,7 +450,7 @@ def test(netG,device):
     
     vdataloader = utils.get_data_with_labels(parser.image_size, parser.image_size,1,
                                             validationImages,parser.batch_size, 
-                                            drop_last=True,
+                                            drop_last=False,
                                             filter="30-40")
     
     for i, data in enumerate(vdataloader, 0):
@@ -614,8 +615,14 @@ def main(args):
     generator_mapping_size=parser.image_size
     output_channels=3
 
-    netG = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels, leakyRelu_flag=False)
-    netG.load_state_dict(torch.load(parser.gen_model))
+    netG = Stack.Generator(trainer.gpu_number, 
+                           input_size,
+                            generator_mapping_size, 
+                            parser.output_channels,
+                            leakyRelu_flag=False)
+    
+    netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+    #netG.load_state_dict(torch.load(parser.gen_model))
     netG.eval()
     netG.cuda()
 
@@ -631,7 +638,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_15May_110epc_64_6conds_zprod.pth",
+    args =  {"-gen_model":"models/modelnetG30.pt",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -641,9 +648,10 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":6,
+                                       "-condition_len":7,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":106,
+                                       "-latent":107,
+                                       "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
                                        "-working_path":"./Generator_eval/",
