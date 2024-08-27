@@ -265,7 +265,7 @@ $begin 'AnsoftProject'
 		AverageSarMethod=0
 		UseAutoDCThickness=true
 		HaveZwaveSupport=true
-		DCThicknessObjects(464726, '"<Effective>"')
+		DCThicknessObjects(462180, '"<Effective>"')
 		$begin 'OutputVariable'
 			NextUniqueID=6
 			MoveBackwards=false
@@ -324,7 +324,7 @@ $begin 'AnsoftProject'
 			WorkingCS=1
 			$begin 'GeometryCore'
 				BlockVersionID=3
-				DataVersion=111
+				DataVersion=113
 				NativeKernel='ACIS'
 				NativeKernelVersionID=13
 				Units='mm'
@@ -618,7 +618,7 @@ $begin 'AnsoftProject'
 						$begin 'GeometryPart'
 							$begin 'Attributes'
 								Name='conductor_1'
-								Flags='NonModel#'
+								Flags=''
 								Color='(255 0 0)'
 								Transparency=0
 								PartCoordinateSystem=1
@@ -18448,7 +18448,7 @@ $begin 'AnsoftProject'
 						$begin 'GeometryPart'
 							$begin 'Attributes'
 								Name='Cylinder1'
-								Flags=''
+								Flags='NonModel#'
 								Color='(255 0 0)'
 								Transparency=0
 								PartCoordinateSystem=1
@@ -19030,7 +19030,7 @@ $begin 'AnsoftProject'
 			$begin 'MeshSettings'
 				$begin 'GlobalSurfApproximation'
 					CurvedSurfaceApproxChoice='UseSlider'
-					SliderMeshSettings=7
+					SliderMeshSettings=1
 				$end 'GlobalSurfApproximation'
 				$begin 'GlobalCurvilinear'
 					Apply=false
@@ -19046,8 +19046,23 @@ $begin 'AnsoftProject'
 				AllowPhiForLayeredGeometry=true
 			$end 'MeshSettings'
 			$begin 'MeshOperations'
-				NextUniqueID=0
+				NextUniqueID=3
 				MoveBackwards=false
+				$begin 'ApplyCurvilinear1'
+					ID=1
+					Type='Curvilinear'
+					IsComponent=false
+					Objects(462180)
+					Apply=true
+				$end 'ApplyCurvilinear1'
+				$begin 'ModelResolution1'
+					ID=2
+					Type='DefeatureBased'
+					IsComponent=false
+					Objects(462180)
+					UseAutoLength=false
+					DefeatureLength='0.0392699081697681mm'
+				$end 'ModelResolution1'
 			$end 'MeshOperations'
 		$end 'MeshSetup'
 		$begin 'AnalysisSetup'
@@ -19062,10 +19077,10 @@ $begin 'AnsoftProject'
 					ID=0
 					SetupType='HfssDriven'
 					SolveType='Single'
-					Frequency='75GHz'
+					Frequency='60GHz'
 					MaxDeltaS=0.01
 					UseMatrixConv=false
-					MaximumPasses=10
+					MaximumPasses=11
 					MinimumPasses=3
 					MinimumConvergedPasses=3
 					PercentRefinement=30
@@ -19089,6 +19104,8 @@ $begin 'AnsoftProject'
 					EnhancedLowFreqAccuracy=false
 					SaveRadFieldsOnly=false
 					SaveAnyFields=true
+					CacheSaveKind='Delta'
+					ConstantDelta='0s'
 					IESolverType='Auto'
 					LambdaTargetForIESolver=0.15
 					UseDefaultLambdaTgtForIESolver=true
@@ -19107,7 +19124,7 @@ $begin 'AnsoftProject'
 							Type='Interpolating'
 							SaveFields=false
 							SaveRadFields=false
-							InterpTolerance=0.5
+							InterpTolerance=0.1
 							InterpMaxSolns=250
 							InterpMinSolns=0
 							InterpMinSubranges=1
@@ -19147,6 +19164,7 @@ $begin 'AnsoftProject'
 		$begin 'PortFieldDisplay'
 			$begin 'PortFieldDisplay'
 				ScaleFactor=5
+				Frequency='60GHz'
 			$end 'PortFieldDisplay'
 		$end 'PortFieldDisplay'
 		$begin 'FieldsReporter'
@@ -19156,6 +19174,8 @@ $begin 'AnsoftProject'
 			$begin 'PlotDefaults'
 				Default_SolutionId=44
 				Default_PlotFolder='Automatic'
+				Default_Phase='0deg'
+				Default_Freq='60GHz'
 			$end 'PlotDefaults'
 			$begin 'FieldsPlotManagerID'
 				NextUniqueID=0
@@ -19266,7 +19286,7 @@ $begin 'AnsoftProject'
 							$end 'Sweep'
 							$begin 'Sweep'
 								Variable='Freq'
-								Column='75GHz'
+								Column='30GHz'
 								Units='GHz'
 							$end 'Sweep'
 							$begin 'PostprocessSweep'
@@ -19305,6 +19325,21 @@ $begin 'AnsoftProject'
 								Increment=0.0872664625997165
 								CreateIndexedSubsweepFlag=false
 							$end 'PostprocessSweep'
+							$begin 'Sweep'
+								Variable='Xsize'
+								Column='5mm'
+								Units='mm'
+							$end 'Sweep'
+							$begin 'Sweep'
+								Variable='Ysize'
+								Column='5mm'
+								Units='mm'
+							$end 'Sweep'
+							$begin 'Sweep'
+								Variable='H'
+								Column='0.787mm'
+								Units='mm'
+							$end 'Sweep'
 						$end 'Sweeps'
 						IsPortOnly=false
 					$end 'SimDataExtractor'
@@ -19316,7 +19351,7 @@ $begin 'AnsoftProject'
 						$begin 'Sweeps'
 							$begin 'Sweep'
 								Variable='Freq'
-								Column='75GHz'
+								Column='60GHz'
 								Units='GHz'
 							$end 'Sweep'
 							$begin 'PostprocessSweep'
@@ -19355,6 +19390,21 @@ $begin 'AnsoftProject'
 								Increment=0.0872664625997165
 								CreateIndexedSubsweepFlag=false
 							$end 'PostprocessSweep'
+							$begin 'Sweep'
+								Variable='Xsize'
+								Column='5mm'
+								Units='mm'
+							$end 'Sweep'
+							$begin 'Sweep'
+								Variable='Ysize'
+								Column='5mm'
+								Units='mm'
+							$end 'Sweep'
+							$begin 'Sweep'
+								Variable='H'
+								Column='0.787mm'
+								Units='mm'
+							$end 'Sweep'
 						$end 'Sweeps'
 						IsPortOnly=false
 					$end 'SimDataExtractor'
@@ -19434,15 +19484,15 @@ $begin 'AnsoftProject'
 				$end 'Solution'
 			$end 'SimSetup'
 			$begin 'Version ID Map'
-				V=6537
+				V=8406
 				$begin 'Setup'
 					N='Setup1'
-					V=6537
-					Soln(N='AdaptivePass', V=6537)
-					Soln(N='LastAdaptive', V=6537)
-					Soln(N='Sweep', V=6537)
+					V=8406
+					Soln(N='AdaptivePass', V=8406)
+					Soln(N='LastAdaptive', V=8406)
+					Soln(N='Sweep', V=8406)
 				$end 'Setup'
-				IQM=6538
+				IQM=8407
 			$end 'Version ID Map'
 			$begin 'ID Map'
 				$begin 'Setup'
@@ -19493,7 +19543,7 @@ $begin 'AnsoftProject'
 				DesignInstanceID=1
 				$begin 'WindowPosition'
 					$begin 'EditorWindow'
-						Circuit(Editor3d(View('View Orientation Gadget'=1, WindowPos(5, -1, -1, -9, -38, 96, 96, 1300, 545), OrientationMatrix(-0.113842017948627, -0.182553365826607, 0.288642168045044, 0, 0.341526001691818, -0.060851126909256, 0.0962140709161758, 0, 4.69154807348559e-17, 0.304255574941635, 0.192428141832352, 0, 1.13842010498047, 0.17920657992363, -5.50811862945557, 1, 0, -2.15075373649597, 2.15075373649597, -1, 1, -1.45885705947876, 11.3547782897949), Drawings[3: 'Rectangle2', 'Box1', 'Cylinder1'], 'View Data'('Render Mode'=1, 'Show Ruler'=0, 'Coordinate Systems View Mode'=2, 'CS Triad View Mode'=0, 'Render Facets'=1, GridVisible=2, GridAutoAdjust=1, GridAutoExtents=1, GridType='Rect', GridStyle='Line', NumPixels=30, dXForGrid=0.5, dYForGrid=0.5, dZForGrid=0.5, dRForGrid=0.5, dThetaForGrid=10), ClipPlanes(ClipPlaneOptions(DisableWhenDrawingNewPlane=true, ForceOpqaueForUnclipped=false, ShowClipped=false, Transparency=0, HandleColor=16776960)))))
+						Circuit(Editor3d(View('View Orientation Gadget'=1, WindowPos(3, -1, -1, -9, -38, 96, 96, 1300, 545), OrientationMatrix(-0.113842017948627, -0.182553350925446, 0.288642168045044, 0, 0.341526001691818, -0.0608511231839657, 0.0962140709161758, 0, 0, 0.304255545139313, 0.192428141832352, 0, 1.13842010498047, 0.179206535220146, -5.50811862945557, 1, 0, -1.66201555728912, 1.66201555728912, -1, 1, -1.45885753631592, 11.3547782897949), Drawings[5: 'Rectangle2', 'Box1', 'conductor_1', 'ApplyCurvilinear1', 'ModelResolution1'], 'View Data'('Render Mode'=1, 'Show Ruler'=0, 'Coordinate Systems View Mode'=2, 'CS Triad View Mode'=0, 'Render Facets'=1, GridVisible=2, GridAutoAdjust=1, GridAutoExtents=1, GridType='Rect', GridStyle='Line', NumPixels=30, dXForGrid=0.2, dYForGrid=0.2, dZForGrid=0.2, dRForGrid=0.2, dThetaForGrid=10), ClipPlanes(ClipPlaneOptions(DisableWhenDrawingNewPlane=true, ForceOpqaueForUnclipped=false, ShowClipped=false, Transparency=0, HandleColor=16776960)))))
 					$end 'EditorWindow'
 				$end 'WindowPosition'
 				$begin 'ReportSetup'
@@ -19515,7 +19565,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=0
-									VersionID=850
+									VersionID=910
 									Name='transmittance'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -19597,7 +19647,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=2
-									VersionID=851
+									VersionID=911
 									Name='transmittanceTM'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -19683,7 +19733,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=3
-									VersionID=852
+									VersionID=912
 									Name='dB(S(FloquetPort1:1,FloquetPort1:1))'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -19765,7 +19815,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=6
-									VersionID=853
+									VersionID=913
 									Name='dB(S(FloquetPort2:1,FloquetPort1:1))'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -19851,7 +19901,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=7
-									VersionID=854
+									VersionID=914
 									Name='dB(S(FloquetPort1:2,FloquetPort1:2))'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -19933,7 +19983,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=8
-									VersionID=855
+									VersionID=915
 									Name='dB(S(FloquetPort2:2,FloquetPort1:2))'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -20019,7 +20069,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=10
-									VersionID=856
+									VersionID=916
 									Name='ReflectanceTE'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -20101,7 +20151,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=11
-									VersionID=857
+									VersionID=917
 									Name='ReflectanceTM'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -20187,7 +20237,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=13
-									VersionID=858
+									VersionID=918
 									Name='AbsorbanceTM'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -20269,7 +20319,7 @@ $begin 'AnsoftProject'
 										$end 'DESIGN_SOLUTION_SIM_VALUE_CONTEXT'
 									$end 'DesignSolnDefn'
 									ID=15
-									VersionID=859
+									VersionID=919
 									Name='AbsorbanceTE'
 									TieNameToExpr=true
 									$begin 'Components'
@@ -20343,7 +20393,7 @@ $begin 'AnsoftProject'
 						NextUniqueID=16
 						MoveBackwards=false
 						$begin 'NextVersID'
-							NextUniqueID=860
+							NextUniqueID=920
 							MoveBackwards=false
 						$end 'NextVersID'
 					$end 'ReportManager'
@@ -27826,10 +27876,10 @@ $begin 'AnsoftProject'
 														DataSourceID=4
 														$begin 'BasicLayoutAttribute'
 															$begin 'LayoutRect'
-																Top=1380
-																Left=704
-																Bottom=9711
-																Right=8809
+																Top=1614
+																Left=1060
+																Bottom=9673
+																Right=8152
 															$end 'LayoutRect'
 														$end 'BasicLayoutAttribute'
 													$end 'SubMapItem'
@@ -27837,10 +27887,10 @@ $begin 'AnsoftProject'
 														DataSourceID=28
 														$begin 'BasicLayoutAttribute'
 															$begin 'LayoutRect'
-																Top=1380
-																Left=704
-																Bottom=9711
-																Right=8809
+																Top=1614
+																Left=1060
+																Bottom=9673
+																Right=8152
 															$end 'LayoutRect'
 														$end 'BasicLayoutAttribute'
 													$end 'SubMapItem'
@@ -27848,10 +27898,10 @@ $begin 'AnsoftProject'
 														DataSourceID=35
 														$begin 'BasicLayoutAttribute'
 															$begin 'LayoutRect'
-																Top=697
+																Top=807
 																Left=75
 																Bottom=9925
-																Right=478
+																Right=715
 															$end 'LayoutRect'
 														$end 'BasicLayoutAttribute'
 													$end 'SubMapItem'
@@ -27861,16 +27911,16 @@ $begin 'AnsoftProject'
 														DataSourceID=31
 														$begin 'CartesianAxisLayoutAttribute'
 															$begin 'AxisRect'
-																Top=697
-																Left=8809
+																Top=807
+																Left=8152
 																Bottom=9925
 																Right=9925
 															$end 'AxisRect'
 															$begin 'GridRect'
-																Top=1380
-																Left=704
-																Bottom=9711
-																Right=8809
+																Top=1614
+																Left=1060
+																Bottom=9673
+																Right=8152
 															$end 'GridRect'
 															AxisCollapsed=false
 															AxisExpandCollapseByUser=false
@@ -27880,19 +27930,19 @@ $begin 'AnsoftProject'
 														DataSourceID=32
 														$begin 'CartesianAxisLayoutAttribute'
 															$begin 'AxisRect'
-																Top=697
-																Left=704
-																Bottom=1380
-																Right=8809
+																Top=807
+																Left=1060
+																Bottom=1614
+																Right=8152
 															$end 'AxisRect'
 															$begin 'GridRect'
-																Top=1380
-																Left=704
-																Bottom=9711
-																Right=8809
+																Top=1614
+																Left=1060
+																Bottom=9673
+																Right=8152
 															$end 'GridRect'
 															AxisCollapsed=false
-															AxisExpandCollapseByUser=false
+															AxisExpandCollapseByUser=true
 														$end 'CartesianAxisLayoutAttribute'
 													$end 'SubMapItem'
 												$end 'MainMapItem'
@@ -27900,10 +27950,10 @@ $begin 'AnsoftProject'
 													$begin 'SubMapItem'
 														DataSourceID=4
 														$begin 'CartesianCurveGroupLayoutAttribute'
-															X_spc=1000000000
+															X_spc=2000000000
 															X_fwd=4
 															X_fpr=2
-															Y1_spc=0.1
+															Y1_spc=0.2
 															Y1_fwd=3
 															Y1_fpr=2
 														$end 'CartesianCurveGroupLayoutAttribute'
@@ -27916,9 +27966,9 @@ $begin 'AnsoftProject'
 															$begin 'Dock_0'
 																$begin 'OverlayLayoutAttribute'
 																	$begin 'BoundingRect'
-																		Top=7039
+																		Top=6984
 																		Left=564
-																		Bottom=7661
+																		Bottom=7716
 																		Right=8064
 																	$end 'BoundingRect'
 																	ModifySize=false
@@ -27928,7 +27978,7 @@ $begin 'AnsoftProject'
 															$begin 'Dock_1'
 																$begin 'OverlayLayoutAttribute'
 																	$begin 'BoundingRect'
-																		Top=9378
+																		Top=9268
 																		Left=0
 																		Bottom=10000
 																		Right=10000
@@ -27942,7 +27992,7 @@ $begin 'AnsoftProject'
 																	$begin 'BoundingRect'
 																		Top=0
 																		Left=0
-																		Bottom=622
+																		Bottom=732
 																		Right=10000
 																	$end 'BoundingRect'
 																	ModifySize=false
@@ -28037,7 +28087,7 @@ $begin 'AnsoftProject'
 												$end 'CurveMed'
 											$end 'DispType'
 										$end 'WrapperDoc'
-										WindowPos(WindowPos(3, -1, -1, -9, -38, 32, 32, 1242, 489))
+										WindowPos(WindowPos(5, -1, -1, -9, -38, 32, 32, 1242, 489))
 									$end 'ViewInfo'
 								$end 'Report2D'
 							$end 'WindowInfoList'
@@ -28083,8 +28133,8 @@ NumFiles= 1
 $begin 'sab'
 Design_0.setup/NativeGeometryFiles/0462180.sab
 BIN000000148268
-ACIS BinaryFileT             SpatialACIS 29.0.1 NTTue Aug 20 16:59:29 2024      ğ?íµ ÷Æ°>»½×Ùß|Û=
-MZ2V6ZVC2KTNDXKVB5Z3XQM9N_7VMXG76DDRVJ6N7KCG4KJQ7UC4CFPQU2DKCNM59YDSKR65DU8VMQ	body%      ÿÿÿÿÿÿÿÿÿÿÿÿ       ÿÿÿÿ   
+ACIS BinaryFileT             SpatialACIS 29.0.1 NTFri Aug 23 18:27:51 2024      ğ?íµ ÷Æ°>»½×Ùß|Û=
+MZ5W5_9RDCN6JPMWVMHSD3VFAP5VCYJQ5_DUKPAP3UBRKM2Q8YCRCNJPBKANKQEP23CQKRCNDQ8_CG	body%      ÿÿÿÿÿÿÿÿÿÿÿÿ       ÿÿÿÿ   
 È¡E¶ó}á?òÊäŠAvÀÈv¾Ÿ/é?òÊäŠAÆ@Ê¡E¶ó}á¿Èv¾Ÿ/é?string_attrib%   name_attrib%   gen%   attrib%   ÿÿÿÿÿÿÿÿ   ÿÿÿÿ    ¦îß ATTRIB_XACIS_NAME%6conductor_1	lump%   ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ       
 È¡E¶ó}á?òÊäŠAvÀÈv¾Ÿ/é?òÊäŠAÆ@Ê¡E¶ó}á¿Èv¾Ÿ/é?transform%   ÿÿÿÿÿÿÿÿ      ğ?                              ğ?                              ğ?                              ğ?rgb_color%	   st%
    %   ÿÿÿÿÿÿÿÿ          Æîß       ğ?                
@@ -28491,8 +28541,8 @@ Wâ&/æ?®h‘í|_ÀÈv¾Ÿ/é?%   ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ:  V  ÿÿÿÿW  	   ÿÿ
 # Ansoft project setting data. Non-Ansoft programs
 # should not read the rest of this file.
 B_SETNGS 1.03
-ACIS BinaryFileT             SpatialACIS 29.0.1 NTTue Aug 20 16:59:29 2024      ğ?íµ ÷Æ°>»½×Ùß|Û=
-MP9FUA9337J3GRUXN2HMH53M7R8JCZGPN9AUUE8NWABNUK6QC3DGMEJP83BQUEVPWACT3PM55QC3CGtransform%      ÿÿÿÿ      ğ?                              ğ?                              ğ?                              ğ?
+ACIS BinaryFileT             SpatialACIS 29.0.1 NTFri Aug 23 18:27:51 2024      ğ?íµ ÷Æ°>»½×Ùß|Û=
+M7XWDUQV3P4U_ZC5PC2E55N5T46S38K7DSCKMQ85AK8QVSPQ3Q8JVJ6N4Q8QKNC5CK8RUFJQDKAQCPtransform%      ÿÿÿÿ      ğ?                              ğ?                              ğ?                              ğ?
 point%      ÿÿÿÿÿÿÿÿÿÿÿÿ                        	flag%   ansoft%   attrib%   ÿÿÿÿÿÿÿÿ   ÿÿÿÿ    ¥îÛ     
 color%   %   %   ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ   ¥îÛ ÿ ÿ€
 units%   %   %   ÿÿÿÿÿÿÿÿ          ¥îÛ mm     @@%   %   %   ÿÿÿÿÿÿÿÿÿÿÿÿ       ¥îÛ ÀÀÀ€End-of-ACIS-data
