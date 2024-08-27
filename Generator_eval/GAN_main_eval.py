@@ -625,8 +625,8 @@ def main(args):
                             parser.output_channels,
                             leakyRelu_flag=False)
     
-    netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
-    #netG.load_state_dict(torch.load(parser.gen_model))
+    #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+    netG.load_state_dict(torch.load(parser.gen_model))
     netG.eval()
     netG.cuda()
 
@@ -642,7 +642,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG70.pt",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_26Ag_200epc_64_7conds_prod_Adam.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,

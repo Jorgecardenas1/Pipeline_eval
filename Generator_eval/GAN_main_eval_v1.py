@@ -579,7 +579,7 @@ if __name__ == "__main__":
     name = str(uuid.uuid4())[:8]
 
             
-    args =  {"-gen_model":"models/modelnetG40.pt",
+    args =  {"-gen_model":"models/modelnetG200.pt",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
