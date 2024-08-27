@@ -63,7 +63,9 @@ Materials={"copper":0,"pec":1}
 Surfacetypes={"Reflective":0,"Transmissive":1}
 TargetGeometries={"circ":0,"box":1, "cross":2}
 Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
-
+#Bands={"30-40":[1,0,0,0,0,0],"40-50":[0,1,0,0,0,0], 
+#       "50-60":[0,0,1,0,0,0],"60-70":[0,0,0,1,0,0],"70-80":[0,0,0,0,1,0], 
+#       "80-90":[1,0,0,0,0,1]}
 
 
 def arguments(args):
@@ -238,7 +240,7 @@ def prepare_data(names, device,df,classes,classes_types):
     materials_encoder=encoders(Materials)
     surfaceType_encoder=encoders(Surfacetypes)
     TargetGeometries_encoder=encoders(TargetGeometries)
-    bands_encoder=encoders(Bands)
+    #bands_encoder=encoders(Bands)
 
     for idx,name in enumerate(names):
 
@@ -317,6 +319,7 @@ def prepare_data(names, device,df,classes,classes_types):
     
             """concat noise and labels adjacent"""
             #tensor1 = torch.cat((conditional_data.to(device),tensorA.to(device),latent_tensor.to(device),)) #concat side
+            print(tensor1.shape)
             #un vector que inclue
             #datos desde el dataset y otros datos aleatorios latentes.
 
@@ -432,8 +435,8 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         substrateWidth = 5 # 5 mm size
         
 
-    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth ,band])
-    
+    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth,band ])
+    #values_array = torch.cat((values_array,torch.Tensor(band)),0)    #values_array = torch.cat((values_array,torch.Tensor(band)),0)
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
 
@@ -463,8 +466,9 @@ def test(netG,device):
         inputs = inputs.to(device)
         classes = classes.to(device)
         _, _, noise,tensor1,real_values,sustratoHeight = prepare_data(names, device,df,classes,classes_types)
-
+        
         testTensor = noise.type(torch.float).to(device)
+        #testTensor = torch.nn.functional.normalize(testTensor, p=2.0, dim=1, eps=1e-5, out=None)
 
         ##Eval
         fake = netG(testTensor).detach().cpu()
@@ -638,7 +642,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG30.pt",
+    args =  {"-gen_model":"models/modelnetG70.pt",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -654,7 +658,7 @@ if __name__ == "__main__":
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
-                                       "-working_path":"./Generator_eval/",
+                                       "-working_path":"./Generator_eval/", 
                                        "-output_path":"../output/"+name} #OJO etepath lo lee el otro main
 
     main(args)

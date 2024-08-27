@@ -52,7 +52,6 @@ parser = argparse.ArgumentParser()
 # simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
 boxImagesPath="../../../data/MetasufacesData/Images-512-Bands/"
-#boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
 DataPath="../../../data/MetasufacesData/Exports/output/"
 simulationData="../../../data/MetasufacesData/DBfiles/"
 validationImages="../../../data/MetasufacesData/testImages/"
@@ -61,9 +60,13 @@ validationImages="../../../data/MetasufacesData/testImages/"
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
 Surfacetypes={"Reflective":0,"Transmissive":1}
-TargetGeometries={"circ":0,"box":1, "cross":2}
-Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
+#TargetGeometries={"circ":0,"box":1, "cross":2}
+TargetGeometries={"circ":[1,0,0],"box":[0,1,0], "cross":[0,0,1]}
 
+Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
+#Bands={"30-40":[1,0,0,0,0,0],"40-50":[0,1,0,0,0,0], 
+#       "50-60":[0,0,1,0,0,0],"60-70":[0,0,0,1,0,0],"70-80":[0,0,0,0,1,0], 
+#       "80-90":[1,0,0,0,0,1]}
 
 
 def arguments(args):
@@ -85,6 +88,7 @@ def arguments(args):
     parser.add_argument("-one_hot_encoding",type=int)
     parser.add_argument("-output_path",type=str) #This defines the length of our conditioning vector
     parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("output_channels", type=int)
 
 
     parser.run_name = args["-run_name"]
@@ -104,6 +108,7 @@ def arguments(args):
     parser.one_hot_encoding = args["-one_hot_encoding"] #if used OHE Incliuding 3 top frequencies
     parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
     parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
+    parser.output_channels=args["-output_channels"]
 
     print('Check arguments function: Done.')
 
@@ -232,18 +237,17 @@ def prepare_data(names, device,df,classes,classes_types):
     array2 = []
     noise = torch.Tensor()
 
-    substrate_encoder=encoders(Substrates)
-    materials_encoder=encoders(Materials)
-    surfaceType_encoder=encoders(Surfacetypes)
-    TargetGeometries_encoder=encoders(TargetGeometries)
-    bands_encoder=encoders(Bands)
+
 
     for idx,name in enumerate(names):
 
         series=name.split('_')[-2]#
         band_name=name.split('_')[-1].split('.')[0]#
         batch=name.split('_')[4]
-
+        version_batch=1
+        if batch=="v2":
+            version_batch=2
+            batch=name.split('_')[5]
 
         for file_name in glob.glob(DataPath+batch+'/files/'+'/'+parser.metricType+'*'+series+'.csv'): 
             #loading the absorption data
@@ -259,16 +263,21 @@ def prepare_data(names, device,df,classes,classes_types):
                 train=train.loc[101:200]
 
             elif Bands[str(band_name)]==2:
-                
-                train=train.loc[201:300]
-
+                if version_batch==1:
+                    train=train.loc[201:300]
+                else:
+                    train=train.loc[1:100]
             elif Bands[str(band_name)]==3:
-                
-                train=train.loc[301:400]
+                if version_batch==1:
+                    train=train.loc[301:400]
+                else:
+                    train=train.loc[101:200]
 
             elif Bands[str(band_name)]==4:
-                
-                train=train.loc[401:500]
+                if version_batch==1: 
+                    train=train.loc[401:500]
+                else:
+                    train=train.loc[201:300]
 
             elif Bands[str(band_name)]==5:
 
@@ -283,21 +292,8 @@ def prepare_data(names, device,df,classes,classes_types):
 
             top_frequencies = all_frequencies[indices]
 
-            if parser.one_hot_encoding == 1:  
-                conditional_data,sustratoHeight = set_conditioning_one_hot(df,
-                                                    name,
-                                                    classes[idx],
-                                                    classes_types[idx],
-                                                    Bands[str(band_name)],
-                                                    top_frequencies,
-                                                    substrate_encoder,
-                                                    materials_encoder,
-                                                    surfaceType_encoder,
-                                                    TargetGeometries_encoder,
-                                                    bands_encoder)
 
-            else:
-                conditional_data,sustratoHeight = set_conditioning(df,
+            conditional_data,sustratoHeight = set_conditioning(df,
                                                     name,
                                                     classes[idx],
                                                     classes_types[idx],
@@ -310,17 +306,16 @@ def prepare_data(names, device,df,classes,classes_types):
             #loading data to tensors for discriminator
             tensorA = torch.from_numpy(values[1])
             labels = torch.cat((conditional_data.to(device),tensorA.to(device))) #concat side
-
-            array2.append(tensorA.to(device)) #concat por batches
+            array2.append(labels) # to create stack of tensors
 
             latent_tensor=torch.rand(parser.latent)
 
 
             """multiply noise and labels to get a single vector"""
-            tensor1=torch.mul(labels.to(device),latent_tensor.to(device) )
+            #tensor1=torch.mul(labels.to(device),latent_tensor.to(device) )
     
             """concat noise and labels adjacent"""
-            #tensor1 = torch.cat((conditional_data.to(device),tensorA.to(device),latent_tensor.to(device),)) #concat side
+            tensor1 = torch.cat((conditional_data.to(device),tensorA.to(device),latent_tensor.to(device),)) #concat side
             #un vector que inclue
             #datos desde el dataset y otros datos aleatorios latentes.
 
@@ -337,68 +332,16 @@ def prepare_data(names, device,df,classes,classes_types):
 print('Check prepare_data function: Done.')
 
 
-def set_conditioning_one_hot(df,name,target,categories,band_name,top_freqs,substrate_encoder,materials_encoder,surfaceType_encoder,TargetGeometries_encoder,bands_encoder):
-    series=name.split('_')[-2]
-    batch=name.split('_')[4]
-    iteration=series.split('-')[-1]
-    row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
-        #print(batch)
-        #print(iteration)
-
-
-    target_val=target
-    category=categories
-    band=band_name
-
-    """"
-    surface type: reflective, transmissive
-    layers: conductor and conductor material / Substrate information
-    """
-    surfacetype=row["type"].values[0]
-        
-    layers=row["layers"].values[0]
-    layers= layers.replace("'", '"')
-    layer=json.loads(layers)
-        
-        
-    if (target_val==2): #is cross. Because an added variable to the desing 
-        
-        sustratoHeight= json.loads(row["paramValues"].values[0])
-        sustratoHeight= sustratoHeight[-2]
-    else:
-    
-        sustratoHeight= json.loads(row["paramValues"].values[0])
-        sustratoHeight= sustratoHeight[-1]
-        
-    materialsustrato=torch.Tensor(substrate_encoder.transform(np.array(Substrates[layer['substrate']['material']]).reshape(-1, 1)).toarray()).squeeze(0)
-    materialconductor=torch.Tensor(materials_encoder.transform(np.array(Materials[layer['conductor']['material']]).reshape(-1, 1)).toarray()).squeeze(0)
-    surface=torch.Tensor(surfaceType_encoder.transform(np.array(Surfacetypes[surfacetype]).reshape(-1, 1)).toarray()).squeeze(0)
-    band=torch.Tensor(bands_encoder.transform(np.array(band).reshape(-1, 1)).toarray()).squeeze(0)
-  
-
-    """[ 1.0000,  0.0000,  1.0000,  0.0000,  1.0000,  0.0000,  0.2520,  0.0000,
-         0.0000,  1.0000,  0.0000,  0.0000,  0.0000, 56.8000, 56.7000, 56.6000]
-         surface,materialconductor,materialsustrato,torch.Tensor([sustratoHeight]),band,top_freqs
-         """
-
-    values_array = torch.cat((surface,materialconductor,materialsustrato,torch.Tensor([sustratoHeight]),band,top_freqs),0) #concat side
-    """ Values array solo pouede llenarse con n+umero y no con textos"""
-    # values_array = torch.Tensor(values_array)
-    return values_array, sustratoHeight
-
-print('Check prepare_data function: Done.')
-
-
 def set_conditioning(df,name,target,categories,band_name,top_freqs):
     series=name.split('_')[-2]
     batch=name.split('_')[4]
+    if batch=="v2":
+        batch=name.split('_')[5]
+    
     iteration=series.split('-')[-1]
+
     row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
 
-    print(categories)
-    print(batch)
-        #print(batch)
-        #print(iteration)
 
     target_val=target
     category=categories
@@ -424,20 +367,22 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         
         sustratoHeight= json.loads(row["paramValues"].values[0])
         sustratoHeight= sustratoHeight[-2]
+        substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
     else:
     
         sustratoHeight= json.loads(row["paramValues"].values[0])
         sustratoHeight= sustratoHeight[-1]
-        
+        substrateWidth = 5 # 5 mm size
 
 
-    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band])
+    values_array=torch.Tensor(geometry)
+    values_array=torch.cat((values_array,torch.Tensor([surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth,band ])),0)
     
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
 
     """ conditions no top frequencies"""
-    values_array = torch.Tensor(values_array)
+    #values_array = torch.Tensor(values_array)
     
     return values_array,sustratoHeight
 
@@ -464,6 +409,7 @@ def test(netG,device):
         _, _, noise,tensor1,real_values,sustratoHeight = prepare_data(names, device,df,classes,classes_types)
 
         testTensor = noise.type(torch.float).to(device)
+        testTensor = torch.nn.functional.normalize(testTensor, p=2.0, dim=1, eps=1e-5, out=None)
 
         ##Eval
         fake = netG(testTensor).detach().cpu()
@@ -605,33 +551,35 @@ def main(args):
 
     # Sizes for discrimnator and generator
     """Z product"""
-    input_size=parser.spectra_length+parser.condition_len
+    #input_size=parser.spectra_length+parser.condition_len
 
     """this for Z concat"""
-    #input_size=parser.spectra_length+parser.condition_len+parser.latent
+    input_size=parser.spectra_length+parser.condition_len+parser.latent
     
     
-    generator_mapping_size=parser.image_size
+    generator_mapping_size=64
     output_channels=3
 
-    netG = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels, leakyRelu_flag=False)
-    netG.load_state_dict(torch.load(parser.gen_model))
+    netG = Stack.Generator(trainer.gpu_number, 
+                           input_size,
+                            generator_mapping_size, 
+                            parser.output_channels,
+                            leakyRelu_flag=False)    
+    netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+   # netG.load_state_dict(torch.load(parser.gen_model))    
     netG.eval()
     netG.cuda()
 
     print(netG)
     test(netG,device)
-    #testwithLabels(netG,device)
 
 
 if __name__ == "__main__":
 
     name = str(uuid.uuid4())[:8]
 
-    #if not os.path.exists("output/"+str(name)):
-    #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_15May_110epc_64_6conds_zprod.pth",
+    args =  {"-gen_model":"models/modelnetG40.pt",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -641,10 +589,11 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":6,
+                                       "-condition_len":9,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":106,
+                                       "-latent":209,
                                        "-spectra_length":100,
+                                       "-output_channels":3,
                                        "-one_hot_encoding":0,
                                        "-working_path":"./Generator_eval/",
                                        "-output_path":"../output/"+name} #OJO etepath lo lee el otro main

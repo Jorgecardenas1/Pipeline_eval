@@ -36,6 +36,7 @@ import torchvision.transforms as transforms
 from torchvision.transforms import ToTensor, Lambda
 import torchvision.utils as vutils
 from torch.autograd import Variable
+from scipy.signal import find_peaks,peak_widths
 
 import glob
 from tqdm.notebook import tqdm
@@ -273,46 +274,60 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
 
                 train=train.loc[501:600]
             
-            #getting the spectra
-            values=np.array(train.values.T)
-            values=np.around(values, decimals=2, out=None)
+            #preparing data from spectra for each image
+            data=np.array(train.values.T)
+            values=data[1]
+            all_frequencies=data[0]
 
-            #getting the freqency points under test
-            all_values=torch.from_numpy(values[1])
-            all_frequencies=torch.from_numpy(values[0])
+            #get top freqencies for top values 
+            peaks = find_peaks(values, threshold=0.00001)[0] #indexes of peaks
+            results_half = peak_widths(values, peaks, rel_height=0.5) #4 arrays: widths, y position, initial and final x
+            results_half = results_half[0]
+            data = values[peaks]
+            fre_peaks = all_frequencies[peaks]
+            
+            length_output=3
 
-            # top 3 values
-            _, indices  = torch.topk(all_values, 3)
+            if len(peaks)>length_output:
+                data = data[0:length_output]
+                fre_peaks = fre_peaks[0:length_output]
+                results_half = results_half[0:length_output]
+
+            elif len(peaks)==0:
+
+                data = np.zeros(length_output)
+                fre_peaks = all_frequencies[0:length_output]
+                results_half = np.zeros(length_output)
+
+            else:
+
+                difference = length_output-len(peaks)
+
+                for idnx in range(difference):
+                    data = np.append(data, 0)
+                    fequencies = np.where(values<0.1)
+                    fequencies = np.squeeze(fequencies)
+                    fre_peaks = np.append(fre_peaks,all_frequencies[fequencies[idnx]])
+                    results_half = np.append(results_half,0)
 
 
-            top_frequencies = all_frequencies[indices]
+            #labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks)),0)
+            labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks),torch.from_numpy(results_half)),0)
 
-            """12 conditiosn"""
-            # conditional_data = set_conditioning_one_hot(df,
-            #                                     name,
-            #                                     classes[idx],
-            #                                     classes_types[idx],
-            #                                     Bands[str(band_name)],
-            #                                     top_frequencies,
-            #                                     substrate_encoder,
-            #                                     materials_encoder,
-            #                                     surfaceType_encoder,
-            #                                     TargetGeometries_encoder,
-            #                                     bands_encoder)
 
 
             """6 conditions no one-hot-encoding"""
             conditional_data,sustratoHeight = set_conditioning(df,name,classes[idx],
                                                 classes_types[idx],
                                                 Bands[str(band_name)],
-                                                top_frequencies,)
+                                                None,)
 
 
             bands_batch.append(band_name)
 
             #loading data to tensors for discriminator
-            tensorA = torch.from_numpy(values[1]) #Just have spectra profile
-            labels = torch.cat((conditional_data.to(device),tensorA.to(device))) #concat side
+            tensorA = torch.from_numpy(values) #Just have spectra profile
+            labels = torch.cat((conditional_data.to(device),labels_peaks.to(device),tensorA.to(device))) #concat side
             # normaliztion
             #labels -= labels.min(-1)[0]
             #labels /= labels.max(-1)[0]     
@@ -438,7 +453,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
 
 
 
-    values_array=torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,substrateWidth,band])
+    values_array=torch.Tensor([geometry,substrateWidth ,band])
     
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
@@ -646,7 +661,11 @@ def main(args):
                                   initial_depth,
                                   parser.output_channels,
                                   leakyRelu_flag=False)
-        netG.load_state_dict(torch.load(parser.gen_model))
+        netG.load_state_dict(torch.load(parser.gen_model) )  
+        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+
+
+        #NETGModelTM_abs__GANV2_FWHM_lowswitch_25Ag-lr1-4.pth
         netG.eval()
         netG.cuda()
     else:
@@ -683,7 +702,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_Bands_19Ag-lr1-4_100epc_64.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANmainV2_FWHM_lowswitch_25Ag-lr1-4.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -693,9 +712,9 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":7,
+                                       "-condition_len":12,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":257,
+                                       "-latent":312,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
