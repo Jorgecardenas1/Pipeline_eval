@@ -23,7 +23,6 @@ import torch.optim as optimizer
 from torchsummary import summary
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
-from torcheval.metrics import BinaryAccuracy
 from torchvision.utils import save_image
 
 from torchvision import datasets
@@ -409,7 +408,7 @@ def test(netG,device):
         _, _, noise,tensor1,real_values,sustratoHeight = prepare_data(names, device,df,classes,classes_types)
 
         testTensor = noise.type(torch.float).to(device)
-        testTensor = torch.nn.functional.normalize(testTensor, p=2.0, dim=1, eps=1e-5, out=None)
+        #testTensor = torch.nn.functional.normalize(testTensor, p=2.0, dim=1, eps=1e-5, out=None)
 
         ##Eval
         fake = netG(testTensor).detach().cpu()
@@ -565,8 +564,8 @@ def main(args):
                             generator_mapping_size, 
                             parser.output_channels,
                             leakyRelu_flag=False)    
-    netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
-   # netG.load_state_dict(torch.load(parser.gen_model))    
+   # netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+    netG.load_state_dict(torch.load(parser.gen_model))    
     netG.eval()
     netG.cuda()
 
@@ -579,7 +578,7 @@ if __name__ == "__main__":
     name = str(uuid.uuid4())[:8]
 
             
-    args =  {"-gen_model":"models/modelnetG200.pt",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_Bands_28Ag_50epc_64_9conds_cat.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,

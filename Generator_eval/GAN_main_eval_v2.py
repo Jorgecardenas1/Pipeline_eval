@@ -28,7 +28,6 @@ import torch.optim as optimizer
 from torchsummary import summary
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
-from torcheval.metrics import BinaryAccuracy
 from torchvision.utils import save_image
 
 from torchvision import datasets
@@ -595,12 +594,16 @@ def main(args):
         initial_depth = 512
         generator_mapping_size=64
 
-        netG = Stack.Generator_V2(trainer.gpu_number,
+
+        
+        netG = Stack.Generator_V2(parser.image_size,
+                                  trainer.gpu_number,
                                   parser.spectra_length+parser.condition_len,
                                   parser.latent, generator_mapping_size,
                                   initial_depth,
                                   parser.output_channels,
                                   leakyRelu_flag=False)
+        
         netG.load_state_dict(torch.load(parser.gen_model) )  
         #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
 
@@ -628,19 +631,19 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_FWHM_ADAM_27Ag_.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_128_FWHM_ADAM_28Ag.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
                                        "-workers":1,
                                        "-gpu_number":1,
-                                       "-image_size":64,
+                                       "-image_size":128,
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
                                        "-condition_len":15,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":315,
+                                       "-latent":115,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
