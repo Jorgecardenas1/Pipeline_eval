@@ -604,8 +604,8 @@ def main(args):
                                   parser.output_channels,
                                   leakyRelu_flag=False)
         
-        #netG.load_state_dict(torch.load(parser.gen_model) )  
-        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        netG.load_state_dict(torch.load(parser.gen_model) )  
+        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
 
 
         #NETGModelTM_abs__GANV2_FWHM_lowswitch_25Ag-lr1-4.pth
@@ -631,7 +631,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG30_noshape.pt",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_128_noShape_FWHM_ADAM_29Ag.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
