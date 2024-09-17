@@ -311,14 +311,12 @@ def set_conditioning(bands_batch,freqx_val,target,path,categories,clipEmbedder,d
         category=categories[idx]
         geometry=TargetGeometries[category]
         band=bands_batch[idx]
-        
 
         """"
         surface type: reflective, transmissive
         layers: conductor and conductor material / Substrate information
         """
        
-        
         surfacekey=row["type"].values[0]
         surfacetype=Surfacetypes[surfacekey]
         
@@ -331,33 +329,23 @@ def set_conditioning(bands_batch,freqx_val,target,path,categories,clipEmbedder,d
         
         
         if (target_val==2): #is cross. Because an added variable to the desing 
+
+
             sustratoHeight= json.loads(row["paramValues"].values[0])
             sustratoHeight= sustratoHeight[-2]
             sustratoHeight = Height[str(sustratoHeight)]
 
             substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
         else:
-        
+
+
             sustratoHeight= json.loads(row["paramValues"].values[0])
             sustratoHeight= sustratoHeight[-1]
             sustratoHeight = Height[str(sustratoHeight)]
             substrateWidth = 5 # 5 mm size
         
 
-        """this to apply for one hot encoding"""
-        # materialsustrato=torch.Tensor(substrate_encoder.transform(np.array(Substrates[layer['substrate']['material']]).reshape(-1, 1)).toarray()).squeeze(0)
-        # materialconductor=torch.Tensor(materials_encoder.transform(np.array(Materials[layer['conductor']['material']]).reshape(-1, 1)).toarray()).squeeze(0)
-        # surface=torch.Tensor(surfaceType_encoder.transform(np.array(Surfacetypes[surfacekey]).reshape(-1, 1)).toarray()).squeeze(0)
-        # band=torch.Tensor(bands_encoder.transform(np.array(band).reshape(-1, 1)).toarray()).squeeze(0)
-  
-
-        #values_array = torch.cat((torch.Tensor(geometry),torch.Tensor(surfacetype),torch.Tensor(materialconductor),torch.Tensor(materialsustrato),torch.Tensor([sustratoHeight]),torch.Tensor(band)),0) #concat side
-        #if parser.pred_size==1:
-        #    arr.append(torch.Tensor([geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight, substrateWidth,band,freqx_val]))
-       
-        #else:
-        val_arr=torch.Tensor(geometry)
-        val_arr=torch.cat((val_arr,torch.Tensor([band])),0)
+        val_arr=torch.cat((torch.Tensor(geometry),torch.Tensor([band])),0)
         #val_arr = torch.Tensor([band,freqx_val])
         arr.append(val_arr)
 
@@ -381,12 +369,12 @@ def test(model,criterion,device):
                                             filter="30-40")
     
     for i, data in enumerate(vdataloader, 0):
-
         
         inputs, classes, names, classes_types = data
         inputs = inputs.to(device)
         classes = classes.to(device)
         labels,condition= prepare_data(names, device,df,classes,classes_types)
+        print(classes)
 
         if condition.shape[1]==parser.condition_len:
 
@@ -491,10 +479,10 @@ if __name__ == "__main__":
 
     name = str(uuid.uuid4())[:8]
 
-    args =  {"-model":"models/trainedModelTM_abs__RESNET152_Bands_5sep_2e-4_20epc_ADAM_6out.pth",
+    args =  {"-model":"models/trainedModelTM_abs__RESNET152_Bands_8sep_5e-4_500epc_ADAM_6out.pth",
                                        "-run_name":"Predictor ",
                                        "-epochs":1,
-                                       "-batch_size":8,
+                                       "-batch_size":1,
                                        "-workers":1,
                                        "-gpu_number":1,
                                        "-image_size":128,

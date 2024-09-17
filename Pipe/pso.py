@@ -42,7 +42,7 @@ class Particle:
         
 
     def random_array(self, array_size):
-        self.values_array = np.array(np.random.random_sample(array_size))
+        self.values_array = np.random.random_sample(array_size)
 
     def fill_zeros_array(self, array_size):
        self.values_array = np.zeros(array_size)
@@ -90,14 +90,13 @@ class Swarm:
         print("particulas creadas:"+str(len(self.particles)))
 
         interval_array=np.array(self.var_max) - np.array(self.var_min)
-        self.vmax = interval_array * 0.6
+        self.vmax = interval_array * 0.9
 
         for particle in self.particles:
             #Generate random array for each particle
             particle.random_array(self.variables_number)
             #Scale the random values
             particle.values_array = particle.values_array*(self.var_max-self.var_min) + self.var_min
-
 
 
     def nuevas_particulas(self,particulas_ant, pi_best, pg, vel_anterior, iteration):
@@ -113,7 +112,7 @@ class Swarm:
         #Cambio dinámico de la inercia
         phi = 0.85 * self.phiv**(iteration-0.1) #0.8 y 1
         phi1 = 2.0 #valores que se pueden revisar. Seguir el valor el mejor fit propio
-        phi2 = 2.1 #esto va valores componen self-knowledge.  seguir el mejor fit global
+        phi2 = 2.0 #esto va valores componen self-knowledge.  seguir el mejor fit global
         damping = 0.8 #este damping se utiliza cando las particulas tocan los limitesmáximos y mínimos.
 
         for i in range(self.particles_number):
@@ -122,6 +121,7 @@ class Swarm:
             particula_anterior=particulas_ant[i]
 
             for idx,dimension in enumerate(particula_anterior.values_array):
+
                 """ 
                 Calcula la velocidad de la particula i, dada su pi, pg y su velocidad
                  y posicion anterior 
@@ -142,7 +142,6 @@ class Swarm:
 
                 ###inercia +  atraccion a la mejor posicion de la particula i +  atraccion a la mejor posición global
                 ###
-
 
                 vel[i][idx] = phi * (vel_anterior[i][idx]) + phi1 * rand * ((pi_best[i].values_array)[idx] - dimension) + \
                      phi2 * rand * (pg[idx] - dimension)
@@ -187,7 +186,7 @@ class Swarm:
 
         index_pg = np.argmin(self.pbest) #toma el indice del particle best entre todas las particulas
         self.best_index = index_pg
-        print("get particle best pg="+str(pi[index_pg].values_array))
+        #print("get particle best pg="+str(pi[index_pg].values_array))
         self.pg = pi[index_pg].values_array # seleccionar la mejor posicion-particula del array de particulas
         self.gbest = np.min(self.pbest)  #best global fitness 
         return index_pg
@@ -198,15 +197,14 @@ def fitness(predicted,truth,iter):
     #get results
     Y_true = truth
     Y_pred = predicted[0]
-
     # Calculation of Mean Squared Error (MSE)
     loss = nn.MSELoss()
 
-    fitness =  loss(Y_true,Y_pred)  #Esta variable quedará para hacer una funcion compuesta en el futuro
+    fitness =  loss(Y_pred,Y_true)  #Esta variable quedará para hacer una funcion compuesta en el futuro
     #fitness = fitness.round(decimals=2, out=None)
 
     print("iter="+str(iter))
-    print("fitness="+str(fitness))
+    print("fitness="+str(fitness.detach().item()))
     
  
     return fitness

@@ -11,7 +11,6 @@ from druida import setup
 from druida.DataManager import datamanager
 from druida.tools import utils
 
-import random
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -26,6 +25,7 @@ from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 from torcheval.metrics import BinaryAccuracy
 from torchvision.utils import save_image
+from scipy.signal import find_peaks,peak_widths
 
 from torchvision import datasets
 import torchvision.transforms as transforms
@@ -37,7 +37,6 @@ import glob
 from tqdm.notebook import tqdm
 import argparse
 import json
-from PIL import Image
 import cv2 
 import json
 
@@ -48,11 +47,18 @@ from druida.tools.utils import CAD
 
 
 
+validationImages="../../data/MetasufacesData/testImages/"
+DataPath="../../data/MetasufacesData/Exports/output/"
+simulationData="../../data/MetasufacesData/DBfiles/"
+
+
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
 Surfacetypes={"Reflective":0,"Transmissive":1}
-TargetGeometries={"circ":0,"box":1, "cross":2}
+TargetGeometries={"circ":[1,0,0],"box":[0,1,0], "cross":[0,0,1]}
 Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
+Height={"0.252":[1,0,0,0],"0.508":[0,1,0,0], 
+       "0.787":[0,0,1,0],"1.575":[0,0,0,1]}
 
 optimizing=False
 
@@ -155,7 +161,6 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
     
     ImageProcessor.elevation_file(layers,**kwargs)
 
-print('Check cad_generation function: Done.')
 
 
 
@@ -213,7 +218,8 @@ def arguments(args):
     parser.add_argument("-image_size",type=int)
     parser.add_argument("-device",type=str)
     parser.add_argument("-learning_rate",type=float)
-    parser.add_argument("-condition_len",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-conditional_len_pred",type=int) #This defines the length of our conditioning vector
+    parser.add_argument("-conditional_len_gen",type=int) #This defines the length of our conditioning vector
     parser.add_argument("-n_particles",type=int) #This defines the length of our conditioning vector
     parser.add_argument("-metricType",type=str) #This defines the length of our conditioning vector
     parser.add_argument("-latent",type=int) #This defines the length of our conditioning vector
@@ -225,6 +231,10 @@ def arguments(args):
     parser.add_argument("-output_path",type=str) #This defines the length of our conditioning vector
     parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
     parser.add_argument("-gan_version",type=bool) #This defines the length of our conditioning vector
+    parser.add_argument("-validation_images",type=bool) #This defines the length of our conditioning vector
+    parser.add_argument("-output_size",type=int) #This defines the length of our conditioning vector
+
+
 
 
     parser.run_name = args["-run_name"]
@@ -235,10 +245,10 @@ def arguments(args):
     parser.image_size = args["-image_size"]
     parser.device = args["-device"]
     parser.learning_rate = args["-learning_rate"]
-    parser.condition_len = args["-condition_len"] #Incliuding 3 top frequencies
+    parser.conditional_len_pred = args["-conditional_len_pred"] #Incliuding 3 top frequencies
+    parser.conditional_len_gen = args["-conditional_len_gen"] #Incliuding 3 top frequencies
     parser.cond_channel = args["-cond_channel"] #Incliuding 3 top frequencies
     parser.n_particles = args["-n_particles"] #Incliuding 3 top frequencies
-
     parser.metricType= args["-metricType"] #this is to be modified when training for different metrics.
     parser.latent=args["-latent"] #this is to be modified when training for different metrics.
     parser.spectra_length=args["-spectra_length"] #this is to be modified when training for different metrics.
@@ -248,6 +258,8 @@ def arguments(args):
     parser.output_path = args["-output_path"] #if used OHE Incliuding 3 top frequencies
     parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
     parser.gan_version = args["-gan_version"] #if used OHE Incliuding 3 top frequencies
+    parser.validation_images = args["-validation_images"] #if used OHE Incliuding 3 top frequencies
+    parser.output_size = args["-output_size"] #Incliuding 3 top frequencies
 
     print('Check arguments function: Done.')
 
@@ -286,11 +298,239 @@ def prepare_data(device,spectra,conditional_data,latent_tensor):
     return labels,testTensor
 
 
+def load_validation_data(device,z):
+    
+    df = pd.read_csv("out.csv")
+
+
+    dataloader = utils.get_data_with_labels(parser.image_size,parser.image_size,1, 
+                                                validationImages,parser.batch_size,
+                                                drop_last=True,
+                                                filter="30-40")#filter disabled
+    for i, data in enumerate(dataloader, 0):
+        # Genera el batch del espectro, vectores latentes, and propiedades
+        # Estamos Agregando al vector unas componentes condicionales
+        # y otras de ruido en la parte latente  .
+        inputs, classes, names, classes_types = data
+        #sending to CUDA
+        inputs = inputs.to(device)
+        classes = classes.to(device) #classes son indices que customDataSet asigna al cargar los folders con los datos.
+                                    #no necesariamente coincide con mis indices de tipo de de clases
+
+        _, labels, noise,real_values,sustratoHeight,labels_pred, coditions_predict_net= prepare_data_validation(names, device,df,classes,classes_types,z,
+                                                             None,
+                                                             None,
+                                                             None,
+                                                             None,
+                                                             None)
+        
+        noiseTensor = noise.type(torch.float).to(device)
+
+        if parser.gan_version:
+            label_conditions = torch.stack(labels).type(torch.float).to(device) #Discrminator Conditioning spectra
+            noise = noise.type(torch.float).to(device) #Generator input espectro+ruido
+            label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
+        else:
+
+            pass
+    
+        
+        break
+
+    return label_conditions, noiseTensor, labels_pred, coditions_predict_net
+
+def prepare_data_validation(files_name, device,df,classes,classes_types,z,substrate_encoder, materials_encoder,surfaceType_encoder,TargetGeometries_encoder,bands_encoder):
+    
+
+    bands_batch,array1,array_labels,cond_pred_net=[],[],[], []
+    a = []        
+
+    noise = torch.Tensor()
+
+    for idx,name in enumerate(files_name):
+
+        series=name.split('_')[-2]#
+        band_name=name.split('_')[-1].split('.')[0]#
+        
+        batch=name.split('_')[4]
+        version_batch=1
+        if batch=="v2":
+            version_batch=2
+            batch=name.split('_')[5]        #print(files_name)
+
+        for file_name in glob.glob(DataPath+batch+'/files/'+'/'+parser.metricType+'*'+series+'.csv'): 
+            #loading the absorption data
+            train = pd.read_csv(file_name)
+
+            # # the band is divided in chunks 
+            if Bands[str(band_name)]==0:
+                
+                train=train.loc[1:100]
+
+            elif Bands[str(band_name)]==1:
+                
+                train=train.loc[101:200]
+
+            elif Bands[str(band_name)]==2:
+                if version_batch==1:
+                    train=train.loc[201:300]
+                else:
+                    train=train.loc[1:100]
+            elif Bands[str(band_name)]==3:
+                if version_batch==1:
+                    train=train.loc[301:400]
+                else:
+                    train=train.loc[101:200]
+
+            elif Bands[str(band_name)]==4:
+                if version_batch==1: 
+                    train=train.loc[401:500]
+                else:
+                    train=train.loc[201:300]
+
+            elif Bands[str(band_name)]==5:
+
+                train=train.loc[501:600]
+            #preparing data from spectra for each image
+            data_raw=np.array(train.values.T)
+            values=data_raw[1]
+            all_frequencies=data_raw[0]
+            all_frequencies = np.array([(float(i)-min(all_frequencies))/(max(all_frequencies)-min(all_frequencies)) for i in all_frequencies])
+
+            values[values < 0.05]= 0
+
+            #get top freqencies for top values 
+            peaks = find_peaks(values, threshold=0.00001)[0] #indexes of peaks
+            results_half = peak_widths(values, peaks, rel_height=0.5) #4 arrays: widths, y position, initial and final x
+            results_half = results_half[0]
+            data = values[peaks]
+            fre_peaks = all_frequencies[peaks]
+            
+            length_output=3
+
+            if len(peaks)>length_output:
+                data = data[0:length_output]
+                fre_peaks = fre_peaks[0:length_output]
+                results_half = results_half[0:length_output]
+
+            elif len(peaks)==0:
+
+                data = np.zeros(length_output)
+                fre_peaks = all_frequencies[0:length_output]
+                results_half = np.zeros(length_output)
+
+            else:
+
+                difference = length_output-len(peaks)
+
+                for idnx in range(difference):
+                    data = np.append(data, 0)
+                    fequencies = np.where(values<0.1)
+                    fequencies = np.squeeze(fequencies)
+                    fre_peaks = np.append(fre_peaks,all_frequencies[fequencies[idnx]])
+                    results_half = np.append(results_half,0)
+
+
+            #labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks)),0)
+            """this has 3 peaks and its frequencies-9 entries"""
+            labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks),torch.from_numpy(results_half)),0)
+
+
+            #labels for predicting network fitness evaluation
+
+            labels_tensor_pred=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks)),0)
+            a.append(labels_tensor_pred)
+
+
+            """This has geometric params 6 entries"""
+            conditional_data, pred_conditional_data,sustratoHeight = set_conditioning(df,name,classes[idx],
+                                                classes_types[idx],
+                                                Bands[str(band_name)],
+                                                None)
+
+
+
+            bands_batch.append(band_name)
+
+            #loading data to tensors for discriminator
+            tensorA = torch.from_numpy(values) #Just have spectra profile
+            labels = torch.cat((conditional_data.to(device),labels_peaks.to(device),tensorA.to(device))) #concat side    
+            array_labels.append(labels) # to create stack of tensors
+
+            latent_tensor = z
+
+            if parser.gan_version:
+
+                noise = torch.cat((noise.to(device),latent_tensor.to(device)))
+            else:
+        
+                pass
+
+
+            cond_pred_net.append(pred_conditional_data)
+
+
+    return array1, array_labels, noise,data_raw,sustratoHeight,a,cond_pred_net
+
+def set_conditioning(df,name,target,categories,band_name,top_freqs):
+    
+    series=name.split('_')[-2]
+
+    batch=name.split('_')[4]
+    if batch=="v2":
+        batch=name.split('_')[5]   
+
+    iteration=series.split('-')[-1]
+
+    row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
+
+    target_val=target #OJOOOOOO CON ESTO !!
+    category=categories
+    geometry=TargetGeometries[category]
+    band=band_name
+
+    """"
+    surface type: reflective, transmissive
+    layers: conductor and conductor material / Substrate information
+    """
+    surfacetype=row["type"].values[0]
+    surfacetype=Surfacetypes[surfacetype]
+        
+    layers=row["layers"].values[0]
+    layers= layers.replace("'", '"')
+    layer=json.loads(layers)
+        
+    materialconductor=Materials[layer['conductor']['material']]
+    materialsustrato=Substrates[layer['substrate']['material']]
+        
+        
+    if (target_val==2): #is cross. 
+                    #This number comes from the custom dataloader as the index for the class folder
+                    #   Because an added variable to the desing 
+        
+        sustratoHeight= json.loads(row["paramValues"].values[0])
+        sustratoHeight= sustratoHeight[-2]
+        substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
+    else:
+    
+        sustratoHeight= json.loads(row["paramValues"].values[0])
+        sustratoHeight= sustratoHeight[-1]
+        substrateWidth = 5 # 5 mm size
+        
+    # Generative conditioning
+    values_array=torch.Tensor(geometry)
+    values_array=torch.cat((values_array,torch.Tensor([sustratoHeight,substrateWidth,band ])),0)
+    values_array = torch.Tensor(values_array)
+
+    # PRedictive conditioning
+    val_arr=torch.cat((torch.Tensor(geometry),torch.Tensor([band])),0)
+    
+    return values_array,val_arr,sustratoHeight
 
 def opt_loop(device,generator,predictor,conditioning,spectra,z,y_predicted,y_truth):
-    
-    var_max  = [np.random.normal(1,0.2) for _ in range(parser.latent)]
-    var_min = [np.random.normal(1,0.2) for _ in range(parser.latent)]
+    rng = np.random.default_rng()
+    var_max  = [1 for _ in range(parser.latent)]
+    var_min = [0 for _ in range(parser.latent)]
     z = z.detach().cpu().numpy()
 
     #take first original random Z
@@ -433,6 +673,15 @@ def save_results(fitness, y_predicted,y_truth,fake,z,values_array):
     sustratoHeight=0.508
     cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight=sustratoHeight)
         
+def join_simulationData():
+
+
+    df = pd.DataFrame()
+    for file in glob.glob(simulationData+"*.csv"): 
+        df2 = pd.read_csv(file)
+        df = pd.concat([df, df2], ignore_index=True)
+    
+    df.to_csv('out.csv',index=False)
 
 
 def main(args):
@@ -443,76 +692,88 @@ def main(args):
 
     #load args
     arguments(args)
+    join_simulationData()  
 
-    #load generator
+    # ------- load generator ------------
     generator_obj = generator.Generator(args=args)
 
     #load user request
-    values_array,spectra,y_truth = load_request()
+    if parser.validation_images:
+        #load validation data
+        z=torch.randn(1,parser.latent)
+        label_conditions, z, y_truth, condition_pred_net=load_validation_data(device, z)
+        y_truth = torch.stack(y_truth).to(device)
+        condition = torch.stack(condition_pred_net)
 
-    if optimizing:
-        pass
     else:
+        values_array,spectra,y_truth = load_request()
+        label_condition,input_tensor = prepare_data(device,spectra,values_array,z)
         z=torch.randn(parser.latent)
-
-    label_condition,input_tensor = prepare_data(device,spectra,values_array,z)
     
-    #generate
-
-    if parser.gan_version:
-        fake = generator_obj.model( label_condition, z, 1).detach().cpu()
-
-    else:
-        fake = generator_obj.model(input_tensor).detach().cpu()
+    # ------ generate ------------
+    fake = generator_obj.model(label_conditions,z,parser.batch_size)
     
     if not os.path.exists(parser.output_path):
         os.makedirs(parser.output_path)
 
-    save_image(fake, parser.output_path+"/generated_image.png")
+    save_image(fake.detach().cpu(), parser.output_path+"/generated_image.png")
 
-    #load predictor
+
+    # ------- load predictor ----------
     predictor_obj = predictor.Predictor(args=args)
-    y_predicted=predictor_obj.model(input_=fake, conditioning=values_array.to(device) ,b_size=parser.batch_size)
 
-    #loss 
-    fitness = pso.fitness(y_predicted,spectra,0)
-    if fitness > 0.001:
+    if parser.validation_images:
 
-        #optimize
-        best_z = opt_loop(device=device, generator=generator_obj,
-                predictor=predictor_obj,
-                conditioning=values_array,
-                spectra=spectra,
-                z=z,
-                y_predicted=y_predicted,
-                y_truth=spectra)
+        condition = torch.nn.functional.normalize(condition, p=2.0, dim=1, eps=1e-5, out=None)
+        y_predicted=predictor_obj.model(input_=fake, conditioning=condition.to(device) ,b_size=parser.batch_size)
+        
+        #------ Optimization process ------ 
+
+        fitness = pso.fitness(y_predicted,y_truth,0)
+        if fitness > 0.001:
+
+            #optimize
+            best_z = opt_loop(device=device, generator=generator_obj,
+                    predictor=predictor_obj,
+                    conditioning=values_array,
+                    spectra=spectra,
+                    z=z,
+                    y_predicted=y_predicted,
+                    y_truth=spectra)
+        else:
+            best_z=z
     else:
-        best_z=z
-    
+        pass
 
-    #final generation
-    label_condition,input_tensor = prepare_data(device,spectra,values_array,torch.tensor(best_z))
-    
-    #generate
-    
-    if parser.gan_version:
-        fake = generator_obj.model( label_condition, z, 1).detach().cpu()
-    else:
-        fake = generator_obj.model(input_tensor).detach().cpu()
+
+
 
     
-    if not os.path.exists(parser.output_path):
-        os.makedirs(parser.output_path)
+    
+
+    # #final generation
+    # label_condition,input_tensor = prepare_data(device,spectra,values_array,torch.tensor(best_z))
+    
+    # #generate
+    
+    # if parser.gan_version:
+    #     fake = generator_obj.model( label_condition, z, 1).detach().cpu()
+    # else:
+    #     fake = generator_obj.model(input_tensor).detach().cpu()
+
+    
+    # if not os.path.exists(parser.output_path):
+    #     os.makedirs(parser.output_path)
 
 
-    #predictor
-    y_predicted=predictor_obj.model(input_=fake, conditioning=values_array.to(device) ,b_size=parser.batch_size)
+    # #predictor
+    # y_predicted=predictor_obj.model(input_=fake, conditioning=values_array.to(device) ,b_size=parser.batch_size)
 
-    #loss 
-    fitness = pso.fitness(y_predicted,spectra,0)
-    print("final fitness:",fitness)
-    #save results
-    save_results(fitness, y_predicted,spectra,fake,z,values_array)
+    # #loss 
+    # fitness = pso.fitness(y_predicted,spectra,0)
+    # print("final fitness:",fitness)
+    # #save results
+    # save_results(fitness, y_predicted,spectra,fake,z,values_array)
 
     
 
@@ -523,28 +784,30 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG120_output_zprod_6Ag_lr1-4_03Switch.pt",
-             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_22July_2e-5_100epc_h1000_f1000_64_MSE_100out.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_128_FWHM_ADAM_28Ag.pth",
+             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_8sep_5e-4_500epc_ADAM_6out.pth",
              "-run_name":name,
-             "-epochs":30,
+             "-epochs":1,
              "-batch_size":1,
              "-workers":1,
              "-gpu_number":1,
-             "-image_size":64,
+             "-image_size":128,
              "-learning_rate":1e-5,
              "-device":"cpu",
              "-metricType":"AbsorbanceTM",
              "-cond_channel":3,
-             "-condition_len":7,
+             "-conditional_len_pred":4,
+             "-output_size":6,
+             "-conditional_len_gen":15,
              "-n_particles":100,
              "-resnet_arch":"resnet152",
-             "-latent":157,
+             "-latent":115,
             "-gan_version":True,
              "-spectra_length":100,
              "-one_hot_encoding":0,
+             "-validation_images":True,
              "-working_path":"./Generator_eval/",
              "-output_path":"./output/"+name} #OJO etepath lo lee el otro main
 
     main(args)
 
-print('Check main function: Done.')

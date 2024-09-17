@@ -594,8 +594,6 @@ def main(args):
         initial_depth = 512
         generator_mapping_size=64
 
-
-        
         netG = Stack.Generator_V2(parser.image_size,
                                   trainer.gpu_number,
                                   parser.spectra_length+parser.condition_len,

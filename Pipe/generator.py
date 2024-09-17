@@ -64,31 +64,28 @@ class Generator:
         trainer = Stack.Trainer(parser)
         # Sizes for discrimnator and generator
         """Z product"""
-        input_size=parser.spectra_length+parser.condition_len
+        input_size=parser.spectra_length+parser.conditional_len_gen
 
         """this for Z concat"""
         #input_size=parser.spectra_length+parser.condition_len+parser.latent
         
         generator_mapping_size=parser.image_size
         output_channels=3
-
-
- 
-
         if parser.gan_version:
 
             initial_depth = 512
             generator_mapping_size=64
-
-            self.model = Stack.Generator_V2(trainer.gpu_number,
-                                  parser.spectra_length+parser.condition_len,
+            
+            self.model = Stack.Generator_V2(parser.image_size,
+                                  trainer.gpu_number,
+                                  parser.spectra_length+parser.conditional_len_gen,
                                   parser.latent, generator_mapping_size,
                                   initial_depth,
-                                  3,
+                                  output_channels,
                                   leakyRelu_flag=False)
 
-            self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
-            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
+            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+            self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
         else:
             self.model = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
             #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
@@ -114,7 +111,7 @@ class Generator:
         parser.add_argument("-image_size",type=int)
         parser.add_argument("-device",type=str)
         parser.add_argument("-learning_rate",type=float)
-        parser.add_argument("-condition_len",type=float) #This defines the length of our conditioning vector
+        parser.add_argument("-conditional_len_gen",type=float) #This defines the length of our conditioning vector
         parser.add_argument("-metricType",type=str) #This defines the length of our conditioning vector
         parser.add_argument("-latent",type=int) #This defines the length of our conditioning vector
         parser.add_argument("-spectra_length",type=int) #This defines the length of our conditioning vector
@@ -133,7 +130,7 @@ class Generator:
         parser.image_size = args["-image_size"]
         parser.device = args["-device"]
         parser.learning_rate = args["-learning_rate"]
-        parser.condition_len = args["-condition_len"] #Incliuding 3 top frequencies
+        parser.conditional_len_gen = args["-conditional_len_gen"] #Incliuding 3 top frequencies
         parser.metricType= args["-metricType"] #this is to be modified when training for different metrics.
         parser.latent=args["-latent"] #this is to be modified when training for different metrics.
         parser.spectra_length=args["-spectra_length"] #this is to be modified when training for different metrics.
