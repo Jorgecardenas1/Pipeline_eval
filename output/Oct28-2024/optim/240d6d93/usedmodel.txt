@@ -1,0 +1,7 @@
+original batch:('circ_01_freq_reflect_v2_af7ecf76-907c-11ef-9b46-047c16a08772_0-1216_75-78.png',)
+image_size:128
+condition_len:14
+latent:300
+spectra_length:100
+gen_model:models/NETGModelTM_abs__GANV2_128_FWHM_ADAM_28Oct_optim.pth
+one_hot_encoding:0

@@ -643,7 +643,7 @@ if __name__ == "__main__":
                                        "-learning_rate":5e-5,
                                        "-condition_len":12,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":112,
+                                       "-latent":30,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,

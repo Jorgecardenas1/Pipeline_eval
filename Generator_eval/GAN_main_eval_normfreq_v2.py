@@ -56,18 +56,18 @@ parser = argparse.ArgumentParser()
 # DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
 # simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../../data/MetasufacesData/Images-512-Bands/"
+boxImagesPath="../../../data/MetasurfacesData/Images-512-Bands/"
 #boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
-DataPath="../../../data/MetasufacesData/Exports/output/"
-simulationData="../../../data/MetasufacesData/DBfiles/"
-validationImages="../../../data/MetasufacesData/testImages/"
+DataPath="../../../data/MetasurfacesData/Exports/output/"
+simulationData="../../../data/MetasurfacesData/DBfiles/"
+validationImages="../../../data/MetasurfacesData/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
 Surfacetypes={"Reflective":0,"Transmissive":1}
 TargetGeometries={"circ":[1,0,0],"box":[0,1,0], "cross":[0,0,1]}
-Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
+Bands={"75-78":0}
 
 
 
@@ -245,6 +245,7 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
         
         batch=name.split('_')[4]
         version_batch=1
+
         if batch=="v2":
             version_batch=2
             batch=name.split('_')[5]        #print(files_name)
@@ -262,26 +263,7 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
                 
                 train=train.loc[101:200]
 
-            elif Bands[str(band_name)]==2:
-                if version_batch==1:
-                    train=train.loc[201:300]
-                else:
-                    train=train.loc[1:100]
-            elif Bands[str(band_name)]==3:
-                if version_batch==1:
-                    train=train.loc[301:400]
-                else:
-                    train=train.loc[101:200]
-
-            elif Bands[str(band_name)]==4:
-                if version_batch==1: 
-                    train=train.loc[401:500]
-                else:
-                    train=train.loc[201:300]
-
-            elif Bands[str(band_name)]==5:
-
-                train=train.loc[501:600]
+    
             #preparing data from spectra for each image
             data_raw=np.array(train.values.T)
             values=data_raw[1]
@@ -323,6 +305,7 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
             #labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks)),0)
             """this has 3 peaks and its frequencies-9 entries"""
             labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks),torch.from_numpy(results_half)),0)
+            labels_peaks = torch.nn.functional.normalize(labels_peaks, p=2.0, dim=0, eps=1e-5, out=None)
 
             """This has geometric params 6 entries"""
             conditional_data,sustratoHeight = set_conditioning(df,name,classes[idx],
@@ -397,14 +380,15 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         
 
     values_array=torch.Tensor(geometry)
-    values_array=torch.cat((values_array,torch.Tensor([sustratoHeight,substrateWidth,band ])),0)
+    values_array=torch.cat((values_array,torch.Tensor([sustratoHeight,substrateWidth ])),0)
        
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
 
     """ conditions no top frequencies"""
     values_array = torch.Tensor(values_array)
-    
+    #values_array = torch.nn.functional.normalize(values_array, p=2.0, dim=0, eps=1e-5, out=None)
+
     return values_array,sustratoHeight
 
 print('Check set_conditioning function: Done.')
@@ -630,7 +614,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_128_FWHM_ADAM_16Sep.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_128_FWHM_ADAM_22Oct.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -640,9 +624,9 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":15,
+                                       "-condition_len":14,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":112,
+                                       "-latent":300,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
