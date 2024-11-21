@@ -614,7 +614,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_128_FWHM_ADAM_2Nov_optim_1e4_batch64_z400_e1000.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_128_FWHM_ADAM_20Nov_ganV2_128_optim_2e4_batch64_z400_e800_gamma0.99_0.15_noise_0.2low.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,

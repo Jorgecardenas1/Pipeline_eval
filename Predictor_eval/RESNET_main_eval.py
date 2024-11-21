@@ -25,6 +25,7 @@ from torch.utils.data import DataLoader
 from torcheval.metrics import BinaryAccuracy
 from torchvision.utils import save_image
 
+import torchvision
 from torchvision import datasets
 import torchvision.transforms as transforms
 from torchvision.transforms import ToTensor, Lambda
@@ -294,16 +295,74 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
     
     return arr,sustratoHeight
 
+def get_data_with_labels(image_size, randomResize, imagesPath, dataset_path,batch_size, drop_last):
+
+    transforms = torchvision.transforms.Compose([
+        #torchvision.transforms.Resize(resize),  # args.image_size + 1/4 *args.image_size
+        torchvision.transforms.RandomResizedCrop(image_size, scale=(randomResize, randomResize)),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+    ])
+
+    df = pd.read_csv(dataset_path)
+    #'path', 'class','class_target', 'freq','band'
+    image_names = df["path"].values.tolist()
+    targets = df["class_target"]
+    targets = targets.replace("circ", 0)
+    targets = targets.replace("cross",1 )
+    targets = targets.values.tolist()
+    classes = df["class"]
+
+    frequencies = df["freq"].values.tolist()
+
+    cursomDataset = customDataset(imagesPath,image_names, targets, classes,frequencies,transforms)
+    dataloader = DataLoader(cursomDataset, batch_size=batch_size, shuffle=True, drop_last=drop_last)
+
+
+    return dataloader
+
+
+class customDataset(Dataset):
+    def __init__(self, image_paths,image_names, targets, classes,frequencies, transforms):
+        self.image_paths = image_paths
+        self.transform = transforms
+        self.names = image_names
+        self.classes = classes
+        self.frequencies = frequencies
+        self.targets = targets
+
+    def __len__(self):
+        return len(self.names)
+
+    def __getitem__(self, idx):
+
+        image_filepath = self.names[idx]
+        path =  self.image_paths+ self.classes[idx] + '/' + image_filepath
+        image = cv2.imread(path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = F.to_pil_image(image)
+        type_class = self.targets[idx]
+        if "\\" in self.names:
+            class_name=self.names[idx].split('_')[0].split('\\')
+
+        else:
+            class_name=self.names[idx].split('_')[0].split('/')
+
+        image = self.transform(image)
+        
+        return image, type_class ,os.path.basename(image_filepath),class_name[-1], self.frequencies[idx]
 
 
 def test(model,criterion,device):
     
     df = pd.read_csv("out.csv")
     
-    vdataloader = utils.get_data_with_labels(parser.image_size, parser.image_size,1,
-                                            validationImages,parser.batch_size, 
-                                            drop_last=True,
-                                            filter="30-40")
+    validation_dataloader = get_data_with_labels(parser.image_size,
+                                      1,
+                                      validationImages,
+                                      "outImagesValidation.csv",
+                                      parser.batch_size,
+                                      drop_last=True)
     
     for i, data in enumerate(vdataloader, 0):
 

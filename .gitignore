@@ -1,4 +1,5 @@
 /Generator_eval/models/*.pth
+/Generator_eval/models/*.pt
 /Predictor_eval/models/*.pth
 /models/*.pth
 /models/*.pt
