@@ -1,0 +1,7 @@
+original batch:('cross_01_freq_reflect_v2_3c8ce4b5-a1b5-11ef-bb20-70d8c2032a38_0-663_75-78.png',)
+image_size:128
+condition_len:11
+latent:400
+spectra_length:100
+gen_model:models/modelnetG547_noshape.pt
+one_hot_encoding:0
