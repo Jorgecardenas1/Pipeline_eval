@@ -1,0 +1,26 @@
+$begin 'RCSData'
+	$begin 'Mode0'
+		KzReal=1603.32
+		KzImag=-0
+		ThetaInc=0
+		PhiInc=-3.14159
+		ExReal=-5489.85
+		ExImag=0
+		EyReal=-0
+		EyImag=0
+		EzReal=0
+		EzImag=0
+	$end 'Mode0'
+	$begin 'Mode1'
+		KzReal=1603.32
+		KzImag=-0
+		ThetaInc=0
+		PhiInc=-3.14159
+		ExReal=0
+		ExImag=0
+		EyReal=-5489.85
+		EyImag=0
+		EzReal=0
+		EzImag=0
+	$end 'Mode1'
+$end 'RCSData'
