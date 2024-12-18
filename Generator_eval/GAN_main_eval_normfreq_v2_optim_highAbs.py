@@ -166,7 +166,7 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
     """DXF generation"""
     units="um"
-    GoalSize=500
+    GoalSize=510
     currentSize=size[0] #assumming an squared image same witdth and height
     multiplier=0
     layerscale=0

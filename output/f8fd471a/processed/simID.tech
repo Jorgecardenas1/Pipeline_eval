@@ -1,0 +1,4 @@
+units"um"
+conductor red 5000.0 35.0 
+dielectric green 5000.0 5000.0 
+substrate blue 0 5000.0 
