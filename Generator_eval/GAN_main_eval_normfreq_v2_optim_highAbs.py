@@ -56,11 +56,11 @@ parser = argparse.ArgumentParser()
 # DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
 # simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../../data/MetasurfacesData/Images-512-Bands/"
+boxImagesPath="../../../data/MetasurfacesDataV3/Images-512-Bands/"
 #boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
-DataPath="../../../data/MetasurfacesData/Exports/output/"
-simulationData="../../../data/MetasurfacesData/DBfiles/"
-validationImages="../../../data/MetasurfacesData/testImages/"
+DataPath="../../../data/MetasurfacesDataV3/Exports/output/"
+simulationData="../../../data/MetasurfacesDataV3/DBfiles/"
+validationImages="../../../data/MetasurfacesDataV3/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
@@ -134,7 +134,7 @@ def join_simulationData():
 
 print('Check join_simulationData function: Done.')
     
-def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight):
+def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight,cellsize):
 
     ImageProcessor=CAD("./"+images_folder+"generated_image_512.png", "./"+images_folder+"processed/")
     image_name="./"+images_folder+image_file_name
@@ -165,8 +165,9 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
     blue_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
 
     """DXF generation"""
+    cellsize = cellsize*100
     units="um"
-    GoalSize=510
+    GoalSize=cellsize
     currentSize=size[0] #assumming an squared image same witdth and height
     multiplier=0
     layerscale=0
@@ -305,7 +306,6 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
             #labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks)),0)
             """this has 3 peaks and its frequencies-9 entries"""
             labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks),torch.from_numpy(results_half)),0)
-            labels_peaks = torch.nn.functional.normalize(labels_peaks, p=2.0, dim=0, eps=1e-5, out=None)
 
             """This has geometric params 6 entries"""
             conditional_data,sustratoHeight = set_conditioning(df,name,classes[idx],
@@ -320,6 +320,8 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
             #loading data to tensors for discriminator
             tensorA = torch.from_numpy(values) #Just have spectra profile
             labels = torch.cat((conditional_data.to(device),labels_peaks.to(device),tensorA.to(device))) #concat side    
+            labels = torch.nn.functional.normalize(labels, p=2.0, dim=0, eps=1e-5, out=None)
+
             array_labels.append(labels) # to create stack of tensors
             latent_tensor=torch.randn(1,parser.latent)
 
@@ -375,8 +377,8 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
     else:
     
         sustratoHeight= json.loads(row["paramValues"].values[0])
-        sustratoHeight= sustratoHeight[-1]
-        substrateWidth = 5 # 5 mm size
+        sustratoHeight= sustratoHeight[-2]
+        substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
         
 
     values_array=torch.Tensor(geometry)
@@ -435,6 +437,8 @@ def test(netG,device):
 
 
         ##Eval
+        # we have to process image to obtain size.
+        cellsize,fake = recoverSize(fake)
 
         """Saving Data"""
 
@@ -489,12 +493,51 @@ def test(netG,device):
         destinationFolder = parser.output_path+"/"
         image_name = "generated_image_512.png"
         time.sleep(3)
-        cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight)
+        cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight,cellsize.detach().numpy())
         #plot Data
 
         break
 
 print('Check test function: Done.')
+
+def recoverSize(image):
+   
+    fringe_width = 2
+
+    #factor = ((value - 4.85) / (5.15 - 4.85)) 
+
+
+    # Get image dimensions
+    #C, H, W = image.shape
+    # Create a mask for the fringe
+    mask = torch.zeros((128, 128), dtype=torch.bool)
+
+    # Top fringe
+    mask[:fringe_width, :] = True
+    # Bottom fringe
+    mask[-fringe_width:, :] = True
+    # Left fringe
+    mask[:, :fringe_width] = True
+    # Right fringe
+    mask[:, -fringe_width:] = True
+
+    # Expand the mask to match the image dimensions (C, H, W)
+    mask = mask.unsqueeze(0).expand(3, -1, -1)
+   
+    #factor = ((value - 4.85) / (5.15 - 4.85)) 
+    #print(value)
+    fringes = image[0][:, mask[0]]
+    normalized_value = (torch.mean(fringes,dim=-1) + 1) / 2
+    
+    old_min, old_max = 4.85, 5.15
+    size = normalized_value * (old_max - old_min) + old_min
+
+    size=torch.mean(size)
+    print("size:",size)
+
+    image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1.0]])
+
+    return size, image
 
 def testwithLabels(netG,device):
     
@@ -614,7 +657,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_HighAbs_128_FWHM_ADAM_20Nov_ganV2_128_optim_2e4_batch64_z400_e800_gamma0.99_0.15_noise_0.2low.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_HighAbs_128_FWHM_ADAM_25DIC_ganV2_128_optim_2e4_batch64_z400_e800_gamma0.99_0.15_noise_0.2low.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
