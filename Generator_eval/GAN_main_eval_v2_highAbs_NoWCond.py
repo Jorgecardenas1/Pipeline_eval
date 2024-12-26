@@ -165,7 +165,8 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
     blue_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
 
     """DXF generation"""
-    cellsize = cellsize*100
+    cellsize = round(cellsize*100,1) + 1
+    print(cellsize)
     units="um"
     GoalSize=cellsize
     currentSize=size[0] #assumming an squared image same witdth and height
