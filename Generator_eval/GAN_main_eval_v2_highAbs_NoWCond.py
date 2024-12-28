@@ -165,6 +165,7 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
     blue_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
 
     """DXF generation"""
+    """Here I had to add 1 to correct the precision during conversion to DXF"""
     cellsize = round(cellsize*100,1) + 1
     print(cellsize)
     units="um"
@@ -506,7 +507,7 @@ print('Check test function: Done.')
 
 def recoverSize(image):
    
-    fringe_width = 2
+    fringe_width = 6
 
     #factor = ((value - 4.85) / (5.15 - 4.85)) 
 
@@ -530,16 +531,12 @@ def recoverSize(image):
    
     #factor = ((value - 4.85) / (5.15 - 4.85)) 
     #print(value)
-    print(image[0].shape)
     fringes = image[0][2, mask[0]]
-    normalized_value = (torch.mean(fringes,dim=-1) + 1) / 2
+    normalized_value = (torch.min(fringes) + 1) / 2
     old_min, old_max = 4.85, 5.15
     size = normalized_value * (old_max - old_min) + old_min
-
-    size=torch.mean(size)
-    print("size:",size)
-
-    image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1.0]])
+    
+    image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1]])
 
     return size, image
 
@@ -623,7 +620,7 @@ def main(args):
         # Create models
         """leakyRelu_flag=False use leaky 
         flag=True use Relu"""
-        initial_depth = 512
+        initial_depth = 256
         generator_mapping_size=64
 
         netG = Stack.Generator_V2(parser.image_size,
@@ -661,7 +658,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_HighAbs_128_FWHM_ADAM_25DIC_ganV2_128_optim_2e4_batch64_z400_e800_gamma0.99_0.15_noise_0.2low_noCond.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_28Dic_HighAbs_256Depth_128_z800_NoWCond_.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -673,7 +670,7 @@ if __name__ == "__main__":
                                        "-learning_rate":5e-5,
                                        "-condition_len":13,
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":400,
+                                       "-latent":800,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
