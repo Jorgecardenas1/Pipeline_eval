@@ -382,9 +382,10 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
         
 
-    values_array=torch.Tensor(geometry)
-    values_array=torch.cat((values_array,torch.Tensor([sustratoHeight ])),0)
-       
+    #values_array=torch.Tensor(geometry)
+    #values_array=torch.cat((values_array,torch.Tensor([sustratoHeight ])),0)
+    values_array=torch.Tensor([sustratoHeight ])
+
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
 
@@ -657,7 +658,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_29Dic_HighAbs_512Depth_batch32_512_z400_NoWCond_.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_29Dic_HighAbs_512Depth_batch32_512_z400_NoWGeometryCond.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -667,7 +668,7 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":13,
+                                       "-condition_len":10,
                                        "-metricType":"AbsorbanceTM",
                                        "-latent":400,
                                        "-output_channels":3,
