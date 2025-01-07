@@ -1,0 +1,8 @@
+original batch:('circ_01_freq_reflect_v2_6108e629-c8ff-11ef-898c-047c16a08772_0-183_75-78.png',)
+image_size:512
+condition_len:13
+latent:400
+spectra_length:100
+gen_model:models/NETGModelTM_abs__GANV2_6Ene_HighAbs_512Depth_batch32_512_z400_NoWCond_1pxFringe.pth
+one_hot_encoding:0
+cell size:tensor(4.9265) ValidationWidth:4.92
