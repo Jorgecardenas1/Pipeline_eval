@@ -544,8 +544,8 @@ def testwithLabels(netG,device):
     
     #geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band
     
-    data = pd.read_csv("book-google.csv")
-    name = "circ"
+    data = pd.read_csv("book-google_2.csv")
+    name = "cross"
     sustratoHeight = 0.508
 
 
