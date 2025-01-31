@@ -4,7 +4,7 @@ import glob
 from druidaHFSS.modules import tools
 
 image_size=512
-imagesPath="./data/MetasurfacesData/Images"
+imagesPath="./data/MetasurfacesDataV3/Images"
 
 folders=glob.glob(imagesPath+"/*/", recursive = True)
 files=[]

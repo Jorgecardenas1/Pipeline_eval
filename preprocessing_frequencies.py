@@ -12,10 +12,10 @@ from druida.tools import utils
 from tqdm.notebook import tqdm
 
 
-imagesPath="./data/MetasurfacesData/Images/processed512"
-imagesDestination="./data/MetasurfacesData/Images-512-Bands"
-testDestination="./data/MetasurfacesData/testImages"
-boxImagesPath="./data/MetasurfacesData/Images-512-Bands/"
+imagesPath="./data/MetasurfacesDataV3/Images/processed512"
+imagesDestination="./data/MetasurfacesDataV3/Images-512-Bands"
+testDestination="./data/MetasurfacesDataV3/testImages"
+boxImagesPath="./data/MetasurfacesDataV3/Images-512-Bands/"
 Bands={"75-78":0}
 
  

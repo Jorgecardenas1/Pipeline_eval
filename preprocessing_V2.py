@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 
 image_size=512
-imagesPath="./data/MetasurfacesData/Images"
-DataPath="./data/MetasurfacesData/Exports/output/"
+imagesPath="./data/MetasurfacesDataV3/Images"
+DataPath="./data/MetasurfacesDataV3/Exports/output/"
 
 folders=glob.glob(imagesPath+"/*/", recursive = True)
 files=[]
