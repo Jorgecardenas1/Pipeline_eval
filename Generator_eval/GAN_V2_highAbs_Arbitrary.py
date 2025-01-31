@@ -1,7 +1,7 @@
 
 """
 Version 2 : implementa GAn V1 y GAN V2
-Version 3:
+Version 3: Ene2025
 """
 import sys
 import os
@@ -544,8 +544,10 @@ def testwithLabels(netG,device):
     
     #geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band
     
-    data = pd.read_csv("book-google_2.csv")
-    name = "cross"
+    #data = pd.read_csv("book-google_2.csv")
+    x,y=create_spectra(75.5,0.3) #center, fwhm
+    data = pd.DataFrame({'Freq':x, 'Abs':y})
+    name = "circ"
     sustratoHeight = 0.508
 
 
@@ -634,13 +636,25 @@ def testwithLabels(netG,device):
 
 print('Check testwithLabels function: Done.')
 
+def gaussian(x, center, fwhm):
+    sigma = fwhm / (2 * np.sqrt(2 * np.log(2)))  # Convert FWHM to standard deviation
+    return np.exp(-((x - center) ** 2) / (2 * sigma ** 2))
+
+
+
+def create_spectra(center,fwhm):
+    # Define parameters
+    x = np.linspace(75.0, 78.0, 101)  # Range from 0 to 1
+    y = gaussian(x, center, fwhm)
+    # Plot
+    
+    return x, y
 
 def prepare_data_arbitrary(CSV_labels,substrateH, device,target):
     
     array_labels=[]
 
     noise = torch.Tensor()
-
 
     #preparing data from spectra for each image
     train=CSV_labels.loc[1:100]
