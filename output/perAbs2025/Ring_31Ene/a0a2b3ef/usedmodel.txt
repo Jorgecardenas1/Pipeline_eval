@@ -1,0 +1,8 @@
+original batch:('cross_01_freq_reflect_v2_85a51a0e-bf02-11ef-a5f1-047c16a08772_0-646_75-78.png',)
+image_size:512
+condition_len:13
+latent:400
+spectra_length:100
+gen_model:models/modelnetG290NETGModelTM_abs__GAN_31Ene_ganV2_HighAbs_NoWCond_1pxFringe.pt
+one_hot_encoding:0
+cell size:tensor(4.9940) ValidationWidth:5.0
