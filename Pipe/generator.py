@@ -93,8 +93,8 @@ class Generator:
                                   output_channels,
                                   leakyRelu_flag=False)
 
-            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
-            self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
+            self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
         else:
             #self.model = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
             #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())

@@ -198,7 +198,7 @@ def fitness(predicted,truth,iter):
     
     #get results
     Y_true = truth
-    Y_pred = predicted[0]
+    Y_pred = predicted
     # Calculation of Mean Squared Error (MSE)
     loss = nn.MSELoss()
 
