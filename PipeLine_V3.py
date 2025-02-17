@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 
-"""
-Version 2 : implementa GAn V1 y GAN V2
-Version 3:
-"""
+"""Pipeline_V3.py: This is the main flow control of the generation-prediction loop."""
+__author__      = "JORGE H. CARDENAS"
+__copyright__   = "2024,2025"
+__version__   = "1.0"
+
+
 import sys
 import os
 import time
@@ -57,18 +60,17 @@ parser = argparse.ArgumentParser()
 # DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
 # simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../data/MetasufacesData/Images-512-Bands/"
-#boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
-DataPath="../../data/MetasufacesData/Exports/output/"
-simulationData="../../data/MetasufacesData/DBfiles/"
-validationImages="../../data/MetasufacesData/testImages/"
+boxImagesPath="../../data/MetasurfacesDataV3/Images-512-Bands/"
+DataPath="../../data/MetasurfacesDataV3/Exports/output/"
+simulationData="../../data/MetasurfacesDataV3/DBfiles/"
+validationImages="../../data/MetasurfacesDataV3/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
-Surfacetypes={"Reflective":0,"Transmissive":1}
-TargetGeometries={"circ":[1,0,0],"box":[0,1,0], "cross":[0,0,1]}
-Bands={"30-40":0,"40-50":1, "50-60":2,"60-70":3,"70-80":4, "80-90":5}
+Surfacetypes={"Reflective":0,"Absorptive":1}
+TargetGeometries={"circ":[1,0,0,0],"cross":[0,1,0,0], "ring":[0,0,1,0],"splitcross":[0,0,0,1]}
+Bands={"75-78":0}
 
 
 
@@ -80,6 +82,7 @@ def arguments(args):
     parser.add_argument("-workers",type=int)
     parser.add_argument("-gpu_number",type=int)
     parser.add_argument("-image_size",type=int)
+    parser.add_argument("-predictor_image_size",type=int)
     parser.add_argument("-dataset_path",type=str)
     parser.add_argument("-device",type=str)
     parser.add_argument("-learning_rate",type=float)
@@ -108,6 +111,7 @@ def arguments(args):
     parser.workers=args["-workers"]
     parser.gpu_number=args["-gpu_number"]
     parser.image_size = args["-image_size"]
+    parser.predictor_image_size = args["-predictor_image_size"]
     parser.dataset_path = args["-dataset_path"]
     parser.device = args["-device"]
     parser.learning_rate = args["-learning_rate"]
@@ -149,7 +153,7 @@ def join_simulationData():
 
 print('Check join_simulationData function: Done.')
     
-def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight):
+def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight,cellsize):
 
     ImageProcessor=CAD("./"+images_folder+"generated_image_512.png", "./"+images_folder+"processed/")
     image_name="./"+images_folder+image_file_name
@@ -179,9 +183,10 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
     blue_cnts,size=ImageProcessor.colorContour(upperBound, lowerBound,image_name,epsilon_coeff, threshold_Value,contour_name)
 
-    """DXF generation"""
+    cellsize = round(cellsize*100,1) + 1
+    print(cellsize)
     units="um"
-    GoalSize=500
+    GoalSize=cellsize
     currentSize=size[0] #assumming an squared image same witdth and height
     multiplier=0
     layerscale=0
@@ -247,11 +252,46 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
 print('Check cad_generation function: Done.')
 
+def recoverSize(image):
+   
+    fringe_width = 1
+
+    #factor = ((value - 4.85) / (5.15 - 4.85)) 
+
+
+    # Get image dimensions
+    #C, H, W = image.shape
+    # Create a mask for the fringe
+    mask = torch.zeros((512, 512), dtype=torch.bool)
+
+    # Top fringe
+    mask[:fringe_width, :] = True
+    # Bottom fringe
+    mask[-fringe_width:, :] = True
+    # Left fringe
+    mask[:, :fringe_width] = True
+    # Right fringe
+    mask[:, -fringe_width:] = True
+
+    # Expand the mask to match the image dimensions (C, H, W)
+    mask = mask.unsqueeze(0).expand(3, -1, -1)
+   
+    #factor = ((value - 4.85) / (5.15 - 4.85)) 
+    fringes = torch.round(image[0][2, mask[0]],decimals=2)
+    
+    normalized_value = (torch.mode(fringes).values + 1) / 2
+    
+    old_min, old_max = 4.85, 5.3
+    size = normalized_value * (old_max - old_min) + old_min
+    print("size:",size)
+    image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1]])
+
+    return size, image
 
 def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder, materials_encoder,surfaceType_encoder,TargetGeometries_encoder,bands_encoder):
+    
     bands_batch,array1,array_labels=[],[],[]
-    a = []        
-
+    spectra_values = []        
     noise = torch.Tensor()
 
     for idx,name in enumerate(files_name):
@@ -261,9 +301,10 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
         
         batch=name.split('_')[4]
         version_batch=1
+
         if batch=="v2":
             version_batch=2
-            batch=name.split('_')[5]        #print(files_name)
+            batch=name.split('_')[5]      
 
         for file_name in glob.glob(DataPath+batch+'/files/'+'/'+parser.metricType+'*'+series+'.csv'): 
             #loading the absorption data
@@ -278,35 +319,21 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
                 
                 train=train.loc[101:200]
 
-            elif Bands[str(band_name)]==2:
-                if version_batch==1:
-                    train=train.loc[201:300]
-                else:
-                    train=train.loc[1:100]
-            elif Bands[str(band_name)]==3:
-                if version_batch==1:
-                    train=train.loc[301:400]
-                else:
-                    train=train.loc[101:200]
-
-            elif Bands[str(band_name)]==4:
-                if version_batch==1: 
-                    train=train.loc[401:500]
-                else:
-                    train=train.loc[201:300]
-
-            elif Bands[str(band_name)]==5:
-
-                train=train.loc[501:600]
+            
             #preparing data from spectra for each image
             data_raw=np.array(train.values.T)
             values=data_raw[1]
+            values = np.around(values, decimals=2, out=None)
+
             all_frequencies=data_raw[0]
-            
             all_frequencies_predictor = np.array([(float(i)-min(all_frequencies))/(max(all_frequencies)-min(all_frequencies)) for i in all_frequencies])
             all_frequencies = np.array([(float(i)-min(all_frequencies))/(max(all_frequencies)-min(all_frequencies)) for i in all_frequencies])
 
+
+            #find peaks for generator
             data,fre_peaks, results_half =  find_peaks_func(values, all_frequencies)
+
+            #find peaks for predictor
             data_pred,fre_peaks_pred, results_half_pred =  find_peaks_func(values, all_frequencies_predictor)
 
 
@@ -314,10 +341,11 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
             """this has 3 peaks and its frequencies-9 entries"""
             labels_peaks=torch.cat((torch.from_numpy(data),torch.from_numpy(fre_peaks),torch.from_numpy(results_half)),0)
 
-            labels_tensor_truth=torch.cat((torch.from_numpy(data_pred),torch.from_numpy(fre_peaks_pred)),0)
-            a.append(labels_tensor_truth)
+            #labels_tensor_truth=torch.cat((torch.from_numpy(data_pred),torch.from_numpy(fre_peaks_pred)),0)
 
-            """This has geometric params 6 entries"""
+            spectra_values.append(torch.from_numpy(values))
+
+            """Preparing conditional data. This has geometric params"""
             conditional_data,condition_predictor,sustratoHeight = set_conditioning(df,name,classes[idx],
                                                 classes_types[idx],
                                                 Bands[str(band_name)],
@@ -330,20 +358,26 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
             #loading data to tensors for discriminator
             tensorA = torch.from_numpy(values) #Just have spectra profile
             labels = torch.cat((conditional_data.to(device),labels_peaks.to(device),tensorA.to(device))) #concat side    
+            labels = torch.nn.functional.normalize(labels, p=2.0, dim=0, eps=1e-5, out=None)
+
             array_labels.append(labels) # to create stack of tensors
+            condition_predictor = torch.nn.functional.normalize(condition_predictor, p=2.0, dim = 1)
+
+
+            #latent tensor for Generator
             #latent_tensor=torch.randn(1,parser.latent)
-            latent_tensor=z
+            latent_tensor=z #in this case we have to provide z as it is the optimization object.
 
             if parser.gan_version:
 
                 noise = torch.cat((noise.to(device),latent_tensor.to(device)))
             else:
-        
                 pass
 
-    return array1, array_labels, noise,data_raw,sustratoHeight, a,condition_predictor
+    return array1, array_labels, noise,data_raw,sustratoHeight, spectra_values,condition_predictor
 
 def find_peaks_func(values, all_frequencies):
+
     #get top freqencies for top values 
     peaks = find_peaks(values, threshold=0.00001)[0] #indexes of peaks
     results_half = peak_widths(values, peaks, rel_height=0.5) #4 arrays: widths, y position, initial and final x
@@ -383,7 +417,8 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
 
     batch=name.split('_')[4]
     if batch=="v2":
-        batch=name.split('_')[5]    
+        batch=name.split('_')[5]   
+
     iteration=series.split('-')[-1]
     row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
 
@@ -421,18 +456,20 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
     
         sustratoHeight= json.loads(row["paramValues"].values[0])
         sustratoHeight= sustratoHeight[-1]
-        substrateWidth = 5 # 5 mm size
-        
+        #substrateWidth = 5 # 5 mm size
+        substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
+
 
     # ---conditioning Generator
     values_array=torch.Tensor(geometry)
-    values_array=torch.cat((values_array,torch.Tensor([sustratoHeight,substrateWidth,band ])),0)
+    values_array=torch.cat((values_array,torch.Tensor([sustratoHeight ])),0)
     values_array = torch.Tensor(values_array)
     #contitioning Predictor
-    values_array_predictor=torch.cat((torch.Tensor(geometry),torch.Tensor([band])),0)
-    #values_array_pred = torch.stack(values_array_predictor)
+   
+    values_array_predictor=torch.cat((torch.Tensor(geometry),torch.Tensor([sustratoHeight,substrateWidth])),0)
+    values_array_pred = torch.stack([values_array_predictor])
 
-    return values_array, values_array_predictor,sustratoHeight
+    return values_array, values_array_pred,sustratoHeight
 
 
 def test(netG,device):
@@ -555,7 +592,7 @@ def load_validation_data(device,z):
         #sending to CUDA
         inputs = inputs.to(device)
         classes = classes.to(device)
-        _, labels, noise,real_values,sustratoHeight, truth,condition_predictor = prepare_data(names, device,df,classes,classes_types,z,
+        _, labels, noise,real_values,_, truth,condition_predictor = prepare_data(names, device,df,classes,classes_types,z,
                                                              None,
                                                              None,
                                                              None,
@@ -661,8 +698,10 @@ def particle_processing(device,generator,predictor, particle,  y_truth,condition
 
 
     # ------ generate ------------
-    fake = generator.model(conditions_generator,torch.from_numpy(particle.values_array).float().to(device),parser.batch_size)    
-    y_predicted=predictor.model(input_=fake, conditioning=conditions_predictor.to(device) ,b_size=parser.batch_size)
+    fake = generator.model(conditions_generator,torch.from_numpy(particle.values_array).float().to(device),parser.batch_size)  
+    resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
+  
+    y_predicted=predictor.model(input_=resized_fake, conditioning=conditions_predictor.to(device) ,b_size=parser.batch_size)
 
     #take particle and generate with its vector
     fitness = pso.fitness(y_predicted,y_truth,0)
@@ -670,6 +709,7 @@ def particle_processing(device,generator,predictor, particle,  y_truth,condition
     return fitness
 
 def save_results(fitness, y_predicted,y_truth,fake,z,values_array,names):
+
     with open(parser.output_path+"/usedmodel.txt", "a") as f:
         f.write("batch:"+str(parser.run_name))
         f.write("\n")
@@ -701,7 +741,9 @@ def save_results(fitness, y_predicted,y_truth,fake,z,values_array,names):
         # Saving figure by changing parameter values
     plt.savefig(parser.output_path+"/spectra_expected"+".png")
 
-    
+    fake = fake.detach().cpu()
+    cellsize,fake = recoverSize(fake)
+
     # upscaling
     save_image(fake, parser.output_path+"/best_generated_image.png")
     image = cv2.imread(parser.output_path+"/best_generated_image.png")
@@ -721,7 +763,7 @@ def save_results(fitness, y_predicted,y_truth,fake,z,values_array,names):
     """NOTE: subs height must be trained"""
     #1.575 0.787 0.508 0.252
     sustratoHeight=0.508
-    cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight=sustratoHeight)
+    cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight=sustratoHeight,cellsize=cellsize.detach().numpy())
         
 
 
@@ -739,11 +781,12 @@ def main(args):
     netG = generator.Generator(args=args)
 
     #--------load validation data
-    z=torch.randn(parser.latent)
+    z=torch.randn(parser.latent) #for the sake of controlling the z generator along the optimization process
     labels, z, y_truth, condition_predictor,real_values,names=load_validation_data(device, z)
+
     label_conditions = torch.stack(labels).type(torch.float).to(device)
     noise = z.type(torch.float).to(device)
-    label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
+    #label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
 
     # ------ generate ------------
     fake = netG.model(label_conditions,noise,parser.batch_size)
@@ -753,18 +796,21 @@ def main(args):
 
     save_image(fake.detach().cpu(), parser.output_path+"/generated_image.png")
 
+    resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
+    
     # ------- load predictor ----------
     predictor_obj = predictor.Predictor(args=args)
 
     if parser.validation_images:
 
-        condition = torch.nn.functional.normalize(condition_predictor, p=2.0, dim=-1, eps=1e-5, out=None)
-        y_predicted=predictor_obj.model(input_=fake, conditioning=condition.to(device) ,b_size=parser.batch_size)
+        #condition = torch.nn.functional.normalize(condition_predictor, p=2.0, dim=-1, eps=1e-5, out=None)
+        y_predicted=predictor_obj.model(input_=resized_fake, conditioning=condition_predictor.to(device) ,b_size=parser.batch_size)
         y_truth = torch.stack(y_truth).to(device)
 
         #------ Optimization process ------ 
 
         fitness = pso.fitness(y_predicted,y_truth,0)
+
         if fitness > 0.001:
 
             #optimize
@@ -772,21 +818,23 @@ def main(args):
                     predictor=predictor_obj,
                     z=noise,
                     y_truth=y_truth,
-                    conditions_predictor=condition,
+                    conditions_predictor=condition_predictor,
                     conditions_generator=label_conditions)
         else:
             best_z=z
 
     fake = netG.model(label_conditions,torch.from_numpy(best_z).float().to(device),parser.batch_size)
+    resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
 
-    y_predicted=predictor_obj.model(input_=fake, conditioning=condition.to(device) ,b_size=parser.batch_size)
+    y_predicted=predictor_obj.model(input_=resized_fake, conditioning=condition_predictor.to(device) ,b_size=parser.batch_size)
 
     #take particle and generate with its vector
     fitness = pso.fitness(y_predicted,y_truth,0)
     fitness = fitness.detach().item()
 
-    save_results(fitness, y_predicted,real_values,fake,best_z,condition,names)
+    save_results(fitness, y_predicted,real_values,fake,best_z,condition_predictor,names)
 
+    del resized_fake,fake,y_predicted
 
 if __name__ == "__main__":
 
@@ -795,24 +843,25 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_128_FWHM_ADAM_16Sep.pth",
-             "-pred_model":"models/trainedModelTM_abs__RESNET152_Bands_8sep_5e-4_500epc_ADAM_6out.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_13Feb_ganV2_.pth",
+             "-pred_model":"models/trainedModelTM_abs_14FEB_50ep.pth",
              "-run_name":"GAN Training",
                                        "-epochs":50,
                                        "-batch_size":1,
                                        "-workers":1,
                                        "-gpu_number":1,
-                                       "-image_size":128,
+                                       "-image_size":512,
+                                       "-predictor_image_size":256,
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-conditional_len_gen":15,
-                                       "-conditional_len_pred":4,
-                                       "-resnet_arch":"resnet152",
+                                       "-conditional_len_gen":14,
+                                       "-conditional_len_pred":6,
+                                       "-resnet_arch":"resnet18",
                                        "-metricType":"AbsorbanceTM",
-                                       "-latent":112,
+                                       "-latent":400,
                                        "-n_particles":50,
-                                       "-output_size":6,
+                                       "-output_size":100,
                                        "-output_channels":3,
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,

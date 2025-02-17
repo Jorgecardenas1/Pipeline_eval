@@ -1,3 +1,8 @@
+"""predictor.py: Predictor as class to load trained model."""
+__author__      = "JORGE H. CARDENAS"
+__copyright__   = "2024,2025"
+__version__   = "1.0"
+
 import sys
 import os
 import time
@@ -52,15 +57,15 @@ class Predictor:
         os.environ["PYTORCH_USE_CUDA_DSA"] = "1"
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-        self.model=self.get_net_resnet(device,hiden_num=1000,dropout=0.1,features=1000, Y_prediction_size=parser.output_size)
+        self.model=self.get_net_resnet(device,hiden_num=800,dropout=0.3,features=600, Y_prediction_size=parser.output_size)
         self.model = self.model.to(device)
 
-    def get_net_resnet(self,device,hiden_num=1000,dropout=0.1,features=3000, Y_prediction_size=601):
+    def get_net_resnet(self,device,hiden_num=800,dropout=0.3,features=600, Y_prediction_size=100):
         
-        model = Stack.Predictor_RESNET(parser.resnet_arch,conditional=True, 
+        model = Stack.Predictor_RESNET_V2(parser.resnet_arch,conditional=True, 
                                        cond_input_size=parser.conditional_len_pred, 
                                        cond_channels=parser.cond_channel, 
-                                ngpu=1, image_size=parser.image_size ,
+                                ngpu=1, image_size=parser.predictor_image_size ,
                                 output_size=8, channels=3,
                                 features_num=features,hiden_num=hiden_num, #Its working with hiden nums. Features in case and extra linear layer
                                 dropout=dropout, 
@@ -84,6 +89,7 @@ class Predictor:
         parser.add_argument("-workers",type=int)
         parser.add_argument("-gpu_number",type=int)
         parser.add_argument("-image_size",type=int)
+        parser.add_argument("-predictor_image_size",type=int)
         parser.add_argument("-device",type=str)
         parser.add_argument("-learning_rate",type=float)
         parser.add_argument("-conditional_len_pred",type=float) #This defines the length of our conditioning vector
@@ -106,6 +112,7 @@ class Predictor:
         parser.workers=args["-workers"]
         parser.gpu_number=args["-gpu_number"]
         parser.image_size = args["-image_size"]
+        parser.predictor_image_size = args["-predictor_image_size"]
         parser.device = args["-device"]
         parser.learning_rate = args["-learning_rate"]
         parser.conditional_len_pred = args["-conditional_len_pred"] #Incliuding 3 top frequencies

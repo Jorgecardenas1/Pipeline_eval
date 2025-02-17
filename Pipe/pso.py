@@ -2,10 +2,12 @@
 
 """
 pso.py
-Functions related to implementation of PSO algorithm.
-
-
+Functions related to custom implementation of PSO algorithm.
 """
+__author__      = "JORGE H. CARDENAS"
+__copyright__   = "2024,2025"
+__version__   = "1.0"
+
 
 from numpy.core.records import array
 

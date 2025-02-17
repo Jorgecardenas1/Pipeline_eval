@@ -66,7 +66,7 @@ validationImages="../../../data/MetasurfacesDataV3/testImages/"
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
 Surfacetypes={"Reflective":0,"Transmissive":1}
-TargetGeometries={"circ":[1,0,0],"box":[0,1,0], "cross":[0,0,1]}
+TargetGeometries={"circ":[1,0,0,0],"cross":[0,1,0,0], "ring":[0,0,1,0],"splitcross":[0,0,0,1]}
 Bands={"75-78":0}
 
 
@@ -533,7 +533,7 @@ def recoverSize(image):
     
     normalized_value = (torch.mode(fringes).values + 1) / 2
     
-    old_min, old_max = 4.85, 5.15
+    old_min, old_max = 4.85, 5.3
     size = normalized_value * (old_max - old_min) + old_min
     print("size:",size)
     image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1]])
@@ -545,9 +545,9 @@ def testwithLabels(netG,device):
     #geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band
     
     #data = pd.read_csv("book-google_2.csv")
-    x,y=create_spectra(75.5,0.3) #center, fwhm
+    x,y=create_spectra(75.3,0.2) #center, fwhm
     data = pd.DataFrame({'Freq':x, 'Abs':y})
-    name = "circ"
+    name = "ring"
     sustratoHeight = 0.508
 
 
@@ -764,8 +764,8 @@ def main(args):
                                   parser.output_channels,
                                   leakyRelu_flag=False)
         
-        netG.load_state_dict(torch.load(parser.gen_model) )  
-        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        #netG.load_state_dict(torch.load(parser.gen_model) )  
+        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
 
 
         #NETGModelTM_abs__GANV2_FWHM_lowswitch_25Ag-lr1-4.pth
@@ -791,7 +791,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GANV2_6Ene_HighAbs_512Depth_batch32_512_z400_NoWCond_1pxFringe.pth",
+    args =  {"-gen_model":"models/modelnetG306_4Feb_NoWCond.pt",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -801,7 +801,7 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":13,
+                                       "-condition_len":14,
                                        "-metricType":"AbsorbanceTM",
                                        "-latent":400,
                                        "-output_channels":3,

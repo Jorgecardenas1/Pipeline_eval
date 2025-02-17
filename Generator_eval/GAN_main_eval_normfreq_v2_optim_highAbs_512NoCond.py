@@ -65,8 +65,8 @@ validationImages="../../../data/MetasurfacesDataV3/testImages/"
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
-Surfacetypes={"Reflective":0,"Absorptive":1}
-TargetGeometries={"circ":[1,0,0],"cross":[0,1,0], "ring":[0,0,1]}
+Surfacetypes={"Reflective":0,"Transmissive":1}
+TargetGeometries={"circ":[1,0,0,0],"cross":[0,1,0,0], "ring":[0,0,1,0],"splitcross":[0,0,0,1]}
 Bands={"75-78":0}
 
 
@@ -382,9 +382,9 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
         
 
-    #values_array=torch.Tensor(geometry)
-    #values_array=torch.cat((values_array,torch.Tensor([sustratoHeight ])),0)
-    values_array=torch.Tensor([sustratoHeight ])
+    values_array=torch.Tensor(geometry)
+    values_array=torch.cat((values_array,torch.Tensor([sustratoHeight ])),0)
+    #values_array=torch.Tensor([sustratoHeight ])
 
     """condition with top frequencies"""
     #values_array = torch.cat((values_array,top_freqs),0) #concat side
@@ -533,7 +533,7 @@ def recoverSize(image):
     
     normalized_value = (torch.mode(fringes).values + 1) / 2
     
-    old_min, old_max = 4.85, 5.15
+    old_min, old_max = 4.85, 5.3
     size = normalized_value * (old_max - old_min) + old_min
     print("size:",size)
     image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1]])
@@ -658,7 +658,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_31Ene_ganV2_HighAbs_NoGeom.pth",
+    args =  {"-gen_model":"models/GAN_main_eval_normfreq_v2_optim_highAbs_512NoCond.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
@@ -668,7 +668,7 @@ if __name__ == "__main__":
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
-                                       "-condition_len":10,
+                                       "-condition_len":14,
                                        "-metricType":"AbsorbanceTM",
                                        "-latent":400,
                                        "-output_channels":3,

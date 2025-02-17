@@ -533,7 +533,7 @@ def recoverSize(image):
     #print(value)
     fringes = image[0][2, mask[0]]
     normalized_value = (torch.min(fringes) + 1) / 2
-    old_min, old_max = 4.85, 5.15
+    old_min, old_max = 4.85, 5.3
     size = normalized_value * (old_max - old_min) + old_min
     
     image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1]])

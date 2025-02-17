@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+
+"""generator.py: Generator as class to load trained model."""
+__author__      = "JORGE H. CARDENAS"
+__copyright__   = "2024,2025"
+__version__   = "1.0"
+
+
 import sys
 import os
 import time
@@ -64,13 +72,14 @@ class Generator:
         trainer = Stack.Trainer(parser)
         # Sizes for discrimnator and generator
         """Z product"""
-        input_size=parser.spectra_length+parser.conditional_len_gen
+        #input_size=parser.spectra_length+parser.conditional_len_gen
 
         """this for Z concat"""
         #input_size=parser.spectra_length+parser.condition_len+parser.latent
         
-        generator_mapping_size=parser.image_size
+        generator_mapping_size=64
         output_channels=3
+        
         if parser.gan_version:
 
             initial_depth = 512
@@ -87,10 +96,11 @@ class Generator:
             #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
             self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
         else:
-            self.model = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
+            #self.model = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
             #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
-            self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
-
+            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
+            pass
+        
         self.model.eval()
         
         if device.type!='cpu':
