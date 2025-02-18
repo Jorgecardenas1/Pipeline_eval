@@ -882,7 +882,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG204.pt",
+    args =  {"-gen_model":"models/modelnetG235.pt",
              "-pred_model":"models/trainedModelTM_abs_14FEB_50ep.pth",
              "-run_name":"GAN Training",
                                        "-epochs":50,

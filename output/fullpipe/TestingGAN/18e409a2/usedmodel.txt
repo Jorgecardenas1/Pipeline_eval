@@ -1,0 +1,8 @@
+original batch:('splitcross_01_freq_reflect_v2_f3a9a3ac-e28a-11ef-9153-047c16a08772_0-1547_75-78.png',)
+image_size:512
+condition_len:14
+latent:400
+spectra_length:100
+gen_model:models/modelnetG235.pt
+one_hot_encoding:0
+cell size:tensor(5.2977) ValidationWidth:5.224
