@@ -65,7 +65,7 @@ validationImages="../../../data/MetasurfacesDataV3/testImages/"
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
 Materials={"copper":0,"pec":1}
-Surfacetypes={"Reflective":0,"Transmissive":1}
+Surfacetypes={"Reflective":0,"Absorptive":1}
 TargetGeometries={"circ":[1,0,0,0],"cross":[0,1,0,0], "ring":[0,0,1,0],"splitcross":[0,0,0,1]}
 Bands={"75-78":0}
 
@@ -631,8 +631,8 @@ def main(args):
                                   parser.output_channels,
                                   leakyRelu_flag=False)
         
-        netG.load_state_dict(torch.load(parser.gen_model) )  
-        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        #netG.load_state_dict(torch.load(parser.gen_model) )  
+        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
 
 
         #NETGModelTM_abs__GANV2_FWHM_lowswitch_25Ag-lr1-4.pth
@@ -658,7 +658,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/GAN_main_eval_normfreq_v2_optim_highAbs_512NoCond.pth",
+    args =  {"-gen_model":"models/modelnetG204.pt",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
