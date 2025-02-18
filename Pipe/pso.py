@@ -44,7 +44,7 @@ class Particle:
         
 
     def random_array(self, array_size):
-        self.values_array = np.random.random_sample(array_size)
+        self.values_array = randn(array_size) # 0.5+0.5*randn(array_size)
 
     def fill_zeros_array(self, array_size):
        self.values_array = np.zeros(array_size)
@@ -55,7 +55,7 @@ class Particle:
 
 class Swarm:
     
-    phiv=0.95
+    phiv=0.5
 
     particles=[] # array with all particles part of the swar
     x_particles=[] # array with all particles part of the swar
@@ -92,7 +92,7 @@ class Swarm:
         print("particulas creadas:"+str(len(self.particles)))
 
         interval_array=np.array(self.var_max) - np.array(self.var_min)
-        self.vmax = interval_array * 0.9
+        self.vmax = interval_array * 0.6
 
         for particle in self.particles:
             #Generate random array for each particle
@@ -112,14 +112,18 @@ class Swarm:
         vel = np.zeros([self.particles_number, self.variables_number])#llenar de ceros la variable velocidad
         
         #Cambio dinámico de la inercia
-        phi = 0.85 * self.phiv**(iteration-0.1) #0.8 y 1
-        phi1 = 2.0 #valores que se pueden revisar. Seguir el valor el mejor fit propio
-        phi2 = 2.0 #esto va valores componen self-knowledge.  seguir el mejor fit global
-        damping = 0.8 #este damping se utiliza cando las particulas tocan los limitesmáximos y mínimos.
+        phi = 0.5-((0.5-0.4)*iteration/(150) )# 0.999 * self.phiv#**(iteration-0.1) #0.8 y 1
+        self.phiv =phi
+        print(phi)
+        phi1 = 1.3 #valores que se pueden revisar. Seguir el valor el mejor fit propio
+        phi2 = 2.1 #esto va valores componen self-knowledge.  seguir el mejor fit global
+        damping = 0.2 #este damping se utiliza cando las particulas tocan los limitesmáximos y mínimos.
 
         for i in range(self.particles_number):
             
-            rand = np.random.random() #valores entre 0 y 1
+            rand = np.random.uniform(low=0., high=1.0) #valores entre 0 y 1
+            rand2 = np.random.uniform(low=0., high=1.0) #valores entre 0 y 1
+
             particula_anterior=particulas_ant[i]
 
             for idx,dimension in enumerate(particula_anterior.values_array):
@@ -146,7 +150,7 @@ class Swarm:
                 ###
 
                 vel[i][idx] = phi * (vel_anterior[i][idx]) + phi1 * rand * ((pi_best[i].values_array)[idx] - dimension) + \
-                     phi2 * rand * (pg[idx] - dimension)
+                     phi2 * rand2 * (pg[idx] - dimension)
 
                 #Limiting velocity when too large
                 if np.abs(vel[i][idx]) > self.vmax[idx]:
@@ -155,7 +159,7 @@ class Swarm:
                     
 
                 #Calculating new paticles
-                self.x_particles[i].values_array[idx] = (particulas_ant[i].values_array[idx] + vel[i][idx]).round(decimals=3, out=None) ## xi(t-1)+vi( 
+                self.x_particles[i].values_array[idx] = (particulas_ant[i].values_array[idx] + vel[i][idx]).round(decimals=4, out=None) ## xi(t-1)+vi( 
 
                 """In this part we apply a bounce tecnique in the wall defined
                 by the limits of max and min values for dimensions"""       
@@ -164,17 +168,17 @@ class Swarm:
                     
                     vel[i][idx]= vel[i][idx]*damping
 
-                    self.x_particles[i].values_array[idx] = (self.var_max[idx]-np.abs(vel[i][idx])).round(decimals=3, out=None) ## xi(t-1)+vi(t)
+                    self.x_particles[i].values_array[idx] = (self.var_max[idx]-np.abs(vel[i][idx])).round(decimals=4, out=None) ## xi(t-1)+vi(t)
                     
 
                 elif self.x_particles[i].values_array[idx] < self.var_min[idx]:
                    
                     vel[i][idx]= vel[i][idx]*damping
 
-                    self.x_particles[i].values_array[idx] = (self.var_min[idx]+np.abs(vel[i][idx]) ).round(decimals=3, out=None) ## xi(t-1)+vi(t)
+                    self.x_particles[i].values_array[idx] = (self.var_min[idx]+np.abs(vel[i][idx]) ).round(decimals=4, out=None) ## xi(t-1)+vi(t)
                     
                 else:
-                    self.x_particles[i].values_array[idx] = (particulas_ant[i].values_array[idx] + vel[i][idx]).round(decimals=3, out=None) ## xi(t-1)+vi( 
+                    self.x_particles[i].values_array[idx] = (particulas_ant[i].values_array[idx] + vel[i][idx]).round(decimals=4, out=None) ## xi(t-1)+vi( 
 
                 #This sections is used to force a=B*2
                 # if idx==global_.A_dimension_index+1:
@@ -205,7 +209,6 @@ def fitness(predicted,truth,iter):
     fitness =  loss(Y_pred,Y_true)  #Esta variable quedará para hacer una funcion compuesta en el futuro
     #fitness = fitness.round(decimals=2, out=None)
 
-    print("iter="+str(iter))
     print("fitness="+str(fitness.detach().item()))
     
  
