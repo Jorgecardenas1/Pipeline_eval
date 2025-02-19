@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Pipeline_V3.py: This is the main flow control of the generation-prediction loop."""
+"""Pipeline_V3.py: using cell size and tuned optmization ."""
 __author__      = "JORGE H. CARDENAS"
 __copyright__   = "2024,2025"
 __version__   = "1.0"
@@ -60,10 +60,10 @@ parser = argparse.ArgumentParser()
 # DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
 # simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../data/MetasurfacesDataV3RESNET/Images-512-Bands/"
-DataPath="../../data/MetasurfacesDataV3RESNET/Exports/output/"
-simulationData="../../data/MetasurfacesDataV3RESNET/DBfiles/"
-validationImages="../../data/MetasurfacesDataV3RESNET/testImages/"
+boxImagesPath="../../data/MetasurfacesDataV3/Images-512-Bands/"
+DataPath="../../data/MetasurfacesDataV3/Exports/output/"
+simulationData="../../data/MetasurfacesDataV3/DBfiles/"
+validationImages="../../data/MetasurfacesDataV3/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
@@ -326,9 +326,7 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
             values = np.around(values, decimals=2, out=None)
 
             all_frequencies=data_raw[0]
-            all_frequencies_predictor = np.array([(float(i)-min(all_frequencies))/(max(all_frequencies)-min(all_frequencies)) for i in all_frequencies])
             all_frequencies = np.array([(float(i)-min(all_frequencies))/(max(all_frequencies)-min(all_frequencies)) for i in all_frequencies])
-
 
             #find peaks for generator
             data,fre_peaks, results_half =  find_peaks_func(values, all_frequencies)
@@ -380,11 +378,10 @@ def prepare_data_pred(device,fake, names,classes, classes_types ):
         """Preparing conditional data. This has geometric params"""
         
         condition_predictor,sustratoHeight,substratewidth = set_conditioning_pred(name,classes[idx],classes_types[idx],substrate_width)
-
-        condition_predictor = torch.nn.functional.normalize(condition_predictor, p=2.0, dim = 1)
+        normalized_condition_predictor = torch.nn.functional.normalize(condition_predictor, p=2.0, dim = 1)
 
         
-    return condition_predictor,sustratoHeight,substratewidth
+    return condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth
 
 
 def find_peaks_func(values, all_frequencies):
@@ -673,6 +670,7 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_predictor,condition
     pi_best = swarm.particles.copy()#array initial particles
 
     for i in range(parser.epochs):
+        
         print("current it.:"+str(i))
         particulas_anterior = []
         particulas_anterior  = swarm.particles.copy() #Array de particulas
@@ -726,7 +724,9 @@ def particle_processing(device,generator,predictor, particle,  y_truth,condition
     fake = generator.model(conditions_generator,torch.from_numpy(particle.values_array).float().to(device),parser.batch_size)  
     resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
   
-    y_predicted=predictor.model(input_=resized_fake, conditioning=conditions_predictor.to(device) ,b_size=parser.batch_size)
+    normalized_condition_predictor = torch.nn.functional.normalize(conditions_predictor, p=2.0, dim = 1)
+
+    y_predicted=predictor.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
 
     #take particle and generate with its vector
     fitness = pso.fitness(y_predicted,y_truth,0)
@@ -827,18 +827,18 @@ def main(args):
 
     if parser.validation_images:
 
-        condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
+        condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
         resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
 
         #condition = torch.nn.functional.normalize(condition_predictor, p=2.0, dim=-1, eps=1e-5, out=None)
-        y_predicted=predictor_obj.model(input_=resized_fake, conditioning=condition_predictor.to(device) ,b_size=parser.batch_size)
+        y_predicted=predictor_obj.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
         y_truth = torch.stack(y_truth).to(device)
         
         #------ Optimization process ------ 
 
         fitness = pso.fitness(y_predicted,y_truth,0)
 
-        if fitness > 0.001:
+        if fitness > 0.0015:
 
             #optimize
             best_z = opt_loop(device=device, generator=netG,
@@ -853,13 +853,13 @@ def main(args):
     fake = netG.model(label_conditions,torch.from_numpy(best_z).float().to(device),parser.batch_size)
     resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
 
-    y_predicted=predictor_obj.model(input_=resized_fake, conditioning=condition_predictor.to(device) ,b_size=parser.batch_size)
+    y_predicted=predictor_obj.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
 
     #take particle and generate with its vector
     fitness = pso.fitness(y_predicted,y_truth,0)
     fitness = fitness.detach().item()
 
-    save_results(fitness, y_predicted,data_raw,fake,best_z,condition_predictor,names)
+    save_results(fitness, y_predicted,data_raw,fake,best_z,normalized_condition_predictor,names)
 
     del resized_fake,fake,y_predicted
 

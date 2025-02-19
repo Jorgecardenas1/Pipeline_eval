@@ -56,14 +56,11 @@ print('Check import functions: Done.')
 
 # Arguments
 parser = argparse.ArgumentParser()
-# boxImagesPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Images Jorge Cardenas 512\\"
-# DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
-# simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../data/MetasurfacesDataV3RESNET/Images-512-Bands/"
-DataPath="../../data/MetasurfacesDataV3RESNET/Exports/output/"
-simulationData="../../data/MetasurfacesDataV3RESNET/DBfiles/"
-validationImages="../../data/MetasurfacesDataV3RESNET/testImages/"
+boxImagesPath="../../data/MetasurfacesDataV3/Images-512-Bands/"
+DataPath="../../data/MetasurfacesDataV3/Exports/output/"
+simulationData="../../data/MetasurfacesDataV3/DBfiles/"
+validationImages="../../data/MetasurfacesDataV3/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
@@ -185,6 +182,7 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
     cellsize = round(cellsize*100,1) + 1
     print(cellsize)
+
     units="um"
     GoalSize=cellsize
     currentSize=size[0] #assumming an squared image same witdth and height
@@ -256,9 +254,6 @@ def recoverSize(image):
    
     fringe_width = 1
 
-    #factor = ((value - 4.85) / (5.15 - 4.85)) 
-
-
     # Get image dimensions
     #C, H, W = image.shape
     # Create a mask for the fringe
@@ -283,7 +278,7 @@ def recoverSize(image):
     
     old_min, old_max = 4.85, 5.3
     size = normalized_value * (old_max - old_min) + old_min
-    print("size:",size)
+    #print("size:",size)
     image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1]])
 
     return size, image
@@ -326,9 +321,7 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
             values = np.around(values, decimals=2, out=None)
 
             all_frequencies=data_raw[0]
-            all_frequencies_predictor = np.array([(float(i)-min(all_frequencies))/(max(all_frequencies)-min(all_frequencies)) for i in all_frequencies])
             all_frequencies = np.array([(float(i)-min(all_frequencies))/(max(all_frequencies)-min(all_frequencies)) for i in all_frequencies])
-
 
             #find peaks for generator
             data,fre_peaks, results_half =  find_peaks_func(values, all_frequencies)
@@ -380,7 +373,6 @@ def prepare_data_pred(device,fake, names,classes, classes_types ):
         """Preparing conditional data. This has geometric params"""
         
         condition_predictor,sustratoHeight,substratewidth = set_conditioning_pred(name,classes[idx],classes_types[idx],substrate_width)
-
         normalized_condition_predictor = torch.nn.functional.normalize(condition_predictor, p=2.0, dim = 1)
 
         
@@ -472,6 +464,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
 
 
     # ---conditioning Generator
+    print("original Cell size:",substrateWidth)
     values_array=torch.Tensor(geometry)
     values_array=torch.cat((values_array,torch.Tensor([sustratoHeight ])),0)
     values_array = torch.Tensor(values_array)
@@ -628,24 +621,12 @@ def load_vector_gen(device,z):
 
 
 
-def opt_loop(device,generator,predictor,z,y_truth,conditions_predictor,conditions_generator):
+def opt_loop(device,generator,predictor,z,y_truth,conditions_generator,names,classes, classes_types):
 
 
-    rng = np.random.default_rng()
     var_max  = [1 for _ in range(parser.latent)]
     var_min = [-1 for _ in range(parser.latent)]
     z = z.detach().cpu().numpy()
-    #take first original random Z
-    #optimizing Z requires generating random particles considering the original
-    #Z value.
-
-    #var_max=var_max*z
-    #ones= np.where((var_max)>1)
-    #var_max[ones]=1
-
-    #var_min=var_min*z
-    #zeros= np.where((var_min)<0)
-    #var_min[zeros]=0
 
     #Define swarm
     global swarm
@@ -653,8 +634,7 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_predictor,condition
     swarm.create()
 
 
-    #first fitness value
-
+    #--------first fitness value-----
     for index in range(len(swarm.particles)):
         particle = swarm.particles[index]
         fitness = particle_processing(device, 
@@ -662,24 +642,26 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_predictor,condition
                                       predictor,
                                       particle, 
                                       y_truth,
-                                      conditions_predictor,
-                                      conditions_generator)
+                                      conditions_generator,names,classes, classes_types)
         
         swarm.pbest[particle.id_] = fitness
 
     best_index=swarm.get_particle_best_fit(swarm.particles)
-    #Optimization loop
+    
+    #-------Optimization loop-------
 
     pi_best = swarm.particles.copy()#array initial particles
 
     for i in range(parser.epochs):
         
         print("current it.:"+str(i))
+
         particulas_anterior = []
         particulas_anterior  = swarm.particles.copy() #Array de particulas
 
         x , v = swarm.nuevas_particulas(particulas_anterior, pi_best, swarm.pg, swarm.velocidades,i)
-        ### se actualizan las particulas originales con las nuevas particulas actualizadas
+        
+        ### se actualizan las particulas originales con las nuevas particulas 
         for index_, particle in enumerate(x):
             swarm.particles[index_].values_array = particle.values_array
 
@@ -694,15 +676,15 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_predictor,condition
 
             """possibly change conditioning vector
             [geometry,surfacetype,materialconductor,materialsustrato,sustratoHeight,band]
-            """
+            
             #conditioning[0] = random.choice([0,1,2]) #chosing between differente geometries
+            """
             fitness = particle_processing(device, 
-                                          generator, 
-                                          predictor,
-                                          particle,
-                                          y_truth,
-                                          conditions_predictor,
-                                          conditions_generator)
+                                      generator, 
+                                      predictor,
+                                      particle, 
+                                      y_truth,
+                                      conditions_generator,names,classes, classes_types)
             valores[index]=fitness
 
             if valores[index] < swarm.pbest[index]:
@@ -713,21 +695,22 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_predictor,condition
             swarm.gbest = np.min(swarm.pbest) #swarm.gbest comes from get_particle_best_fit
             swarm.pg = pi_best[np.argmin(swarm.pbest)].values_array
                 
+        
         best_index=np.argmin(swarm.pbest)
         
-        print("best_particle", json.dumps(swarm.particles[best_index].values_array.tolist()))
+        print("best_particle", json.dumps(swarm.pg.tolist()))
     print("Minimo global encontrado: "+str(swarm.gbest))
 
-    return swarm.particles[best_index].values_array
+    return swarm.pg
 
-def particle_processing(device,generator,predictor, particle,  y_truth,conditions_predictor,conditions_generator):
+def particle_processing(device,generator,predictor, particle,  y_truth,conditions_generator,names,classes, classes_types):
 
 
     # ------ generate ------------
     fake = generator.model(conditions_generator,torch.from_numpy(particle.values_array).float().to(device),parser.batch_size)  
     resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
   
-    normalized_condition_predictor = torch.nn.functional.normalize(conditions_predictor, p=2.0, dim = 1)
+    condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
 
     y_predicted=predictor.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
 
@@ -810,6 +793,7 @@ def main(args):
 
     #--------load validation data
     z=torch.randn(parser.latent) #for the sake of controlling the z generator along the optimization process
+    #loading conditioning for generation
     labels, z, y_truth,data_raw,names,classes, classes_types=load_vector_gen(device, z)
     label_conditions = torch.stack(labels).type(torch.float).to(device)
     label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
@@ -829,8 +813,12 @@ def main(args):
     predictor_obj = predictor.Predictor(args=args)
 
     if parser.validation_images:
-
+        #getting a normalized version to use for predicting
+        #the not normalized version is used to update later the conditioning vector during optimization
         condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
+        print(condition_predictor)
+
+        #predictor is trained with 256 pixels images
         resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
 
         #condition = torch.nn.functional.normalize(condition_predictor, p=2.0, dim=-1, eps=1e-5, out=None)
@@ -841,24 +829,32 @@ def main(args):
 
         fitness = pso.fitness(y_predicted,y_truth,0)
 
-        if fitness > 0.0015:
+        #the limit value comes from the predicting training
+        #the MSE value reached during traing is close to 1e-3
+        if fitness > 0.005:
 
-            #optimize
+            #optimization loop
             best_z = opt_loop(device=device, generator=netG,
                     predictor=predictor_obj,
                     z=noise,
                     y_truth=y_truth,
-                    conditions_predictor=condition_predictor,
-                    conditions_generator=label_conditions)
+                    conditions_generator=label_conditions,
+                    names=names,classes=classes, classes_types=classes_types)
         else:
+            #optimization not required
             best_z=z
 
-    fake = netG.model(label_conditions,torch.from_numpy(best_z).float().to(device),parser.batch_size)
-    resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
+#-----final generation --------
 
+    fake = netG.model(label_conditions,torch.from_numpy(best_z).float().to(device),parser.batch_size)
+
+    #A new fake is obtained thus a new cell size is generated
+    condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
+    print(condition_predictor)
+    resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
     y_predicted=predictor_obj.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
 
-    #take particle and generate with its vector
+    #measure fitness and save results
     fitness = pso.fitness(y_predicted,y_truth,0)
     fitness = fitness.detach().item()
 
@@ -873,10 +869,10 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG301.pt",
+    args =  {"-gen_model":"models/modelnetG95_high.pt",
              "-pred_model":"models/trainedModelTM_abs__17Feb_RESNET18_ADAM.pth",
              "-run_name":"GAN Training",
-                                       "-epochs":150,
+                                       "-epochs":50,
                                        "-batch_size":1,
                                        "-workers":1,
                                        "-gpu_number":1,
