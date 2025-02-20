@@ -112,13 +112,13 @@ class Swarm:
         vel = np.zeros([self.particles_number, self.variables_number])#llenar de ceros la variable velocidad
         
         #Cambio dinámico de la inercia
-        phi = 0.75-((0.75-0.4)*iteration/(50) )# adaptive inertia method
+        phi = 0.6-((0.75-0.4)*iteration/(50) )# adaptive inertia method
         self.phiv =phi
         print(phi)
         
-        phi1 = 2 #valores que se pueden revisar. Seguir el valor el mejor fit propio
-        phi2 = 2 #esto va valores componen self-knowledge.  seguir el mejor fit global
-        damping = 0.2 #este damping se utiliza cando las particulas tocan los limitesmáximos y mínimos.
+        phi1 = 1.3 #valores que se pueden revisar. Seguir el valor el mejor fit propio
+        phi2 = 1.9 #esto va valores componen self-knowledge.  seguir el mejor fit global
+        damping = 0.5 #este damping se utiliza cando las particulas tocan los limitesmáximos y mínimos.
 
         for i in range(self.particles_number):
             
@@ -151,7 +151,7 @@ class Swarm:
                 ###
 
                 vel[i][idx] = phi * (vel_anterior[i][idx]) + phi1 * rand * ((pi_best[i].values_array)[idx] - dimension) + \
-                     phi2 * rand * (pg[idx] - dimension)
+                     phi2 * rand2 * (pg[idx] - dimension)
 
                 #Limiting velocity when too large
                 if np.abs(vel[i][idx]) > self.vmax[idx]:

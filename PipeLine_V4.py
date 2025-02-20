@@ -332,7 +332,7 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
 
 
             """Preparing conditional data. This has geometric params"""
-            conditional_data,sustratoHeight = set_conditioning(df,name,classes[idx],
+            conditional_data,sustratoHeight,substrateWidth = set_conditioning(df,name,classes[idx],
                                                 classes_types[idx],
                                                 Bands[str(band_name)],
                                                 None)
@@ -358,7 +358,7 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
             else:
                 pass
 
-    return array1, array_labels, noise,data_raw,sustratoHeight, spectra_values
+    return array1, array_labels, noise,data_raw,sustratoHeight, spectra_values,substrateWidth
 
 def prepare_data_pred(device,fake, names,classes, classes_types ):
     
@@ -464,7 +464,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
     values_array = torch.Tensor(values_array)
     #contitioning Predictor
    
-    return values_array,sustratoHeight
+    return values_array,sustratoHeight,substrateWidth
 
 
 def set_conditioning_pred(name,target,categories, substrate_width):
@@ -603,7 +603,7 @@ def load_vector_gen(device):
         inputs = inputs.to(device)
         classes = classes.to(device)
 
-        _, labels, noise,data_raw,_, truth = prepare_data(names, device,df,classes,classes_types,
+        _, labels, noise,data_raw,_, truth,substrateWidth = prepare_data(names, device,df,classes,classes_types,
                                                              None,
                                                              None,
                                                              None,
@@ -611,7 +611,7 @@ def load_vector_gen(device):
                                                              None)
         break
 
-    return labels, noise,truth,data_raw,names,classes, classes_types
+    return labels, noise,truth,data_raw,names,classes, classes_types,substrateWidth
 
 
 
@@ -715,7 +715,8 @@ def particle_processing(device,generator,predictor, particle,  y_truth,condition
     fitness = fitness.detach().item()
     return fitness
 
-def save_results(fitness, y_predicted,y_truth,fake,z,values_array,names):
+def save_results(fitness, y_predicted,y_truth,fake,z,condition_predictor,final_condition_predictor,names,Initialsubstratewidth,finalsubstratewidth):
+
 
     with open(parser.output_path+"/usedmodel.txt", "a") as f:
         f.write("batch:"+str(parser.run_name))
@@ -724,7 +725,7 @@ def save_results(fitness, y_predicted,y_truth,fake,z,values_array,names):
         f.write("fitness:"+str(fitness))
         f.write("\n")
         
-        f.write("Predicte:"+str(y_predicted))
+        f.write("Predicted:"+str(y_predicted))
         f.write("\n")
 
         f.write("latent:"+str(z))
@@ -733,13 +734,17 @@ def save_results(fitness, y_predicted,y_truth,fake,z,values_array,names):
         f.write("Truth:"+str(y_truth))
         f.write("\n")
 
-        f.write("conditioning:"+str(values_array))
+        f.write("initial conditioning:"+str(condition_predictor))
         f.write("\n")
 
-        f.write("conditioning:"+str(names))
+        f.write("final conditioning:"+str(final_condition_predictor))
         f.write("\n")
 
+        f.write("initial conditioning:"+str(Initialsubstratewidth))
+        f.write("\n")
 
+        f.write("final conditioning:"+str(finalsubstratewidth))
+        f.write("\n")
     f = open('data.json')
     data = json.load(f)
 
@@ -790,7 +795,7 @@ def main(args):
 
      #for the sake of controlling the z generator along the optimization process
     #loading conditioning for generation
-    labels, noise, y_truth,data_raw,names,classes, classes_types=load_vector_gen(device)
+    labels, noise, y_truth,data_raw,names,classes, classes_types,originalsubstrateWidth=load_vector_gen(device)
 
     label_conditions = torch.stack(labels).type(torch.float).to(device)
     label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
@@ -811,7 +816,7 @@ def main(args):
     if parser.validation_images:
         #getting a normalized version to use for predicting
         #the not normalized version is used to update later the conditioning vector during optimization
-        condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
+        condition_predictor,normalized_condition_predictor,sustratoHeight,Initialsubstratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
         print(condition_predictor)
         #predictor is trained with 256 pixels images
         resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
@@ -847,9 +852,9 @@ def main(args):
     
 
     #A new fake is obtained thus a new cell size is generated
-    condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
+    final_condition_predictor,normalized_condition_predictor,sustratoHeight,finalsubstratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
 
-    print(condition_predictor)
+    print(final_condition_predictor)
 
     resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
     y_predicted=predictor_obj.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
@@ -858,7 +863,7 @@ def main(args):
     fitness = pso.fitness(y_predicted,y_truth,0)
     fitness = fitness.detach().item()
 
-    save_results(fitness, y_predicted,data_raw,fake,best_z,normalized_condition_predictor,names)
+    save_results(fitness, y_predicted,data_raw,fake,best_z,condition_predictor,final_condition_predictor,names,originalsubstrateWidth,finalsubstratewidth)
 
     del resized_fake,fake,y_predicted
 
@@ -869,7 +874,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_16Feb_ganV2_.pth",
+    args =  {"-gen_model":"models/modelnetG340.pt",
              "-pred_model":"models/trainedModelTM_abs__17Feb_RESNET18_ADAM.pth",
              "-run_name":"GAN Training",
                                        "-epochs":50,
