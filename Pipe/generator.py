@@ -61,7 +61,6 @@ class Generator:
     
     def __init__(self, args):
         self.args = args
-
         os.environ["PYTORCH_USE_CUDA_DSA"] = "1"
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         
@@ -70,41 +69,25 @@ class Generator:
         self.arguments(self.args)
 
         trainer = Stack.Trainer(parser)
-        # Sizes for discrimnator and generator
-        """Z product"""
-        #input_size=parser.spectra_length+parser.conditional_len_gen
 
-        """this for Z concat"""
-        #input_size=parser.spectra_length+parser.condition_len+parser.latent
-        
+        initial_depth = 512
         generator_mapping_size=64
         output_channels=3
-        
-        if parser.gan_version:
 
-            initial_depth = 512
-            generator_mapping_size=64
-            
-            self.model = Stack.Generator_V2(parser.image_size,
-                                  trainer.gpu_number,
-                                  parser.spectra_length+parser.conditional_len_gen,
-                                  parser.latent, generator_mapping_size,
-                                  initial_depth,
-                                  output_channels,
-                                  leakyRelu_flag=False)
-
-            self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
-            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
-        else:
-            #self.model = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
-            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
-            #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)))
-            pass
+        self.model = Stack.Generator_V2(parser.image_size,
+                                trainer.gpu_number,
+                                parser.spectra_length+parser.conditional_len_gen,
+                                parser.latent, generator_mapping_size,
+                                initial_depth,
+                                output_channels,
+                                leakyRelu_flag=False)
         
+        self.model.load_state_dict(torch.load(parser.gen_model) )  
+        #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+
         self.model.eval()
-        
-        if device.type!='cpu':
-            self.model.cuda()
+        self.model.cuda()
+
 
     def generate(conditions, data, noise):
         pass

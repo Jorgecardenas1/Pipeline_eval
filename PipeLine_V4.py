@@ -5,7 +5,6 @@ __author__      = "JORGE H. CARDENAS"
 __copyright__   = "2024,2025"
 __version__   = "1.0"
 
-
 import sys
 import os
 import time
@@ -139,7 +138,6 @@ def arguments(args):
 
 # Data pre-processing
 def join_simulationData():
-
 
     df = pd.DataFrame()
     for file in glob.glob(simulationData+"*.csv"): 
@@ -283,9 +281,9 @@ def recoverSize(image):
 
     return size, image
 
-def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder, materials_encoder,surfaceType_encoder,TargetGeometries_encoder,bands_encoder):
+def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, materials_encoder,surfaceType_encoder,TargetGeometries_encoder,bands_encoder):
     
-    bands_batch,array1,array_labels=[],[],[]
+    array1,array_labels=[],[]
     spectra_values = []        
     noise = torch.Tensor()
 
@@ -318,8 +316,8 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
             #preparing data from spectra for each image
             data_raw=np.array(train.values.T)
             values=data_raw[1]
+            spectra_values.append(torch.from_numpy(values))
             values = np.around(values, decimals=2, out=None)
-
             all_frequencies=data_raw[0]
             all_frequencies = np.array([(float(i)-min(all_frequencies))/(max(all_frequencies)-min(all_frequencies)) for i in all_frequencies])
 
@@ -332,7 +330,6 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
 
             #labels_tensor_truth=torch.cat((torch.from_numpy(data_pred),torch.from_numpy(fre_peaks_pred)),0)
 
-            spectra_values.append(torch.from_numpy(values))
 
             """Preparing conditional data. This has geometric params"""
             conditional_data,sustratoHeight = set_conditioning(df,name,classes[idx],
@@ -342,11 +339,10 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
 
 
 
-            bands_batch.append(band_name)
 
             #loading data to tensors for discriminator
-            tensorA = torch.from_numpy(values) #Just have spectra profile
-            labels = torch.cat((conditional_data.to(device),labels_peaks.to(device),tensorA.to(device))) #concat side    
+            tensorSpectra = torch.from_numpy(values) #Just have spectra profile
+            labels = torch.cat((conditional_data.to(device),labels_peaks.to(device),tensorSpectra.to(device))) #concat side    
             labels = torch.nn.functional.normalize(labels, p=2.0, dim=0, eps=1e-5, out=None)
 
             array_labels.append(labels) # to create stack of tensors
@@ -354,7 +350,7 @@ def prepare_data(files_name, device,df,classes,classes_types,z,substrate_encoder
 
             #latent tensor for Generator
             #latent_tensor=torch.randn(1,parser.latent)
-            latent_tensor=z #in this case we have to provide z as it is the optimization object.
+            latent_tensor=torch.randn(1,parser.latent) #in this case we have to provide z as it is the optimization object.
 
             if parser.gan_version:
 
@@ -423,6 +419,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         batch=name.split('_')[5]   
 
     iteration=series.split('-')[-1]
+
     row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
 
     print(categories)
@@ -431,9 +428,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         #print(iteration)
 
     target_val=target
-    category=categories
-    geometry=TargetGeometries[category]
-    band=band_name
+    geometry=TargetGeometries[categories]
 
     """"
     surface type: reflective, transmissive
@@ -452,15 +447,14 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
         
     if (target_val==2): #is cross. Because an added variable to the desing 
         
-        sustratoHeight= json.loads(row["paramValues"].values[0])
-        sustratoHeight= sustratoHeight[-2]
+        sustratoHeight= 0.508
         substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
     else:
     
-        sustratoHeight= json.loads(row["paramValues"].values[0])
-        sustratoHeight= sustratoHeight[-1]
+        sustratoHeight= 0.508
         #substrateWidth = 5 # 5 mm size
         substrateWidth = json.loads(row["paramValues"].values[0])[-1] # from the simulation crosses have this additional free param
+
 
 
     # ---conditioning Generator
@@ -590,7 +584,7 @@ def test(netG,device):
         break
 
 
-def load_vector_gen(device,z):
+def load_vector_gen(device):
 
     df = pd.read_csv("out.csv")
     
@@ -608,7 +602,8 @@ def load_vector_gen(device,z):
         #sending to CUDA
         inputs = inputs.to(device)
         classes = classes.to(device)
-        _, labels, noise,data_raw,_, truth = prepare_data(names, device,df,classes,classes_types,z,
+
+        _, labels, noise,data_raw,_, truth = prepare_data(names, device,df,classes,classes_types,
                                                              None,
                                                              None,
                                                              None,
@@ -637,6 +632,7 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_generator,names,cla
     #--------first fitness value-----
     for index in range(len(swarm.particles)):
         particle = swarm.particles[index]
+
         fitness = particle_processing(device, 
                                       generator, 
                                       predictor,
@@ -710,7 +706,7 @@ def particle_processing(device,generator,predictor, particle,  y_truth,condition
     fake = generator.model(conditions_generator,torch.from_numpy(particle.values_array).float().to(device),parser.batch_size)  
     resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
   
-    condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
+    _,normalized_condition_predictor,_,_ = prepare_data_pred(device,fake, names,classes, classes_types)
 
     y_predicted=predictor.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
 
@@ -787,20 +783,20 @@ def main(args):
     arguments(args)
     join_simulationData()  
 
-    #trainer = Stack.Trainer(parser)
 
     netG = generator.Generator(args=args)
-
+    
     #--------load validation data
-    z=torch.randn(parser.latent) #for the sake of controlling the z generator along the optimization process
+
+     #for the sake of controlling the z generator along the optimization process
     #loading conditioning for generation
-    labels, z, y_truth,data_raw,names,classes, classes_types=load_vector_gen(device, z)
+    labels, noise, y_truth,data_raw,names,classes, classes_types=load_vector_gen(device)
+
     label_conditions = torch.stack(labels).type(torch.float).to(device)
     label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
-
-    noise = z.type(torch.float).to(device)
-    #label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
-
+    noise = noise.type(torch.float).to(device)
+    #noise = torch.nn.functional.normalize(noise, p=2.0, dim=1, eps=1e-5, out=None)
+    
     # ------ generate ------------
     fake = netG.model(label_conditions,noise,parser.batch_size)
     
@@ -817,7 +813,6 @@ def main(args):
         #the not normalized version is used to update later the conditioning vector during optimization
         condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
         print(condition_predictor)
-
         #predictor is trained with 256 pixels images
         resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
 
@@ -840,17 +835,22 @@ def main(args):
                     y_truth=y_truth,
                     conditions_generator=label_conditions,
                     names=names,classes=classes, classes_types=classes_types)
+            
+            fake = netG.model(label_conditions,torch.from_numpy(best_z).float().to(device),parser.batch_size)
         else:
             #optimization not required
-            best_z=z
+            best_z=noise
+            fake = netG.model(label_conditions,best_z,parser.batch_size)
 
 #-----final generation --------
 
-    fake = netG.model(label_conditions,torch.from_numpy(best_z).float().to(device),parser.batch_size)
+    
 
     #A new fake is obtained thus a new cell size is generated
     condition_predictor,normalized_condition_predictor,sustratoHeight,substratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
+
     print(condition_predictor)
+
     resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
     y_predicted=predictor_obj.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
 
@@ -869,7 +869,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG95_high.pt",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_16Feb_ganV2_.pth",
              "-pred_model":"models/trainedModelTM_abs__17Feb_RESNET18_ADAM.pth",
              "-run_name":"GAN Training",
                                        "-epochs":50,

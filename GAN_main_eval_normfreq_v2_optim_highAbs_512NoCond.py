@@ -56,11 +56,11 @@ parser = argparse.ArgumentParser()
 # DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
 # simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../../data/MetasurfacesDataV3/Images-512-Bands/"
+boxImagesPath="../../data/MetasurfacesDataV3/Images-512-Bands/"
 #boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
-DataPath="../../../data/MetasurfacesDataV3/Exports/output/"
-simulationData="../../../data/MetasurfacesDataV3/DBfiles/"
-validationImages="../../../data/MetasurfacesDataV3/testImages/"
+DataPath="../../data/MetasurfacesDataV3/Exports/output/"
+simulationData="../../data/MetasurfacesDataV3/DBfiles/"
+validationImages="../../data/MetasurfacesDataV3/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
@@ -431,7 +431,6 @@ def test(netG,device):
             label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
 
             t_np = noise.cpu().numpy() #convert to Numpy array
-
             fake = netG(label_conditions,testTensor,parser.batch_size).detach().cpu()
 
         else:
@@ -676,7 +675,7 @@ if __name__ == "__main__":
                                        "-spectra_length":100,
                                        "-one_hot_encoding":0,
                                        "-working_path":"./Generator_eval/",
-                                       "-output_path":"../output/"+name} #OJO etepath lo lee el otro main
+                                       "-output_path":"output/"+name} #OJO etepath lo lee el otro main
 
     main(args)
 
