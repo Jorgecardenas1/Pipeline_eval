@@ -620,7 +620,7 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_generator,names,cla
 
 
     var_max  = [1 for _ in range(parser.latent)]
-    var_min = [-1 for _ in range(parser.latent)]
+    var_min = [0 for _ in range(parser.latent)]
     z = z.detach().cpu().numpy()
 
     #Define swarm
@@ -831,7 +831,7 @@ def main(args):
 
         #the limit value comes from the predicting training
         #the MSE value reached during traing is close to 1e-3
-        if fitness > 0.005:
+        if fitness > 0.006:
 
             #optimization loop
             best_z = opt_loop(device=device, generator=netG,
@@ -874,8 +874,8 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG340.pt",
-             "-pred_model":"models/trainedModelTM_abs__17Feb_RESNET18_ADAM.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_13Feb_ganV2_.pth",
+             "-pred_model":"models/trainedModelTM_abs__19FEB_RESNET18_HIGHABS_Notrainingevidence.pth",
              "-run_name":"GAN Training",
                                        "-epochs":50,
                                        "-batch_size":1,
