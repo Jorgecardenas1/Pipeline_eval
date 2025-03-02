@@ -1,4 +1,3 @@
-
 """
 Version 2 : implementa GAn V1 y GAN V2
 Version 3:
@@ -343,7 +342,6 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
     if batch=="v2":
         batch=name.split('_')[5]    
     iteration=series.split('-')[-1]
-
     row=df[(df['sim_id']==batch) & (df['iteration']==int(iteration))  ]
 
     print(categories)
@@ -507,7 +505,7 @@ print('Check test function: Done.')
 
 def recoverSize(image):
    
-    fringe_width = 1
+    fringe_width = 2
 
     #factor = ((value - 4.85) / (5.15 - 4.85)) 
 
@@ -659,10 +657,10 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_16Feb_ganV2_.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_26Feb_ganV2_HighAbs.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
-                                       "-batch_size":2,
+                                       "-batch_size":1,
                                        "-workers":1,
                                        "-gpu_number":1,
                                        "-image_size":512,

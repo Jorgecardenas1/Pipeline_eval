@@ -461,7 +461,7 @@ def set_conditioning(df,name,target,categories,band_name,top_freqs):
     print("original Cell size:",substrateWidth)
     values_array=torch.Tensor(geometry)
     values_array=torch.cat((values_array,torch.Tensor([sustratoHeight ])),0)
-    values_array = torch.Tensor(values_array)
+    #values_array = torch.Tensor(values_array)
     #contitioning Predictor
    
     return values_array,sustratoHeight,substrateWidth
@@ -620,7 +620,7 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_generator,names,cla
 
 
     var_max  = [1 for _ in range(parser.latent)]
-    var_min = [0 for _ in range(parser.latent)]
+    var_min = [-1 for _ in range(parser.latent)]
     z = z.detach().cpu().numpy()
 
     #Define swarm
@@ -722,7 +722,10 @@ def save_results(fitness, y_predicted,y_truth,fake,z,condition_predictor,final_c
         f.write("batch:"+str(parser.run_name))
         f.write("\n")
 
-        f.write("fitness:"+str(fitness))
+        f.write("names:"+str(names))
+        f.write("\n")
+
+        f.write("final fitness:"+str(fitness))
         f.write("\n")
         
         f.write("Predicted:"+str(y_predicted))
@@ -740,10 +743,10 @@ def save_results(fitness, y_predicted,y_truth,fake,z,condition_predictor,final_c
         f.write("final conditioning:"+str(final_condition_predictor))
         f.write("\n")
 
-        f.write("initial conditioning:"+str(Initialsubstratewidth))
+        f.write("original cell size:"+str(Initialsubstratewidth))
         f.write("\n")
 
-        f.write("final conditioning:"+str(finalsubstratewidth))
+        f.write("final cell size:"+str(finalsubstratewidth))
         f.write("\n")
     f = open('data.json')
     data = json.load(f)
@@ -798,7 +801,7 @@ def main(args):
     labels, noise, y_truth,data_raw,names,classes, classes_types,originalsubstrateWidth=load_vector_gen(device)
 
     label_conditions = torch.stack(labels).type(torch.float).to(device)
-    label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
+    #label_conditions = torch.nn.functional.normalize(label_conditions, p=2.0, dim=1, eps=1e-5, out=None)
     noise = noise.type(torch.float).to(device)
     #noise = torch.nn.functional.normalize(noise, p=2.0, dim=1, eps=1e-5, out=None)
     
@@ -823,6 +826,11 @@ def main(args):
 
         #condition = torch.nn.functional.normalize(condition_predictor, p=2.0, dim=-1, eps=1e-5, out=None)
         y_predicted=predictor_obj.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
+       
+        error = torch.abs(condition_predictor[-1][-1]-originalsubstrateWidth)
+        error = error.numpy()
+        print(error)
+
         y_truth = torch.stack(y_truth).to(device)
         
         #------ Optimization process ------ 
@@ -831,7 +839,7 @@ def main(args):
 
         #the limit value comes from the predicting training
         #the MSE value reached during traing is close to 1e-3
-        if fitness > 0.006:
+        if fitness > 0.015 and error > 0.01:
 
             #optimization loop
             best_z = opt_loop(device=device, generator=netG,
@@ -874,8 +882,8 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_13Feb_ganV2_.pth",
-             "-pred_model":"models/trainedModelTM_abs__19FEB_RESNET18_HIGHABS_Notrainingevidence.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_26Feb_ganV2_HighAbs.pth",
+             "-pred_model":"models/trainedModelTM_abs__26feb_RESNET18_ADAM_FULLSET.pth",
              "-run_name":"GAN Training",
                                        "-epochs":50,
                                        "-batch_size":1,
