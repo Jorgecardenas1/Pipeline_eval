@@ -1,8 +1,0 @@
-original batch:('splitcross_01_freq_reflect_v2_12871ca0-edfb-11ef-aa15-047c16a08772_0-913_75-78.png',)
-image_size:512
-condition_len:14
-latent:400
-spectra_length:100
-gen_model:models/NETGModelTM_abs__GAN_26Feb_ganV2_HighAbs.pth
-one_hot_encoding:0
-cell size:tensor(5.1267) ValidationWidth:5.155
