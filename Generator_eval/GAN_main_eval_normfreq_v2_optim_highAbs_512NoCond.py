@@ -657,7 +657,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_26Feb_ganV2_HighAbs.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_26Feb_ganV2_Fullset_.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
