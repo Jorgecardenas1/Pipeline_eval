@@ -1,0 +1,8 @@
+original batch:('ring_01_freq_reflect_v2_72d9943b-e308-11ef-8c1f-047c16a08772_0-916_75-78.png',)
+image_size:512
+condition_len:14
+latent:400
+spectra_length:100
+gen_model:models/modelnetG277_3Mar_fullset.pt
+one_hot_encoding:0
+cell size:5.0255 ValidationWidth:5.004 cell size tesing:5.0168538093566895

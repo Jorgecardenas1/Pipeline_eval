@@ -56,10 +56,10 @@ print('Check import functions: Done.')
 # Arguments
 parser = argparse.ArgumentParser()
 
-boxImagesPath="../../data/MetasurfacesDataV3/Images-512-Bands/"
-DataPath="../../data/MetasurfacesDataV3/Exports/output/"
-simulationData="../../data/MetasurfacesDataV3/DBfiles/"
-validationImages="../../data/MetasurfacesDataV3/testImages/"
+boxImagesPath="../../data/MetasurfacesDataV3Reduced/Images-512-Bands/"
+DataPath="../../data/MetasurfacesDataV3Reduced/Exports/output/"
+simulationData="../../data/MetasurfacesDataV3Reduced/DBfiles/"
+validationImages="../../data/MetasurfacesDataV3Reduced/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
@@ -98,6 +98,7 @@ def arguments(args):
     parser.add_argument("-resnet_arch",type=str) #This defines the length of our conditioning vector
     parser.add_argument("-validation_images",type=bool)
     parser.add_argument("-n_particles",type=int)
+    parser.add_argument("-fringe_model",type=str) #This defines the length of our conditioning vector
 
 
 
@@ -127,6 +128,7 @@ def arguments(args):
     parser.cond_channel=args["-cond_channel"]
     parser.validation_images=args["-validation_images"]
     parser.n_particles=args["-n_particles"]
+    parser.fringe_model=args["-fringe_model"]
 
     print('Check arguments function: Done.')
 
@@ -248,14 +250,16 @@ def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeig
 
 print('Check cad_generation function: Done.')
 
-def recoverSize(image):
-   
-    fringe_width = 1
+def recoverSize(image, predictorObject):
 
-    # Get image dimensions
-    #C, H, W = image.shape
-    # Create a mask for the fringe
-    mask = torch.zeros((512, 512), dtype=torch.bool)
+    #Trained fringe model
+    resized_fake=transforms.Resize(parser.predictor_image_size)(image)
+    
+
+    #Preparing fringe data from image
+    fringe_width = 2
+
+    mask = torch.zeros((parser.predictor_image_size, parser.predictor_image_size), dtype=torch.bool)
 
     # Top fringe
     mask[:fringe_width, :] = True
@@ -267,19 +271,26 @@ def recoverSize(image):
     mask[:, -fringe_width:] = True
 
     # Expand the mask to match the image dimensions (C, H, W)
-    mask = mask.unsqueeze(0).expand(3, -1, -1)
-   
+    mask = mask.unsqueeze(0).expand(parser.batch_size, 1, -1, -1)  
+    mask = torch.squeeze(mask)
     #factor = ((value - 4.85) / (5.15 - 4.85)) 
-    fringes = torch.round(image[0][2, mask[0]],decimals=2)
-    
-    normalized_value = (torch.mode(fringes).values + 1) / 2
-    
-    old_min, old_max = 4.85, 5.3
-    size = normalized_value * (old_max - old_min) + old_min
-    #print("size:",size)
-    image[0][:, mask[0]] = torch.tensor([[-1.0],[-1.0],[1]])
+    resized_fake=resized_fake[:,2,:]
+    #resized_fake = torch.squeeze(a,dim=2)
 
-    return size, image
+    fringes = []
+                        
+    for idx,im in enumerate(resized_fake):
+        fringes.append(torch.round(im[mask],decimals=4))
+
+    fringes_tensor=torch.stack(fringes)
+    final = fringes_tensor[:,0:2025].view(parser.batch_size,45,45)
+    final=torch.unsqueeze(final, dim=1) 
+    #Predicting
+    size=predictorObject.fringe_model(final)
+
+    size = size.item()
+
+    return size
 
 def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, materials_encoder,surfaceType_encoder,TargetGeometries_encoder,bands_encoder):
     
@@ -360,11 +371,13 @@ def prepare_data(files_name, device,df,classes,classes_types,substrate_encoder, 
 
     return array1, array_labels, noise,data_raw,sustratoHeight, spectra_values,substrateWidth
 
-def prepare_data_pred(device,fake, names,classes, classes_types ):
+def prepare_data_pred(device,fake, names,classes, classes_types, predictorObject ):
     
-    substrate_width ,fake = recoverSize(fake.detach().cpu())
+    substrate_width  = recoverSize(fake,predictorObject)
 
-    for idx,name in enumerate(names):
+    print(substrate_width)
+
+    for idx,name in enumerate(names):   
 
         """Preparing conditional data. This has geometric params"""
         
@@ -638,7 +651,10 @@ def opt_loop(device,generator,predictor,z,y_truth,conditions_generator,names,cla
                                       predictor,
                                       particle, 
                                       y_truth,
-                                      conditions_generator,names,classes, classes_types)
+                                      conditions_generator,
+                                      names,
+                                      classes, 
+                                      classes_types)
         
         swarm.pbest[particle.id_] = fitness
 
@@ -706,7 +722,7 @@ def particle_processing(device,generator,predictor, particle,  y_truth,condition
     fake = generator.model(conditions_generator,torch.from_numpy(particle.values_array).float().to(device),parser.batch_size)  
     resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
   
-    _,normalized_condition_predictor,_,_ = prepare_data_pred(device,fake, names,classes, classes_types)
+    _,normalized_condition_predictor,_,_ = prepare_data_pred(device,fake, names,classes, classes_types,predictor)
 
     y_predicted=predictor.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
 
@@ -715,7 +731,7 @@ def particle_processing(device,generator,predictor, particle,  y_truth,condition
     fitness = fitness.detach().item()
     return fitness
 
-def save_results(fitness, y_predicted,y_truth,fake,z,condition_predictor,final_condition_predictor,names,Initialsubstratewidth,finalsubstratewidth):
+def save_results(fitness, y_predicted,y_truth,fake,z,condition_predictor,final_condition_predictor,names,Initialsubstratewidth,finalsubstratewidth,predictor_obj):
 
 
     with open(parser.output_path+"/usedmodel.txt", "a") as f:
@@ -756,9 +772,9 @@ def save_results(fitness, y_predicted,y_truth,fake,z,condition_predictor,final_c
         # Saving figure by changing parameter values
     plt.savefig(parser.output_path+"/spectra_expected"+".png")
 
+    cellsize = recoverSize(fake,predictor_obj)
+    
     fake = fake.detach().cpu()
-    cellsize,fake = recoverSize(fake)
-
     # upscaling
     save_image(fake, parser.output_path+"/best_generated_image.png")
     image = cv2.imread(parser.output_path+"/best_generated_image.png")
@@ -778,7 +794,7 @@ def save_results(fitness, y_predicted,y_truth,fake,z,condition_predictor,final_c
     """NOTE: subs height must be trained"""
     #1.575 0.787 0.508 0.252
     sustratoHeight=0.508
-    cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight=sustratoHeight,cellsize=cellsize.detach().numpy())
+    cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight=sustratoHeight,cellsize=cellsize)
         
 
 
@@ -793,7 +809,6 @@ def main(args):
 
 
     netG = generator.Generator(args=args)
-    
     #--------load validation data
 
      #for the sake of controlling the z generator along the optimization process
@@ -819,7 +834,12 @@ def main(args):
     if parser.validation_images:
         #getting a normalized version to use for predicting
         #the not normalized version is used to update later the conditioning vector during optimization
-        condition_predictor,normalized_condition_predictor,sustratoHeight,Initialsubstratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
+        condition_predictor,normalized_condition_predictor,sustratoHeight,Initialsubstratewidth = prepare_data_pred(device,
+                                                                                                                    fake, 
+                                                                                                                    names,
+                                                                                                                    classes, 
+                                                                                                                    classes_types,
+                                                                                                                    predictor_obj)
         print(condition_predictor)
         #predictor is trained with 256 pixels images
         resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
@@ -839,7 +859,7 @@ def main(args):
 
         #the limit value comes from the predicting training
         #the MSE value reached during traing is close to 1e-3
-        if fitness > 0.015 and error > 0.01:
+        if fitness > 0.005 or error > 0.005:
 
             #optimization loop
             best_z = opt_loop(device=device, generator=netG,
@@ -860,9 +880,12 @@ def main(args):
     
 
     #A new fake is obtained thus a new cell size is generated
-    final_condition_predictor,normalized_condition_predictor,sustratoHeight,finalsubstratewidth = prepare_data_pred(device,fake, names,classes, classes_types)
-
-    print(final_condition_predictor)
+    final_condition_predictor,normalized_condition_predictor,sustratoHeight,finalsubstratewidth = prepare_data_pred(device,
+                                                                                                                    fake, 
+                                                                                                                    names,
+                                                                                                                    classes,
+                                                                                                                    classes_types,
+                                                                                                                    predictor_obj)
 
     resized_fake=transforms.Resize(parser.predictor_image_size)(fake)
     y_predicted=predictor_obj.model(input_=resized_fake, conditioning=normalized_condition_predictor.to(device) ,b_size=parser.batch_size)
@@ -871,7 +894,17 @@ def main(args):
     fitness = pso.fitness(y_predicted,y_truth,0)
     fitness = fitness.detach().item()
 
-    save_results(fitness, y_predicted,data_raw,fake,best_z,condition_predictor,final_condition_predictor,names,originalsubstrateWidth,finalsubstratewidth)
+    save_results(fitness, 
+                 y_predicted,
+                 data_raw,
+                 fake,
+                 best_z,
+                 condition_predictor,
+                 final_condition_predictor,
+                 names,
+                 originalsubstrateWidth,
+                 finalsubstratewidth,
+                 predictor_obj)
 
     del resized_fake,fake,y_predicted
 
@@ -882,8 +915,9 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_26Feb_ganV2_HighAbs.pth",
-             "-pred_model":"models/trainedModelTM_abs__26feb_RESNET18_ADAM_FULLSET.pth",
+    args =  {"-gen_model":"models/modelnetG288_3Mar_reduced.pt",
+             "-pred_model":"models/trainedModelTM_abs__3Mar_RESNET18_ADAM_FULLSET.pth",
+             "-fringe_model":"models/FringeRESNET_4Mar_Fringe.pth",
              "-run_name":"GAN Training",
                                        "-epochs":50,
                                        "-batch_size":1,
@@ -899,7 +933,7 @@ if __name__ == "__main__":
                                        "-resnet_arch":"resnet18",
                                        "-metricType":"AbsorbanceTM",
                                        "-latent":400,
-                                       "-n_particles":60,
+                                       "-n_particles":10,
                                        "-output_size":100,
                                        "-output_channels":3,
                                        "-spectra_length":100,

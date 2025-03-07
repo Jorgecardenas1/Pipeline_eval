@@ -55,10 +55,13 @@ class Predictor:
         self.arguments(self.args)
 
         os.environ["PYTORCH_USE_CUDA_DSA"] = "1"
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-        self.model=self.get_net_resnet(device,hiden_num=800,dropout=0.3,features=600, Y_prediction_size=parser.output_size)
-        self.model = self.model.to(device)
+        self.model=self.get_net_resnet(self.device,hiden_num=600,dropout=0.3,features=400, Y_prediction_size=parser.output_size)
+        #self.model = self.model.to(self.device)
+
+        self.fringe_model = self.get_fringe_resnet(self.device)
+        #self.fringe_model = self.fringe_model.to(self.device)
 
     def get_net_resnet(self,device,hiden_num=800,dropout=0.3,features=400, Y_prediction_size=100):
         
@@ -73,6 +76,8 @@ class Predictor:
 
 
         model.load_state_dict(torch.load(parser.pred_model,map_location=torch.device(device)))
+        #model.load_state_dict(torch.load(parser.pred_model,map_location=torch.device(device)).state_dict())
+
         model.eval()
 
         if device.type!='cpu':
@@ -80,6 +85,25 @@ class Predictor:
 
 
         return model
+    
+    def get_fringe_resnet(self,device):
+        
+        fringe_model = Stack.Fringe_RESNET_V2("resnet18",conditional=False, ngpu=1, image_size=45 ,
+                                output_size=8, channels=1,
+                                features_num=400,hiden_num=600, #Its working with hiden nums. Features in case and extra linear layer
+                                dropout=0.4, 
+                                Y_prediction_size=1) #size of the output vector in this case frenquency points
+    
+        fringe_model.load_state_dict(torch.load(parser.fringe_model,map_location=torch.device(device)))
+        #finge_model.load_state_dict(torch.load(parser.pred_model,map_location=torch.device(device)).state_dict())
+
+        fringe_model.eval()
+
+        if device.type!='cpu':
+            fringe_model.cuda()
+
+
+        return fringe_model
 
     def arguments(self,args):
     
@@ -103,6 +127,7 @@ class Predictor:
         parser.add_argument("-cond_channel",type=int) #This defines the length of our conditioning vector
         parser.add_argument("-resnet_arch",type=str) #This defines the length of our conditioning vector
         parser.add_argument("-output_size",type=float) #This defines the length of our conditioning vector
+        parser.add_argument("-fringe_model",type=str) #This defines the length of our conditioning vector
 
 
 
@@ -126,3 +151,4 @@ class Predictor:
         parser.resnet_arch= args["-resnet_arch"] #this is to be modified when training for different metrics.
         parser.output_size = args["-output_size"] #Incliuding 3 top frequenciess
         parser.cond_channel = args["-cond_channel"] #if used OHE Incliuding 3 top frequencies
+        parser.fringe_model=args["-fringe_model"]
