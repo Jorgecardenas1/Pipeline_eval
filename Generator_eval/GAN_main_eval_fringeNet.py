@@ -55,11 +55,11 @@ parser = argparse.ArgumentParser()
 # DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
 # simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../../data/MetasurfacesDataV3Reduced/Images-512-Bands/"
+boxImagesPath="../../../data/MetasurfacesDataV3/Images-512-Bands/"
 #boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
-DataPath="../../../data/MetasurfacesDataV3Reduced/Exports/output/"
-simulationData="../../../data/MetasurfacesDataV3Reduced/DBfiles/"
-validationImages="../../../data/MetasurfacesDataV3Reduced/testImages/"
+DataPath="../../../data/MetasurfacesDataV3/Exports/output/"
+simulationData="../../../data/MetasurfacesDataV3/DBfiles/"
+validationImages="../../../data/MetasurfacesDataV3/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
@@ -519,7 +519,7 @@ def recoverSize(image,device):
     resized_fake=transforms.Resize(parser.predictor_image_size)(image)
     finge_model = Stack.Fringe_RESNET_V2("resnet18",conditional=False, ngpu=1, image_size=45 ,
                                 output_size=8, channels=1,
-                                features_num=400,hiden_num=600, #Its working with hiden nums. Features in case and extra linear layer
+                                features_num=100,hiden_num=200, #Its working with hiden nums. Features in case and extra linear layer
                                 dropout=0.4, 
                                 Y_prediction_size=1) #size of the output vector in this case frenquency points
     
@@ -691,8 +691,8 @@ def main(args):
                                   parser.output_channels,
                                   leakyRelu_flag=False)
         
-        #netG.load_state_dict(torch.load(parser.gen_model) )  
-        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        netG.load_state_dict(torch.load(parser.gen_model) )  
+        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
 
 
         netG.eval()
@@ -717,8 +717,8 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG277_3Mar_fullset.pt",
-             "-fringe_model":"models/FringeRESNET_4Mar_Fringe.pth",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_3Mar_ganV2_Fullset.pth",
+             "-fringe_model":"models/FringeRESNET__6Mar_Fringe.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
