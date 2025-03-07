@@ -55,11 +55,11 @@ parser = argparse.ArgumentParser()
 # DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
 # simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../../data/MetasurfacesDataV3/Images-512-Bands/"
+boxImagesPath="../../../data/MetasurfacesDataV3RESNET/Images-512-Bands/"
 #boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
-DataPath="../../../data/MetasurfacesDataV3/Exports/output/"
-simulationData="../../../data/MetasurfacesDataV3/DBfiles/"
-validationImages="../../../data/MetasurfacesDataV3/testImages/"
+DataPath="../../../data/MetasurfacesDataV3RESNET/Exports/output/"
+simulationData="../../../data/MetasurfacesDataV3RESNET/DBfiles/"
+validationImages="../../../data/MetasurfacesDataV3RESNET/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
