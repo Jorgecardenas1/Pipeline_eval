@@ -56,10 +56,10 @@ print('Check import functions: Done.')
 # Arguments
 parser = argparse.ArgumentParser()
 
-boxImagesPath="../../data/MetasurfacesDataV3Reduced/Images-512-Bands/"
-DataPath="../../data/MetasurfacesDataV3Reduced/Exports/output/"
-simulationData="../../data/MetasurfacesDataV3Reduced/DBfiles/"
-validationImages="../../data/MetasurfacesDataV3Reduced/testImages/"
+boxImagesPath="../../data/MetasurfacesDataV3/Images-512-Bands/"
+DataPath="../../data/MetasurfacesDataV3/Exports/output/"
+simulationData="../../data/MetasurfacesDataV3/DBfiles/"
+validationImages="../../data/MetasurfacesDataV3/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
@@ -915,9 +915,9 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG288_3Mar_reduced.pt",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_3Mar_ganV2_Fullset.pth",
              "-pred_model":"models/trainedModelTM_abs__3Mar_RESNET18_ADAM_FULLSET.pth",
-             "-fringe_model":"models/FringeRESNET_4Mar_Fringe.pth",
+             "-fringe_model":"models/FringeRESNET__6Mar_Fringe.pth",
              "-run_name":"GAN Training",
                                        "-epochs":50,
                                        "-batch_size":1,

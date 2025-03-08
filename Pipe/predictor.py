@@ -90,7 +90,7 @@ class Predictor:
         
         fringe_model = Stack.Fringe_RESNET_V2("resnet18",conditional=False, ngpu=1, image_size=45 ,
                                 output_size=8, channels=1,
-                                features_num=400,hiden_num=600, #Its working with hiden nums. Features in case and extra linear layer
+                                features_num=100,hiden_num=200, #Its working with hiden nums. Features in case and extra linear layer
                                 dropout=0.4, 
                                 Y_prediction_size=1) #size of the output vector in this case frenquency points
     

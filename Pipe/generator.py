@@ -82,8 +82,8 @@ class Generator:
                                 output_channels,
                                 leakyRelu_flag=False)
         
-        #self.model.load_state_dict(torch.load(parser.gen_model) )  
-        self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        self.model.load_state_dict(torch.load(parser.gen_model) )  
+        #self.model.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
 
         self.model.eval()
         self.model.cuda()
