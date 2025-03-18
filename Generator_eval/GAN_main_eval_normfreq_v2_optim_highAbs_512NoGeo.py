@@ -1,4 +1,3 @@
-
 """
 Version 2 : implementa GAn V1 y GAN V2
 Version 3:
@@ -506,7 +505,7 @@ print('Check test function: Done.')
 
 def recoverSize(image):
    
-    fringe_width = 1
+    fringe_width = 2
 
     #factor = ((value - 4.85) / (5.15 - 4.85)) 
 
@@ -643,7 +642,6 @@ def main(args):
         pass
 
 
-    #netG = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
     
 
     print(netG)
@@ -658,7 +656,7 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG110.pt",
+    args =  {"-gen_model":"models/modelnetG294_3Mar_noGeom.pt",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
