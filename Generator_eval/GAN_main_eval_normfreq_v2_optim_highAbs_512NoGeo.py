@@ -51,15 +51,11 @@ print('Check import functions: Done.')
 
 # Arguments
 parser = argparse.ArgumentParser()
-# boxImagesPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Images Jorge Cardenas 512\\"
-# DataPath="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\Exports\\output\\"
-# simulationData="\\data\\francisco_pizarro\\jorge-cardenas\\data\\MetasufacesData\\DBfiles\\"
 
-boxImagesPath="../../../data/MetasurfacesDataV3/Images-512-Bands/"
-#boxImagesPath="../../../data/MetasufacesData/Images-512-Suband/"
-DataPath="../../../data/MetasurfacesDataV3/Exports/output/"
-simulationData="../../../data/MetasurfacesDataV3/DBfiles/"
-validationImages="../../../data/MetasurfacesDataV3/testImages/"
+boxImagesPath="../../../data/MetasurfacesDataV3RESNET/Images-512-Bands/"
+DataPath="../../../data/MetasurfacesDataV3RESNET/Exports/output/"
+simulationData="../../../data/MetasurfacesDataV3RESNET/DBfiles/"
+validationImages="../../../data/MetasurfacesDataV3RESNET/testImages/"
 
 
 Substrates={"Rogers RT/duroid 5880 (tm)":0, "other":1}
@@ -91,6 +87,8 @@ def arguments(args):
     parser.add_argument("-working_path",type=str) #This defines the length of our conditioning vector
     parser.add_argument("GAN_version",type=bool)
     parser.add_argument("output_channels", type=int)
+    parser.add_argument("-fringe_model",type=str) #This defines the length of our conditioning vector
+    parser.add_argument("-predictor_image_size",type=int)
 
     parser.run_name = args["-run_name"]
     parser.epochs =  args["-epochs"]
@@ -111,6 +109,8 @@ def arguments(args):
     parser.working_path = args["-working_path"] #if used OHE Incliuding 3 top frequencies
     parser.GAN_version=True
     parser.output_channels=args["-output_channels"]
+    parser.fringe_model=args["-fringe_model"]
+    parser.predictor_image_size=args["-predictor_image_size"]
 
     print('Check arguments function: Done.')
 
@@ -133,9 +133,9 @@ def join_simulationData():
 
 print('Check join_simulationData function: Done.')
     
-def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight,cellsize):
+def cad_generation(images_folder,destination_folder,image_file_name,sustratoHeight,cellsize,folder):
 
-    ImageProcessor=CAD("./"+images_folder+"generated_image_512.png", "./"+images_folder+"processed/")
+    ImageProcessor=CAD("./"+images_folder+"generated_image_512.png", "./"+images_folder+folder)
     image_name="./"+images_folder+image_file_name
 
     upperBound=[50,255,255]
@@ -439,7 +439,10 @@ def test(netG,device):
 
         ##Eval
         # we have to process image to obtain size.
-        cellsize,fake = recoverSize(fake)
+        cell_testing  = recoverSize(fake,device)
+
+        cellsize,_ = recoverSizeManual(fake)
+        cellsize = cellsize.numpy()
 
         """Saving Data"""
 
@@ -468,7 +471,7 @@ def test(netG,device):
             f.write("one_hot_encoding:"+str(parser.one_hot_encoding))
             f.write("\n")
 
-            f.write("cell size:"+str(cellsize)+" "+"ValidationWidth:"+str(substrateWidth))
+            f.write("cell size:"+str(cellsize)+" "+"ValidationWidth:"+str(substrateWidth)+ " "+"cell size tesing:"+str(cell_testing))
             f.write("\n")
 
         df_ = pd.DataFrame(t_np) #convert to a dataframe
@@ -496,16 +499,70 @@ def test(netG,device):
         destinationFolder = parser.output_path+"/"
         image_name = "generated_image_512.png"
         time.sleep(3)
-        cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight,cellsize.detach().numpy())
+        cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight,cellsize,"processed/")
+        cad_generation(imagesFolder,destinationFolder,image_name,sustratoHeight,cell_testing,"processedTesting/")
+
         #plot Data
 
         break
 
 print('Check test function: Done.')
 
-def recoverSize(image):
+
+def recoverSize(image,device):
+
+    #Trained fringe model
+    resized_fake=transforms.Resize(parser.predictor_image_size)(image)
+    finge_model = Stack.Fringe_RESNET_V2("resnet18",conditional=False, ngpu=1, image_size=45 ,
+                                output_size=8, channels=1,
+                                features_num=100,hiden_num=200, #Its working with hiden nums. Features in case and extra linear layer
+                                dropout=0.4, 
+                                Y_prediction_size=1) #size of the output vector in this case frenquency points
+    
+    finge_model.load_state_dict(torch.load(parser.fringe_model,map_location=torch.device(device)))
+    finge_model.eval()
+    finge_model = finge_model.to(device)
+
+    #Preparing fringe data from image
+    fringe_width = 1
+
+    mask = torch.zeros((parser.predictor_image_size, parser.predictor_image_size), dtype=torch.bool)
+
+    # Top fringe
+    mask[:fringe_width, :] = True
+    # Bottom fringe
+    mask[-fringe_width:, :] = True
+    # Left fringe
+    mask[:, :fringe_width] = True
+    # Right fringe
+    mask[:, -fringe_width:] = True
+
+    # Expand the mask to match the image dimensions (C, H, W)
+    mask = mask.unsqueeze(0).expand(parser.batch_size, 1, -1, -1)  
+    mask = torch.squeeze(mask)
+    #factor = ((value - 4.85) / (5.15 - 4.85)) 
+    resized_fake=resized_fake[:,2,:]
+    #resized_fake = torch.squeeze(a,dim=2)
+
+    fringes = []
+                        
+    for idx,im in enumerate(resized_fake):
+        fringes.append(torch.round(im[mask],decimals=4))
+
+    fringes_tensor=torch.stack(fringes)
+    final = fringes_tensor[:,0:961].view(parser.batch_size,31,31)
+    final=torch.unsqueeze(final, dim=1).to(device)
+    #Predicting
+
+    size = finge_model(input_=final)
+
+
+    size = size.item()
+    return size
+
+def recoverSizeManual(image):
    
-    fringe_width = 2
+    fringe_width = 1
 
     #factor = ((value - 4.85) / (5.15 - 4.85)) 
 
@@ -513,7 +570,7 @@ def recoverSize(image):
     # Get image dimensions
     #C, H, W = image.shape
     # Create a mask for the fringe
-    mask = torch.zeros((512, 512), dtype=torch.bool)
+    mask = torch.zeros((parser.image_size, parser.image_size), dtype=torch.bool)
 
     # Top fringe
     mask[:fringe_width, :] = True
@@ -630,11 +687,10 @@ def main(args):
                                   parser.output_channels,
                                   leakyRelu_flag=False)
         
-        #netG.load_state_dict(torch.load(parser.gen_model) )  
-        netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
+        netG.load_state_dict(torch.load(parser.gen_model) )  
+        #netG.load_state_dict(torch.load(parser.gen_model,map_location=torch.device(device)).state_dict())
 
 
-        #NETGModelTM_abs__GANV2_FWHM_lowswitch_25Ag-lr1-4.pth
         netG.eval()
         netG.cuda()
     else:
@@ -642,6 +698,7 @@ def main(args):
         pass
 
 
+    #netG = Stack.Generator(trainer.gpu_number, input_size, generator_mapping_size, output_channels)
     
 
     print(netG)
@@ -656,13 +713,15 @@ if __name__ == "__main__":
     #if not os.path.exists("output/"+str(name)):
     #        os.makedirs("output/"+str(name))
             
-    args =  {"-gen_model":"models/modelnetG294_3Mar_noGeom.pt",
+    args =  {"-gen_model":"models/NETGModelTM_abs__GAN_17Mar_ganV2_HighAbs_NoGeom.pth",
+             "-fringe_model":"models/FringeRESNET__6Mar_Fringe.pth",
                                        "-run_name":"GAN Training",
                                        "-epochs":1,
                                        "-batch_size":1,
+                                       "-predictor_image_size":256,
                                        "-workers":1,
                                        "-gpu_number":1,
-                                       "-image_size":512,
+                                       "-image_size":128,
                                        "-dataset_path": os.path.normpath('/content/drive/MyDrive/Training_Data/Training_lite/'),
                                        "-device":"cpu",
                                        "-learning_rate":5e-5,
