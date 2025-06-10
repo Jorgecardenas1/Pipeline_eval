@@ -6,3 +6,5 @@ spectra_length:100
 gen_model:models/modelnetG277_3Mar_fullset.pt
 one_hot_encoding:0
 cell size:4.8905 ValidationWidth:4.905 cell size tesing:4.899986267089844
+
+3bdea2a3-f45e-11ef-8e47-047c16a08772,2025-02-26,250,meta-atom_circ_01_datageneration_v2,circ_01_freq_reflect_v2,HFSSDesign1,Absorptive,"{'conductor': {'thickness': 0.034, 'material': 'copper'}, 'conductor2': {'thickness': 0, 'material': 'pec'}, 'substrate': {'thickness': 0.508, 'material': 'Rogers RT/duroid 5880 (tm)'}}","['radio', 'zSize', 'zSustrato', 'Sustrato']","[0.35, 0.034, 0.508, 4.905]",mm,5.0,,"{'ReflectanceTE': '(mag(S(FloquetPort1:1,FloquetPort1:1)))^2', 'ReflectanceTM': '(mag(S(FloquetPort1:2,FloquetPort1:2)))^2', 'TransmittanceTE': '(mag(S(FloquetPort2:1,FloquetPort1:1)))^2', 'TransmittanceTM': '(mag(S(FloquetPort2:2,FloquetPort1:2)))^2', 'AbsorbanceTE': '1-((mag(S(FloquetPort1:1,FloquetPort1:1)))^2 +(mag(S(FloquetPort2:1,FloquetPort1:1)))^2)', 'AbsorbanceTM': '1-((mag(S(FloquetPort1:2,FloquetPort1:2)))^2 +(mag(S(FloquetPort2:2,FloquetPort1:2)))^2)'}",,,10.0
