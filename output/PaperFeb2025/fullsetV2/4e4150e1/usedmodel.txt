@@ -1,8 +1,0 @@
-original batch:('cross_01_freq_reflect_v2_648e560b-dfcb-11ef-843d-047c16a08772_0-17_75-78.png',)
-image_size:512
-condition_len:14
-latent:400
-spectra_length:100
-gen_model:models/NETGModelTM_abs__GAN_3Mar_ganV2_Fullset.pth
-one_hot_encoding:0
-cell size:4.85225 ValidationWidth:4.857 cell size tesing:4.837533473968506

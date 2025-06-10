@@ -1,0 +1,11 @@
+original batch:('cross_01_freq_reflect_v2_648e560b-dfcb-11ef-843d-047c16a08772_0-17_75-78.png',)
+image_size:512
+condition_len:14
+latent:400
+spectra_length:100
+gen_model:models/NETGModelTM_abs__GAN_3Mar_ganV2_Fullset.pth
+one_hot_encoding:0
+cell size:4.85225 ValidationWidth:4.857 cell size tesing:4.837533473968506
+
+
+648e560b-dfcb-11ef-843d-047c16a08772,2025-01-31,17,meta-atom_cross_01_datageneration_v2,cross_01_freq_reflect_v2,HFSSDesign1,Reflective,"{'conductor': {'thickness': 0.035, 'material': 'copper'}, 'conductor2': {'thickness': 0, 'material': 'pec'}, 'substrate': {'thickness': 0.508, 'material': 'Rogers RT/duroid 5880 (tm)'}}","['arm_w', 'arm_l', 'zSize', 'zSustrato', 'Sustrato']","[1.278, 3.7, 0.035, 0.508, 4.857]",mm,30.0,,"{'ReflectanceTE': '(mag(S(FloquetPort1:1,FloquetPort1:1)))^2', 'ReflectanceTM': '(mag(S(FloquetPort1:2,FloquetPort1:2)))^2', 'TransmittanceTE': '(mag(S(FloquetPort2:1,FloquetPort1:1)))^2', 'TransmittanceTM': '(mag(S(FloquetPort2:2,FloquetPort1:2)))^2', 'AbsorbanceTE': '1-((mag(S(FloquetPort1:1,FloquetPort1:1)))^2 +(mag(S(FloquetPort2:1,FloquetPort1:1)))^2)', 'AbsorbanceTM': '1-((mag(S(FloquetPort1:2,FloquetPort1:2)))^2 +(mag(S(FloquetPort2:2,FloquetPort1:2)))^2)'}",,,90.0

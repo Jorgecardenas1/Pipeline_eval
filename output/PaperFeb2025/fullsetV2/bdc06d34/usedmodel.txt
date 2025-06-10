@@ -1,8 +1,0 @@
-original batch:('ring_01_freq_reflect_v2_72d9943b-e308-11ef-8c1f-047c16a08772_0-2036_75-78.png',)
-image_size:512
-condition_len:14
-latent:400
-spectra_length:100
-gen_model:models/NETGModelTM_abs__GAN_3Mar_ganV2_Fullset.pth
-one_hot_encoding:0
-cell size:5.003 ValidationWidth:5.004 cell size tesing:4.974010944366455
