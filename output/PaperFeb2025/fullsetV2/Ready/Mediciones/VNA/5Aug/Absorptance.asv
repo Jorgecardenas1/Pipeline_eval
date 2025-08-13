@@ -1,0 +1,86 @@
+% Load S-parameter data (Touchstone format)
+filename = 'absorber1.s2p';  % Replace with your file
+data = sparameters(filename);
+freq = data.Frequencies / 1e9;  % Convert to GHz
+s11 = rfparam(data, 2, 2);      % S11 complex
+
+
+filename_outTune = 'absorber_outTune.s2p';  % Replace with your file
+data_outTune = sparameters(filename_outTune);
+s11_outTune = rfparam(data_outTune, 2, 2);      % S11 complex
+
+filename = 'reflect1.s2p';  % Replace with your file
+datareflect = sparameters(filename);
+s11_reflect = rfparam(datareflect,2,2);
+  
+plotLines(freq,data,datareflect,s11,s11_reflect); %plot dB lines
+%calculatePower(freq,s11,s11_reflect);
+calculatePower_outTune(freq,s11,s11_reflect);
+
+
+function calculatePower(freq,s11,s11_reflect)
+
+    % Compute reflected power |S11|^2
+    reflected_power_un=(-(abs(s11))+(abs(s11_reflect))).^2./(abs(s11)).^2;
+    % Compute absorption assuming no transmission
+    absorption = 1-(reflected_power_un);
+    disp(max(absorption))
+
+    normalized_absorption = (absorption - 0) / (1 - 0);
+
+    normalized_ref = (reflected_power_un - 0) / (1 - 0);
+    
+    % Plot
+    figure;
+    plot(freq, normalized_absorption, 'b', 'LineWidth', 1.5); hold on;
+    plot(freq, normalized_ref, 'r', 'LineWidth', 1.5);
+    xlabel('Frequency (GHz)');
+    ylabel('Abs (Linear Units)');
+    title('Reflected Power and Absorption');
+    legend('|S_{11}|^2', '1 - |S_{11}|^2');
+    grid on;
+end
+
+function calculatePower_outTune(freq,s11,s11_reflect)
+
+    P_in = 1;  % in mW (0 dBm)
+    ref=1;
+    P_reflected = (abs(s11).^2./abs(s11_reflect).^2);
+    normalized_ref = (P_reflected-0.4 /).^2;
+
+    % Plot
+    figure;
+    plot(freq, 1-normalized_ref, 'b', 'LineWidth', 1.5); hold on;
+    %plot(freq, normalized_ref, 'r', 'LineWidth', 1.5);
+    xlabel('Frequency (GHz)');
+    ylim([0 1]);  % Set y-axis from 0 to 1
+    xlim([75 78]);  % Set y-axis from 0 to 1
+
+    ylabel('Abs (Linear Units)');
+    title('Reflected Power and Absorption');
+    legend('|S_{11}|^2', '1 - |S_{11}|^2');
+    grid on;
+end
+
+
+function plotLines(freq,data,datareflect,s11,s11_reflect)
+    diff_mag_db = mag2db(abs(s11)) - mag2db(abs(s11_reflect));
+   
+    figure; % Create a new figure for the plot
+    rfplot(data, 2, 2); % Plot S21 from the first file
+    hold on; % Hold the current plot so new plots are added to it
+    rfplot(datareflect, 2, 2); % Plot S21 from the second file
+    plot( freq,diff_mag_db);
+    
+    hold off; % Release the hold on the plot
+    
+    hold off; % Release the hold on the plot
+    
+    % Add labels and title for clarity
+    xlabel('Frequency (Hz)');
+    ylabel('Magnitude (dB)');
+    title('S11 Parameter Comparison');
+    legend('File 1 S21', 'File 2 S21');
+    grid on;
+end
+
